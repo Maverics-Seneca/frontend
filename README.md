@@ -1,2 +1,3 @@
 ##Application Logo
-![image](https://github.com/user-attachments/assets/708e4227-66d1-4585-9569-04c11b714fe9)
+
+![Application Logo 2](https://github.com/user-attachments/assets/c023ef52-f1fd-45e6-a2fb-28ec2acf657a)
