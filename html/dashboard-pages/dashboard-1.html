@@ -37,7 +37,11 @@
 <body>
     <!-- Loader -->
     <div id="loading">
-        <div class="loader"></div>
+        <div class="loader">
+            <div class="loader-body">
+                <img src="./assets/images/loader.gif" alt="loader" width="200">
+            </div>
+        </div>
     </div>
 
     <script>
@@ -46,6 +50,65 @@
             document.getElementById('loading').style.display = 'none';
         });
     </script>
+
+
+    <!-- Sidebar -->
+    <div class="wrapper">
+        <aside class="sidebar" id="first-tour">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <a href="./index.html" class="navbar-brand">
+                    <div class="logo-main">
+                        <img src="./assets/images/logo.png" height="30" alt="logo">
+                        <span class="brand-name">Meditrack</span>
+                    </div>
+                </a>
+
+                <div class="wrapper-menu">
+                    <div class="main-circle" role="button"><i class="ri-more-fill"></i></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="sidebar-body">
+        <div class="sidebar-list">
+            <ul class="navbar-nav" id="sidebar-menu">
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="./index.html">
+                        <i class="ri-hospital-fill"></i>
+                        <span>Guardian Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./dashboard-pages/dashboard-1.html">
+                        <i class="ri-home-8-fill"></i>
+                        <span>Patient Dashboard </span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+</body>
+
+
 
 </body>
 </html>
