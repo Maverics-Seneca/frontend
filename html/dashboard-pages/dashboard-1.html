@@ -32,6 +32,142 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Sidebar Styles */
+        .wrapper {
+            display: flex;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            color: white;
+            padding-top: 20px;
+            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+        }
+
+        .sidebar-body {
+            padding: 20px;
+        }
+
+        .sidebar-list ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-list .nav-item {
+            margin-bottom: 15px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: #3498db;
+        }
+
+        .nav-link .ri-icon {
+            margin-right: 10px;
+        }
+
+        .sub-nav {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .sub-nav .nav-link {
+            color: #ecf0f1;
+        }
+
+        .sub-nav .nav-link:hover {
+            color: #3498db;
+        }
+
+        /* Hero Section */
+.hero {
+    margin-left: 250px; /* Adjust to sidebar width */
+    background: url('./assets/images/hero-image.jpg') no-repeat center center;
+    background-size: cover;
+    color: black; /* Change hero text to dark */
+    padding: 100px 20px;
+    text-align: center;
+    position: relative; /* Ensure it's above the background */
+    z-index: 1; /* Bring hero section text in front */
+    min-height: 300px; /* Ensure there is enough height */
+}
+
+.hero h1 {
+    font-size: 3em;
+    margin: 0;
+    color: #333; /* Dark color for hero text */
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7); /* Light shadow to improve visibility */
+}
+
+.hero p {
+    font-size: 1.5em;
+    margin-top: 10px;
+    color: #333; /* Dark color for hero text */
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7); /* Light shadow to improve readability */
+}
+        /* Card Section Styles */
+        .card-section {
+            margin-left: 250px; /* Adjust content to the right of sidebar */
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 50px 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            font-size: 1.5em;
+            margin-top: 15px;
+        }
+
+        .card p {
+            font-size: 1em;
+            margin-top: 10px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -51,8 +187,7 @@
 
     <!-- Sidebar -->
     <div class="wrapper">
-        <aside class="sidebar" id="first-tour">
-            <!-- Sidebar Header -->
+        <aside class="sidebar">
             <div class="sidebar-header">
                 <a href="./index.html" class="navbar-brand">
                     <div class="logo-main">
@@ -60,133 +195,94 @@
                         <span class="brand-name">MediTrack</span>
                     </div>
                 </a>
+            </div>
 
-                <div class="wrapper-menu">
-                    <div class="main-circle" role="button"><i class="ri-more-fill"></i></div>
+            <div class="sidebar-body">
+                <div class="sidebar-list">
+                    <ul class="navbar-nav" id="sidebar-menu">
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1">
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" href="./index.html">
+                                <i class="ri-hospital-fill ri-icon"></i>
+                                <span>Guardian Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="./dashboard-pages/dashboard-1.html">
+                                <i class="ri-home-8-fill ri-icon"></i>
+                                <span>Patient Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#Guardian" role="button" aria-expanded="false">
+                                <i class="ri-hospital-fill ri-icon" data-bs-toggle="tooltip" title="Guardian"></i>
+                                <span>Guardian</span>
+                            </a>
+                            <ul class="sub-nav collapse" id="Guardian">
+                                <li><a class="nav-link" href="./Guardian/add-Guardian.html"><i class="ri-user-add-fill ri-icon"></i> Add Guardian</a></li>
+                                <li><a class="nav-link" href="./Guardian/Guardian-profile.html"><i class="ri-profile-fill ri-icon"></i> Guardian Profile</a></li>
+                                <li><a class="nav-link" href="./Guardian/edit-Guardian.html"><i class="ri-file-edit-fill ri-icon"></i> Edit Guardian</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="collapse" href="#Patient" role="button" aria-expanded="false">
+                                <i class="ri-hospital-fill ri-icon" data-bs-toggle="tooltip" title="Patient"></i>
+                                <span>Patient</span>
+                            </a>
+                            <ul class="sub-nav collapse" id="Patient">
+                                <li><a class="nav-link" href="./Patient/add-Patient.html"><i class="ri-user-add-fill ri-icon"></i> Add Patient</a></li>
+                                <li><a class="nav-link" href="./Patient/Patient-profile.html"><i class="ri-profile-fill ri-icon"></i> Patient Profile</a></li>
+                                <li><a class="nav-link" href="./Patient/edit-Patient.html"><i class="ri-file-edit-fill ri-icon"></i> Edit Patient</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item ms-2">
+                            <a class="nav-link disabled" href="#" tabindex="-1">
+                                Your Medications
+                            </a>
+                            <ul class="sub-nav collapse" id="Medications">
+                                <li><a class="nav-link" href="./medicine/add-medicine.html"><i class="ri-user-add-fill ri-icon"></i> Add medicines</a></li>
+                                <li><a class="nav-link" href="./refill/refill-alerts.html"><i class="ri-profile-fill ri-icon"></i> Refill Alerts</a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
                 </div>
             </div>
         </aside>
     </div>
 
-    <!-- Sidebar for dashboard -->
-    <div class="sidebar-body">
-        <div class="sidebar-list">
-            <ul class="navbar-nav" id="sidebar-menu">
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1">
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Welcome to MediTrack</h1>
+        <p>Track your medications, manage your health easily</p>
+    </div>
 
-                <!-- Adding guardian dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link active" href="./index.html">
-                        <i class="ri-hospital-fill"></i>
-                        <span>Guardian Dashboard</span>
-                    </a>
-                </li>
-
-                <!-- Adding patient dashboard -->
-                <li class="nav-item">
-                    <a class="nav-link" href="./dashboard-pages/dashboard-1.html">
-                        <i class="ri-home-8-fill"></i>
-                        <span>Patient Dashboard</span>
-                    </a>
-                </li>
-
-                <!-- Sidebar for Guardian -->
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#Guardian" role="button" aria-expanded="false">
-                        <i class="ri-hospital-fill" data-bs-toggle="tooltip" title="Guardian"></i>
-                        <span>Guardian</span>
-                    </a>
-                    <!-- Guardian -->
-                    <ul class="sub-nav collapse" id="Guardian">
-                        <li><a class="nav-link" href="./Guardian/add-Guardian.html"><i class="ri-user-add-fill"></i> Add Guardian</a></li>
-                        <li><a class="nav-link" href="./Guardian/Guardian-profile.html"><i class="ri-profile-fill"></i> Guardian Profile</a></li>
-                        <li><a class="nav-link" href="./Guardian/edit-Guardian.html"><i class="ri-file-edit-fill"></i> Edit Guardian</a></li>
-                    </ul>
-                </li>
-
-                <!-- Sidebar for Patient -->
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#Patient" role="button" aria-expanded="false">
-                        <i class="ri-hospital-fill" data-bs-toggle="tooltip" title="Patient"></i>
-                        <span>Patient</span>
-                    </a>
-                    <!-- Patient -->
-                    <ul class="sub-nav collapse" id="Patient">
-                        <li><a class="nav-link" href="./Patient/add-Patient.html"><i class="ri-user-add-fill"></i> Add Patient</a></li>
-                        <li><a class="nav-link" href="./Patient/Patient-profile.html"><i class="ri-profile-fill"></i> Patient Profile</a></li>
-                        <li><a class="nav-link" href="./Patient/edit-Patient.html"><i class="ri-file-edit-fill"></i> Edit Patient</a></li>
-                    </ul>
-                </li>
-
-                <!-- Medicine section added -->
-                <li class="nav-item ms-2">
-                    <a class="nav-link disabled" href="#" tabindex="-1">
-                        Your Medications
-                    </a>
-                    <!-- Adding list of medicines ,refill alerts -->
-                    <ul class="sub-nav collapse" id="Medications">
-                        <li><a class="nav-link" href="./medicine/add-medicine.html"><i class="ri-user-add-fill"></i> Add medicines</a></li>
-                        <li><a class="nav-link" href="./refill/refill-alerts.html"><i class="ri-profile-fill"></i> Refill Alerts</a></li>
-                        
-                    </ul>
-                </li>
-
-
-                <!-- Authentication Section -->
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="collapse" href="#Authentication" role="button" aria-expanded="false">
-                        <i class="ri-server-fill"></i>
-                        <span>Authentication</span>
-                    </a>
-                    <ul class="collapse" id="Authentication">
-
-                        <li>
-                            <a class="nav-link" href="./auth/sign-up.html">
-                                <i class="ri-logout-box-fill"></i>
-                                <span>Register</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link" href="./auth/sign-in.html">
-                                <i class="ri-login-box-fill"></i>
-                                <span>Sign-in</span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="nav-link" href="./auth/sign-up.html">
-                                <i class="ri-login-box-fill"></i>
-                                <span>Sign-up</span>
-                            </a>
-                        </li>
-
-
-                        <li>
-                            <a class="nav-link" href="./auth/recover-password.html">
-                                <i class="ri-record-mail-fill"></i>
-                                <span>Recover Password</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link" href="./auth/confirm-mail.html">
-                                <i class="ri-chat-check-fill"></i>
-                                <span>Confirm Mail</span>
-                            </a>
-                        </li>
-                        
-                    </ul>
-                </li>
-            </ul>
+    <!-- Card Section -->
+    <div class="card-section">
+        <div class="card">
+            <img src="./assets/images/medication.jpg" alt="Medication">
+            <h3>Manage Medications</h3>
+            <p>Add, update, and keep track of your medications and dosages.</p>
+        </div>
+        <div class="card">
+            <img src="./assets/images/alerts.jpg" alt="Refill Alerts">
+            <h3>Refill Alerts</h3>
+            <p>Receive timely refill alerts to ensure you never run out of supplies.</p>
+        </div>
+        <div class="card">
+            <img src="./assets/images/reminders.jpg" alt="Timely Reminders">
+            <h3>Timely Reminders</h3>
+            <p>Get reminders for when it's time to take your medication.</p>
         </div>
     </div>
-    
-    
-
-    
 </body>
 </html>
