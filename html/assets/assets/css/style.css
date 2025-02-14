@@ -1,0 +1,93 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+  }
+  
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Navigation Bar */
+  nav {
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+  nav a {
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  nav a:hover {
+    background-color: #4CAF50;
+    border-radius: 5px;
+  }
+  
+  /* Container */
+  .container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  /* Sections */
+  .section {
+    display: none;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
+  .active {
+    display: block;
+  }
+  
+  /* Medication List */
+  .medication-list {
+    list-style: none;
+    padding: 0;
+  }
+  .medication-item {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Footer */
+  footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      width: 95%;
+    }
+    nav {
+      flex-direction: column;
+      text-align: center;
+    }
+    nav a {
+      display: block;
+      padding: 10px;
+    }
+  }
+  
