@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Lock Screen - MediTrack</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="../assets/images/logo.png"/>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="../assets/css/core/libs.min.css" />
+    <link rel="stylesheet" href="../assets/css/xray.min.css?v=1.2.0" />
+    <link rel="stylesheet" href="../assets/css/custom.min.css?v=1.2.0" />
+    
+    <style>
+        .lock-screen-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f7fc;
+            padding: 20px;
+        }
+
+        .lock-screen-container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .lock-screen-logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .lock-screen-logo img {
+            width: 250px; /* Adjusted size */
+            max-width: 90%;
+        }
+
+        .lock-screen-container h4 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .lock-screen-container p {
+            font-size: 1rem;
+            max-width: 80%;
+            margin: auto;
+        }
+
+        .form-group {
+            margin-top: 20px;
+        }
+
+        .btn-primary-subtle {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            background-color: #0aab93;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .btn-primary-subtle:hover {
+            background-color: #087f75;
+        }
+
+        @media (max-width: 768px) {
+            .lock-screen-container {
+                padding: 30px;
+            }
+            .lock-screen-logo img {
+                width: 220px; /* Adjusted for mobile */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lock-screen-page">
+        <div class="lock-screen-container">
+            <!-- Logo (Perfectly Centered) -->
+            <div class="lock-screen-logo">
+                <img src="../assets/images/logo.png" alt="MediTrack Logo" />
+            </div>
+
+            <!-- Message -->
+            <h4>Lock Screen</h4>
+            <p>Your session has been locked for security reasons. Please enter your password to unlock.</p>
+
+            <!-- Password Input -->
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" />
+            </div>
+
+            <!-- Unlock Button -->
+            <button type="button" class="btn-primary-subtle">Unlock</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../assets/js/core/libs.min.js"></script>
+    <script src="../assets/js/xray.js?v=1.2.0" defer></script>
+    <script src="../assets/js/sidebar.js?v=1.2.0" defer></script>
+</body>
+</html>
