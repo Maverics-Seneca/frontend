@@ -16,50 +16,171 @@ html {
     color: #333;
     line-height: 1.6;
   }
-
-    /* Header & Navigation */
-    header {
-        background: #fff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        padding: 10px 40px;
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-      }
-      
-      .nav-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .logo img {
-        height: 50px;
-      }
-      
-      .nav-links {
-        list-style: none;
-        display: flex;
-        align-items: center;
-      }
-      
-      .nav-links li {
-        margin-left: 20px;
-        position: relative;
-      }
-      
-      .nav-links li a {
-        text-decoration: none;
-        color: #333;
-        padding: 8px 12px;
-        border-radius: 4px;
-        transition: background 0.3s, color 0.3s;
-      }
-      
-      .nav-links li a:hover,
-      .nav-links li a.active {
-        background: #3498db;
-        color: #fff;
-      }
-      
+  
+  /* Header & Navigation */
+  header {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 10px 40px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo img {
+    height: 50px;
+  }
+  
+  .nav-links {
+    list-style: none;
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-links li {
+    margin-left: 20px;
+    position: relative;
+  }
+  
+  .nav-links li a {
+    text-decoration: none;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.3s, color 0.3s;
+  }
+  
+  .nav-links li a:hover,
+  .nav-links li a.active {
+    background: #3498db;
+    color: #fff;
+  }
+  
+  /* Advanced Dropdown Menu */
+  .dropdown-parent .dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #fff;
+    min-width: 150px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .dropdown-parent:hover .dropdown {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .dropdown li {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .dropdown li:last-child {
+    border-bottom: none;
+  }
+  
+  .dropdown li a {
+    display: block;
+    padding: 10px 12px;
+    color: #333;
+    transition: background 0.3s;
+  }
+  
+  .dropdown li a:hover {
+    background: #3498db;
+    color: #fff;
+  }
+  
+  /* Hamburger Menu (Mobile Only) */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  
+  .menu-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background: #333;
+    margin: 4px 0;
+    transition: 0.3s;
+  }
+  
+  /* Hamburger Active State: transform into cross */
+  .menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+  
+  /* Hero Section with Animated Background */
+  .hero {
+    height: 100vh;
+    background: linear-gradient(135deg, #2c3e50, #4a90e2);
+    animation: gradientAnimation 15s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px; /* account for fixed header */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  @keyframes gradientAnimation {
+    0% { background: linear-gradient(135deg, #2c3e50, #4a90e2); }
+    50% { background: linear-gradient(135deg, #1c1c3c, #3a80c3); }
+    100% { background: linear-gradient(135deg, #2c3e50, #4a90e2); }
+  }
+  
+  .hero-content {
+    text-align: center;
+    color: #fff;
+    max-width: 800px;
+    animation: fadeIn 1s ease-out;
+  }
+  
+  .hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    animation: pulseText 3s infinite ease-in-out;
+  }
+  
+  .hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+  }
+  
+  .btn-get-started {
+    display: inline-block;
+    background: #3498db;
+    color: #fff;
+    padding: 12px 30px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .btn-get-started:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+  }
