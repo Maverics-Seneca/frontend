@@ -184,3 +184,76 @@ html {
     background: #2980b9;
     transform: scale(1.05);
   }
+  
+  /* Features Section */
+.features {
+    padding: 80px 20px;
+    background: #fff;
+  }
+  
+  .features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .features-container h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #2c3e50;
+    transition: color 0.3s;
+  }
+  
+  .features-container h2:hover {
+    color: #2980b9;
+  }
+  
+  .feature-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .feature-item {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+  }
+  
+  .feature-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .feature-icon {
+    height: 40px;
+    width: 40px;
+    margin-bottom: 10px;
+    color: #3498db;
+    transition: color 0.3s;
+  }
+  
+  .feature-item:hover .feature-icon {
+    color: #2980b9;
+  }
+  
+  .feature-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #3498db;
+    transition: color 0.3s;
+  }
+  
+  .feature-item h3:hover {
+    color: #2980b9;
+  }
+  
+  .feature-item p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  
