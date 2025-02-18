@@ -16,3 +16,50 @@ html {
     color: #333;
     line-height: 1.6;
   }
+
+    /* Header & Navigation */
+    header {
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 10px 40px;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+      }
+      
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .logo img {
+        height: 50px;
+      }
+      
+      .nav-links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+      }
+      
+      .nav-links li {
+        margin-left: 20px;
+        position: relative;
+      }
+      
+      .nav-links li a {
+        text-decoration: none;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 4px;
+        transition: background 0.3s, color 0.3s;
+      }
+      
+      .nav-links li a:hover,
+      .nav-links li a.active {
+        background: #3498db;
+        color: #fff;
+      }
+      
