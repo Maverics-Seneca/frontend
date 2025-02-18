@@ -257,3 +257,177 @@ html {
   }
   
   
+  /* About Us Section */
+  .about {
+    padding: 80px 20px;
+    background: #f0f0f0;
+  }
+  
+  .about-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .about-container h2 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: #2c3e50;
+  }
+  
+  /* Our Story */
+  .our-story {
+    margin-bottom: 60px;
+  }
+  
+  .our-story h3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #3498db;
+    transition: color 0.3s ease;
+  }
+  
+  .our-story h3:hover {
+    color: #2980b9;
+  }
+  
+  .our-story p {
+    font-size: 1rem;
+    color: #666;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+  
+  /* Team Section */
+  .team h3 {
+    font-size: 2rem;
+    margin-bottom: 40px;
+    color: #3498db;
+    transition: color 0.3s ease;
+  }
+  
+  .team h3:hover {
+    color: #2980b9;
+  }
+  
+  .team-members {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .team-member {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 250px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .team-member:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  }
+  
+  .team-member img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .team-member h4 {
+    font-size: 1.2rem;
+    color: #333;
+    transition: color 0.3s ease;
+  }
+  
+  .team-member h4:hover {
+    color: #2980b9;
+  }
+  
+  /* Contact Section */
+  .contact {
+    padding: 80px 20px;
+    background: #fff;
+    text-align: center;
+  }
+  
+  .contact-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .contact-container h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    transition: color 0.3s;
+  }
+  
+  .contact-container h2:hover {
+    color: #2980b9;
+  }
+  
+  .contact-container p {
+    font-size: 1rem;
+    margin-bottom: 40px;
+    color: #666;
+  }
+  
+  .contact-form {
+    text-align: left;
+  }
+  
+  .contact-form .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .contact-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  
+  .contact-form textarea {
+    resize: vertical;
+    height: 150px;
+  }
+  
+  .btn-submit {
+    display: inline-block;
+    background: #3498db;
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  
+  .btn-submit:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+  }
