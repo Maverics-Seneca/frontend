@@ -4,3 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MediTrack - Landing Page</title>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header>
+    <div class="nav-container">
+      <!-- Logo (top left) -->
+      <div class="logo">
+        <img src="images/logo.png" alt="MediTrack Logo" />
+      </div>
+      <!-- Navigation Menu -->
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li class="dropdown-parent">
+            <a href="#about">About</a>
+            <ul class="dropdown">
+              <li><a href="#our-story">Our Story</a></li>
+              <li><a href="#team">Team</a></li>
+            </ul>
+          </li>
+          <li class="dropdown-parent">
+            <a href="#contact">Contact</a>
+            <ul class="dropdown">
+              <li><a href="#contact">Email Us</a></li>
+            </ul>
+          </li>
+          <li><a href="#auth">Login / Sign Up</a></li>
+        </ul>
+      </nav>
+      <!-- Hamburger Icon for Mobile -->
+      <div class="menu-toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </header>
