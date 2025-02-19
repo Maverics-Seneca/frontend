@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Recover Password - MediTrack</title>
+    <title>Confirm Email - MediTrack</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../assets/images/logo.png"/>
+    <link rel="shortcut icon" href="/images/logo.png"/>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="../assets/css/core/libs.min.css" />
-    <link rel="stylesheet" href="../assets/css/xray.min.css?v=1.2.0" />
-    <link rel="stylesheet" href="../assets/css/custom.min.css?v=1.2.0" />
+    <link rel="stylesheet" href="/css/core/libs.min.css" />
+    <link rel="stylesheet" href="/css/xray.min.css?v=1.2.0" />
+    <link rel="stylesheet" href="/css/custom.min.css?v=1.2.0" />
 
     <style>
-        .recover-password-page {
+        .confirm-email-page {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -23,7 +23,7 @@
             padding: 20px;
         }
 
-        .recover-container {
+        .confirm-container {
             max-width: 500px;
             width: 100%;
             background: white;
@@ -34,32 +34,28 @@
             padding: 40px;
         }
 
-        .recover-logo {
+        .confirm-logo {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
         }
 
-        .recover-logo img {
+        .confirm-logo img {
             width: 250px; /* Adjusted Logo Size */
             max-width: 90%;
         }
 
-        .recover-container h4 {
+        .confirm-container h4 {
             font-size: 1.8rem;
             font-weight: 600;
             margin-bottom: 10px;
         }
 
-        .recover-container p {
+        .confirm-container p {
             font-size: 1rem;
             max-width: 80%;
             margin: auto;
-        }
-
-        .form-group {
-            margin-top: 20px;
         }
 
         .btn-primary-subtle {
@@ -79,10 +75,10 @@
         }
 
         @media (max-width: 768px) {
-            .recover-container {
+            .confirm-container {
                 padding: 30px;
             }
-            .recover-logo img {
+            .confirm-logo img {
                 width: 220px; /* Adjusted for mobile */
             }
         }
@@ -90,30 +86,25 @@
 </head>
 
 <body>
-    <div class="recover-password-page">
-        <div class="recover-container">
+    <div class="confirm-email-page">
+        <div class="confirm-container">
             <!-- Logo (Perfectly Centered) -->
-            <div class="recover-logo">
-                <img src="../assets/images/logo.png" alt="MediTrack Logo" />
+            <div class="confirm-logo">
+                <img src="/images/logo.png" alt="MediTrack Logo" />
             </div>
 
             <!-- Message -->
-            <h4>Recover Password</h4>
-            <p>Enter your email address to reset your password. You will receive a link to create a new password.</p>
+            <h4>Confirm Your Email</h4>
+            <p>Please check your email inbox for a confirmation link. Click the link to verify your email and activate your account.</p>
 
-            <!-- Email Input -->
-            <div class="form-group">
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" />
-            </div>
-
-            <!-- Submit Button -->
-            <button type="button" class="btn-primary-subtle">Send Reset Link</button>
+            <!-- Resend Button -->
+            <button type="button" class="btn-primary-subtle">Resend Email</button>
         </div>
     </div>
 
     <!-- JavaScript Files -->
-    <script src="../assets/js/core/libs.min.js"></script>
-    <script src="../assets/js/xray.js?v=1.2.0" defer></script>
-    <script src="../assets/js/sidebar.js?v=1.2.0" defer></script>
+    <script src="/js/core/libs.min.js"></script>
+    <script src="/js/xray.js?v=1.2.0" defer></script>
+    <script src="/js/sidebar.js?v=1.2.0" defer></script>
 </body>
 </html>

@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Sign In - MediTrack</title>
+    <title>Sign Up - MediTrack</title>
     
     <!-- Favicon -->
-    <link rel="shortcut icon" href="../assets/images/logo.png"/>
+    <link rel="shortcut icon" href="/images/logo.png"/>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="../assets/css/core/libs.min.css" />
-    <link rel="stylesheet" href="../assets/css/xray.min.css?v=1.2.0" />
-    <link rel="stylesheet" href="../assets/css/custom.min.css?v=1.2.0" />
+    <link rel="stylesheet" href="/css/core/libs.min.css" />
+    <link rel="stylesheet" href="/css/xray.min.css?v=1.2.0" />
+    <link rel="stylesheet" href="/css/custom.min.css?v=1.2.0" />
     
     <style>
         .sign-in-page {
@@ -44,30 +44,23 @@
             text-align: center;
             padding: 40px;
             min-width: 40%;
-            position: relative; /* Ensures proper positioning */
         }
 
         .sign-in-left img {
-            width: 350px; /* Increased logo size further */
-            max-width: 95%;
+            width: 200px;
+            max-width: 80%;
             margin-bottom: 20px;
-            position: relative;
-            left: -35px; /* Shifted more left for true centering */
         }
 
         .sign-in-left h4 {
-            font-size: 1.7rem;
+            font-size: 1.6rem;
             font-weight: 600;
             margin-bottom: 10px;
-            position: relative;
-            left: -20px; /* Align text better */
         }
 
         .sign-in-left p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             max-width: 80%;
-            position: relative;
-            left: -20px; /* Align text better */
         }
 
         .sign-in-right {
@@ -110,11 +103,7 @@
                 padding: 30px;
             }
             .sign-in-left img {
-                width: 280px; /* Adjusted for smaller screens */
-                left: 0;
-            }
-            .sign-in-left h4, .sign-in-left p {
-                left: 0;
+                width: 180px;
             }
         }
     </style>
@@ -125,16 +114,20 @@
         <div class="sign-in-container">
             <!-- Left Side (Logo & Description) -->
             <div class="sign-in-left">
-                <img src="../assets/images/logo.png" alt="MediTrack Logo" />
-                <h4>Welcome Back</h4>
-                <p>Sign in to continue managing your clinic & patient details.</p>
+                <img src="/images/logo.png" alt="MediTrack Logo" />
+                <h4>Manage Your Orders</h4>
+                <p>Track and manage all your clinic & patient details in one place.</p>
             </div>
 
-            <!-- Right Side (Sign-In Form) -->
+            <!-- Right Side (Sign-Up Form) -->
             <div class="sign-in-right">
-                <h1 class="mb-4">Sign In</h1>
+                <h1 class="mb-4">Sign Up</h1>
                 <form>
                     <div class="form-group">
+                        <label for="fullName">Your Full Name</label>
+                        <input type="text" class="form-control" id="fullName" placeholder="Your Full Name" />
+                    </div>
+                    <div class="form-group mt-3">
                         <label for="email">Email Address</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" />
                     </div>
@@ -142,17 +135,16 @@
                         <label for="password">Password</label>
                         <input type="password" class="form-control" id="password" placeholder="Password" />
                     </div>
-                    <div class="d-flex justify-content-between w-100 align-items-center mt-3">
-                        <div class="custom-control custom-checkbox d-flex d-inline-block">
-                            <input type="checkbox" class="custom-control-input me-1" id="customCheck1" />
-                            <label class="custom-control-label" for="customCheck1">Remember Me</label>
-                        </div>
-                        <a href="../auth/recover-password.html" class="float-end">Forgot Password?</a>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="termsCheck" />
+                        <label class="form-check-label" for="termsCheck">
+                            I accept <a href="../extra-pages/terms-of-service.html">Terms and Conditions</a>
+                        </label>
                     </div>
-                    <button type="submit" class="btn-primary-subtle mt-3">Sign In</button>
+                    <button type="submit" class="btn-primary-subtle">Sign Up</button>
                     <div class="text-center mt-3">
-                        <span>Don't have an account? 
-                            <a href="../auth/sign-up.html">Sign Up</a>
+                        <span>Already have an account? 
+                            <a href="../auth/sign-in.html">Sign In</a>
                         </span>
                     </div>
                 </form>
@@ -161,8 +153,8 @@
     </div>
 
     <!-- JavaScript Files -->
-    <script src="../assets/js/core/libs.min.js"></script>
-    <script src="../assets/js/xray.js?v=1.2.0" defer></script>
-    <script src="../assets/js/sidebar.js?v=1.2.0" defer></script>
+    <script src="/js/core/libs.min.js"></script>
+    <script src="/js/xray.js?v=1.2.0" defer></script>
+    <script src="/js/sidebar.js?v=1.2.0" defer></script>
 </body>
 </html>
