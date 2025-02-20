@@ -1,14 +1,24 @@
 const express = require('express'); // Import Express framework
+const axios = require('axios');
+const path = require('path');
+
 const app = express(); // Create an Express application
 const port = 3000; // Define the port number
 
-// Set EJS as the view engine
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Serve static files (CSS, JS, images, etc.) from the 'public' directory
 app.use(express.static('public'));
 
 // ===================== Authentication Routes ===================== //
+
+// Route for the home/sign-in page
+app.get('/login-page', (req, res) => {
+  res.render('pages/login_test', { error: null });
+});
 
 // Route for the home/sign-in page
 app.get('/', (req, res) => {
@@ -94,7 +104,17 @@ app.get('/terms-of-service', (req, res) => {
   res.render('pages/extra/terms-of-service');
 });
 
+app.post('/login', async (req, res) => {
+  try {
+      const response = await axios.post('http://middleware:5000/auth/login', req.body);
+      
+      // Redirect to dashboard on successful login
+      res.redirect('/dashboard-1');
+  } catch (error) {
+      res.render('pages/login_test', { error: "Invalid username or password" });
+  }
+});
 // ===================== Start Server ===================== //
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Frontend running on http://localhost:${port}`);
 });
