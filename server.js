@@ -60,6 +60,26 @@ app.post('/dashboard/add-patient', (req, res) => {
     res.redirect('/dashboard'); // Redirect to dashboard after submission
 });
 
+
+
+// Route to render Add Guardian Page
+app.get('/dashboard/add-guardian', (req, res) => {
+  res.render('pages/dashboard/add-guardian');
+});
+
+// Route for handling Guardian Form Submission
+app.post('/dashboard/add-guardian', (req, res) => {
+    const { guardianName, relation, email, phone, address } = req.body;
+
+    console.log('New Guardian Added:', req.body); // Logs data for testing
+
+    // In a real application, you would save this data to Firebase or another database
+    // Example: db.collection('guardians').add({ guardianName, relation, email, phone, address })
+
+    res.redirect('/dashboard'); // Redirect to dashboard after submission
+});
+
+
 // ===================== Extra Pages Routes ===================== //
 app.get('/privacy-policy', (req, res) => res.render('pages/extra/privacy-policy'));
 app.get('/terms-of-service', (req, res) => res.render('pages/extra/terms-of-service'));
