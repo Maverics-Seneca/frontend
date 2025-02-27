@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Sign Up - MediTrack</title>
-    
+
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/images/logo.png"/>
+    <link rel="shortcut icon" href="/images/logo.png" />
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/core/libs.min.css" />
     <link rel="stylesheet" href="/css/xray.min.css?v=1.2.0" />
     <link rel="stylesheet" href="/css/custom.min.css?v=1.2.0" />
-    
+
     <style>
         .sign-in-page {
             display: flex;
@@ -52,17 +53,6 @@
             margin-bottom: 20px;
         }
 
-        .sign-in-left h4 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .sign-in-left p {
-            font-size: 1rem;
-            max-width: 80%;
-        }
-
         .sign-in-right {
             flex: 1.2;
             padding: 50px;
@@ -90,71 +80,125 @@
         .btn-primary-subtle:hover {
             background-color: #087f75;
         }
-
-        @media (max-width: 768px) {
-            .sign-in-container {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-            .sign-in-left, .sign-in-right {
-                width: 100%;
-                min-width: 100%;
-                padding: 30px;
-            }
-            .sign-in-left img {
-                width: 180px;
-            }
-        }
     </style>
 </head>
 
 <body>
     <div class="sign-in-page">
         <div class="sign-in-container">
-            <!-- Left Side (Logo & Description) -->
             <div class="sign-in-left">
                 <img src="/images/logo.png" alt="MediTrack Logo" />
                 <h4>Manage Your Orders</h4>
                 <p>Track and manage all your clinic & patient details in one place.</p>
             </div>
-
-            <!-- Right Side (Sign-Up Form) -->
             <div class="sign-in-right">
                 <h1 class="mb-4">Sign Up</h1>
-                <form>
+                <form id="signupForm">
                     <div class="form-group">
                         <label for="fullName">Your Full Name</label>
-                        <input type="text" class="form-control" id="fullName" placeholder="Your Full Name" />
+                        <input type="text" class="form-control" id="fullName" placeholder="Your Full Name" required />
                     </div>
-                    <div class="form-group mt-3">
+                    <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email" />
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" required />
                     </div>
-                    <div class="form-group mt-3">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="Your Phone Number" required />
+                    </div>
+                    <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" />
+                        <input type="password" class="form-control" id="password" placeholder="Password" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password"
+                            required />
                     </div>
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="termsCheck" />
+                        <input type="checkbox" class="form-check-input" id="termsCheck" required />
                         <label class="form-check-label" for="termsCheck">
                             I accept <a href="/terms-of-service">Terms and Conditions</a>
                         </label>
                     </div>
                     <button type="submit" class="btn-primary-subtle">Sign Up</button>
                     <div class="text-center mt-3">
-                        <span>Already have an account? 
-                            <a href="/sign-in">Sign In</a>
-                        </span>
+                        <span>Already have an account? <a href="/sign-in">Sign In</a></span>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Files -->
-    <script src="/js/core/libs.min.js"></script>
-    <script src="/js/xray.js?v=1.2.0" defer></script>
-    <script src="/js/sidebar.js?v=1.2.0" defer></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const registerForm = document.getElementById("signupForm");
+
+            registerForm.addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent form from submitting normally
+
+                const fullName = document.getElementById("fullName").value.trim();
+                const email = document.getElementById("email").value.trim();
+                const phone = document.getElementById("phone").value.trim();
+                const password = document.getElementById("password").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+                const termsChecked = document.getElementById("termsCheck").checked;
+                let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                let phoneRegex = /^\d{10,15}$/;
+
+                if (fullName === "") {
+                    alert("Please enter your full name.");
+                    return;
+                }
+
+                if (!emailRegex.test(email)) {
+                    alert("Please enter a valid email address.");
+                    return;
+                }
+                if (!phoneRegex.test(phone)) {
+                    alert("Please enter a valid phone number (10-15 digits).");
+                    return;
+                }
+
+                if (password.length < 8) {
+                    alert("Password must be at least 8 characters long.");
+                    return;
+                }
+
+                if (!termsChecked) {
+                    alert("You must accept the Terms and Conditions.");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match!");
+                    return;
+                }
+
+                const userData = { name: fullName, email, phone, password };
+
+                try {
+                    const response = await fetch("/register", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(userData),
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert("Registration successful! Redirecting...");
+                        window.location.href = "/sign-in";
+                    } else {
+                        alert(result.error || "Registration failed. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong. Please try again later.");
+                }
+            });
+        });
+
+    </script>
 </body>
+
 </html>

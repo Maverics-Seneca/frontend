@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Sign In - MediTrack</title>
-    
+
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/images/logo.png"/>
+    <link rel="shortcut icon" href="/images/logo.png" />
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/core/libs.min.css" />
     <link rel="stylesheet" href="/css/xray.min.css?v=1.2.0" />
     <link rel="stylesheet" href="/css/custom.min.css?v=1.2.0" />
-    
+
     <style>
         .sign-in-page {
             display: flex;
@@ -44,15 +45,18 @@
             text-align: center;
             padding: 40px;
             min-width: 40%;
-            position: relative; /* Ensures proper positioning */
+            position: relative;
+            /* Ensures proper positioning */
         }
 
         .sign-in-left img {
-            width: 350px; /* Increased logo size further */
+            width: 350px;
+            /* Increased logo size further */
             max-width: 95%;
             margin-bottom: 20px;
             position: relative;
-            left: -35px; /* Shifted more left for true centering */
+            left: -35px;
+            /* Shifted more left for true centering */
         }
 
         .sign-in-left h4 {
@@ -60,14 +64,16 @@
             font-weight: 600;
             margin-bottom: 10px;
             position: relative;
-            left: -20px; /* Align text better */
+            left: -20px;
+            /* Align text better */
         }
 
         .sign-in-left p {
             font-size: 1.1rem;
             max-width: 80%;
             position: relative;
-            left: -20px; /* Align text better */
+            left: -20px;
+            /* Align text better */
         }
 
         .sign-in-right {
@@ -104,16 +110,22 @@
                 align-items: center;
                 text-align: center;
             }
-            .sign-in-left, .sign-in-right {
+
+            .sign-in-left,
+            .sign-in-right {
                 width: 100%;
                 min-width: 100%;
                 padding: 30px;
             }
+
             .sign-in-left img {
-                width: 280px; /* Adjusted for smaller screens */
+                width: 280px;
+                /* Adjusted for smaller screens */
                 left: 0;
             }
-            .sign-in-left h4, .sign-in-left p {
+
+            .sign-in-left h4,
+            .sign-in-left p {
                 left: 0;
             }
         }
@@ -133,7 +145,7 @@
             <!-- Right Side (Sign-In Form) -->
             <div class="sign-in-right">
                 <h1 class="mb-4">Sign In</h1>
-                <form>
+                <form id="signInForm">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" />
@@ -150,11 +162,12 @@
                         <a href="/recover-password" class="float-end">Forgot Password?</a>
                     </div>
                     <button type="submit" class="btn-primary-subtle mt-3">Sign In</button>
-                    <div class="text-center mt-3">
-                        <span>Don't have an account? 
-                            <a href="/sign-up">Sign Up</a>
-                        </span>
-                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <span>Don't have an account?
+                        <a href="/sign-up">Sign Up</a>
+                    </span>
+                </div>
                 </form>
             </div>
         </div>
@@ -164,5 +177,35 @@
     <script src="/js/core/libs.min.js"></script>
     <script src="/js/xray.js?v=1.2.0" defer></script>
     <script src="/js/sidebar.js?v=1.2.0" defer></script>
+    <script>
+        document.getElementById("signInForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Stop form from submitting the traditional way
+
+            // Get values from form fields
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Send a POST request to /login with email and password
+                const response = await fetch("/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                // Redirect on success, or show error message
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to dashboard
+                } else {
+                    const errorText = await response.text();
+                    alert("Login failed: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    </script>
 </body>
+
 </html>
