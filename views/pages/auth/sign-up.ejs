@@ -87,7 +87,7 @@
     <div class="sign-in-page">
         <div class="sign-in-container">
             <div class="sign-in-left">
-                <img src="/images/logo.png" alt="MediTrack Logo" />
+                <a href="/"><img src="/images/logo.png" alt="MediTrack Logo" /></a>
                 <h4>Manage Your Orders</h4>
                 <p>Track and manage all your clinic & patient details in one place.</p>
             </div>
@@ -182,6 +182,7 @@
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(userData),
+                        credentials: 'include',
                     });
 
                     const result = await response.json();
