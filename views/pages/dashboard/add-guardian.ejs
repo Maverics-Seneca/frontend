@@ -1,89 +1,188 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { useRouter } from "next/router";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Guardian - MediTrack</title>
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="/css/core/libs.min.css">
+    <link rel="stylesheet" href="/css/xray.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
 
-const AddGuardian = () => {
-  const [guardian, setGuardian] = useState({
-    name: "",
-    relationship: "",
-    phone: "",
-    email: "",
-  });
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+        }
 
-  const router = useRouter();
+        .sidebar {
+            width: 270px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
 
-  const handleChange = (e) => {
-    setGuardian({ ...guardian, [e.target.name]: e.target.value });
-  };
+        .sidebar .logo-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Guardian Data Submitted:", guardian);
-    // Add API call or state update logic here
-    router.push("/guardians"); // Redirect to guardians list page
-  };
+        .sidebar .logo-main img {
+            width: 50px;
+            margin-right: 10px;
+        }
 
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-full max-w-md p-6">
-        <CardContent>
-          <h2 className="text-2xl font-bold mb-4">Add Guardian</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <Label htmlFor="name">Guardian Name</Label>
-              <Input
-                type="text"
-                name="name"
-                id="name"
-                value={guardian.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="relationship">Relationship</Label>
-              <Input
-                type="text"
-                name="relationship"
-                id="relationship"
-                value={guardian.relationship}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                type="tel"
-                name="phone"
-                id="phone"
-                value={guardian.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="email"
-                name="email"
-                id="email"
-                value={guardian.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full">
-              Add Guardian
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+        .sidebar .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            background: #3498db;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo-main">
+            <img src="/public/images/logo.png" alt="MediTrack Logo">
+            <span class="brand-name">MediTrack</span>
+        </div>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
+            <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
+            <li><a href="/dashboard/add-patient">Add Patient</a></li>
+            <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
+            <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
+            <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Add Guardian</h1>
+            <form action="/dashboard/add-guardian" method="POST">
+                <div class="form-group">
+                    <label for="guardianName">Guardian Name</label>
+                    <input type="text" name="guardianName" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianRelation">Relation to Patient</label>
+                    <select name="guardianRelation">
+                        <option value="Parent">Parent</option>
+                        <option value="Spouse">Spouse</option>
+                        <option value="Sibling">Sibling</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianPhone">Guardian Contact Number</label>
+                    <input type="tel" name="guardianPhone" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianEmail">Guardian Email</label>
+                    <input type="email" name="guardianEmail" required />
+                </div>
+
+                <button type="submit">Add Guardian</button>
+            </form>
+        </div>
     </div>
-  );
-};
 
-export default AddGuardian;
+</body>
+</html>

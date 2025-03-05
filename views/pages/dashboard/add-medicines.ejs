@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Medicine - MediTrack</title>
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="/css/core/libs.min.css">
+    <link rel="stylesheet" href="/css/xray.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 270px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            width: calc(100% - 270px);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-main">
+            <img src="/images/logo.png" alt="MediTrack Logo" style="width: 50px; margin-right: 10px;">
+            <span class="brand-name">MediTrack</span>
+        </div>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
+            <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
+            <li><a href="/dashboard/add-patient">Add Patient</a></li>
+            <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
+            <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
+            <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="form-container">
+            <h1>Add Medicine</h1>
+            <form action="/dashboard/add-medicines" method="POST">
+                <div class="form-group">
+                    <label for="medicineName">Medicine Name</label>
+                    <input type="text" name="medicineName" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="dosage">Dosage (mg)</label>
+                    <input type="number" name="dosage" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="frequency">Frequency</label>
+                    <select name="frequency">
+                        <option value="Once a day">Once a day</option>
+                        <option value="Twice a day">Twice a day</option>
+                        <option value="Thrice a day">Thrice a day</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="prescribingDoctor">Prescribing Doctor</label>
+                    <input type="text" name="prescribingDoctor" required />
+                </div>
+
+                <button type="submit">Add Medicine</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>
