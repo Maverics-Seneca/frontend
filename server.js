@@ -126,7 +126,7 @@ app.post('/login', async (req, res) => {
       });
 
       console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
-      res.redirect('/dashboard-1');
+      res.redirect('/');
   } catch (error) {
       console.error('Login error:', error.message); // Debug: Log login error
       res.status(error.response?.status || 500).json({
