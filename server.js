@@ -48,10 +48,24 @@ const authenticateUser = (req, res, next) => {
     }
 };
 
-// Routes
 app.get('/', (req, res) => {
     console.log('Rendering home page. Is logged in:', !!req.cookies.authToken); // Debug: Log login status
-    res.render('pages/index', { isLoggedIn: !!req.cookies.authToken });
+
+    let userName = null;
+    if (req.cookies.authToken) {
+        try {
+            const decoded = jwt.verify(req.cookies.authToken, SECRET_KEY);
+            userName = decoded.name; // Extract the user's name from the token
+        } catch (error) {
+            console.error('Token verification failed:', error.message);
+            res.clearCookie('authToken'); // Clear invalid token
+        }
+    }
+
+    res.render('pages/index', {
+        isLoggedIn: !!req.cookies.authToken, // Boolean indicating if the user is logged in
+        userName: userName, // Pass the user's name to the template
+    });
 });
 
 app.get('/sign-in', (req, res) => res.render('pages/auth/sign-in'));
