@@ -170,7 +170,7 @@
                 </div>
                 <div id="error-message" style="color: red;">
                     <% if (typeof error !== "undefined" && error) { %>
-                        <p><%= error %></p>
+                    <p><%= error %></p>
                     <% } %>
                 </div>
             </div>
@@ -184,20 +184,20 @@
     <script>
         document.getElementById("signInForm").addEventListener("submit", async function (event) {
             event.preventDefault(); // Stop form from submitting the traditional way
-        
+
             // Get values from form fields
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
-        
+
             try {
                 // Send a POST request to /login with email and password
                 const response = await fetch("/login", {
                     method: "POST",
+                    credentials: 'include',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password }),
-                    credentials: 'include',
                 });
-        
+
                 // Redirect on success, or show error message
                 if (response.redirected) {
                     window.location.href = response.url; // Redirect to dashboard
