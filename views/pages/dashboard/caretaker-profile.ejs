@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Caretaker Profile - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels inside .form-container */
+        .form-container label {
+            font-weight: bold;
+        }
+
+        /* Inputs and select elements inside .form-container */
+        .form-container input,
+        .form-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Button inside .form-container */
+        .form-container button {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button:hover {
+            background: #2980b9;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Row for inputs and buttons */
+        .form-container .input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            /* Space between input and buttons */
+        }
+
+
+        /* Buttons styling */
+        .form-container .edit-btn,
+        .form-container .save-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            /* Slightly smaller for compactness */
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 0.9em;
+            /* Smaller text */
+            transition: background 0.2s ease;
+        }
+
+        .form-container .edit-btn:hover,
+        .form-container .save-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Save button specific styling */
+        .form-container .save-btn {
+            background: #2ecc71;
+            /* Green to distinguish from Edit */
+        }
+
+        .form-container .save-btn:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="form-container">
+            <h1>Caretaker Profile</h1>
+            <div class="form-group">
+                <label>Caretaker Name:</label>
+                <div class="input-row">
+                    <input type="text" value="Seneca" disabled />
+                    <button class="edit-btn">Edit</button>
+                    <button class="save-btn" style="display:none;">Save</button>
+                </div>
+            </div>
+            <!-- <h3>Patient Details</h3>
+        <div class="form-group">
+            <label>Full Name:</label>
+            <div class="input-row">
+                <input type="text" value="Seneca" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+            <label>Date of Birth:</label>
+            <div class="input-row">
+                <input type="text" value="01-01-1980" disabled />
+            </div>
+            <label>Gender:</label>
+            <div class="input-row">
+                <input type="text" value="Male" disabled />
+            </div>
+            <label>Medical History:</label>
+            <div class="input-row">
+                <input type="text" value="Diabetes, Hypertension" disabled />
+            </div>
+        </div>
+        <h3>Medication Details</h3>
+        <div class="form-group">
+            <label>Medicine Name:</label>
+            <div class="input-row">
+                <input type="text" value="Metformin" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+        </div>
+        <h3>Refill Alerts</h3>
+        <div class="form-group">
+            <label>Upcoming Refill:</label>
+            <div class="input-row">
+                <input type="text" value="Metformin - 7 days left" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+        </div> -->
+        </div>
+    </div>
+
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
+</body>
+
+</html>

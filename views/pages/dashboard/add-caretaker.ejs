@@ -2,89 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Add Caretaker - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
 
-    <!-- CSS Links -->
-    <link rel="stylesheet" href="/css/core/libs.min.css">
-    <link rel="stylesheet" href="/css/xray.min.css">
-    <link rel="stylesheet" href="/css/custom.min.css">
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/images/background.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 270px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar .logo-main {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .sidebar .logo-main img {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        .sidebar .brand-name {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            background: #3498db;
-        }
-
-        .main-content {
-            margin-left: 270px;
-            width: calc(100% - 270px);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
+        /* Container for the form */
         .form-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
@@ -93,30 +16,35 @@
             max-width: 500px;
             width: 100%;
         }
-
-        h1 {
+    
+        /* h1 inside .form-container */
+        .form-container h1 {
             font-size: 2rem;
             margin-bottom: 20px;
         }
-
-        .form-group {
+    
+        /* Form group inside .form-container */
+        .form-container .form-group {
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
         }
-
-        label {
+    
+        /* Labels inside .form-container */
+        .form-container label {
             font-weight: bold;
         }
-
-        input,
-        select {
+    
+        /* Inputs and select elements inside .form-container */
+        .form-container input,
+        .form-container select {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-
-        button {
+    
+        /* Button inside .form-container */
+        .form-container button {
             background: #3498db;
             color: white;
             padding: 10px;
@@ -126,31 +54,18 @@
             width: 100%;
             font-size: 1.2em;
         }
-
-        button:hover {
+    
+        /* Button hover state inside .form-container */
+        .form-container button:hover {
             background: #2980b9;
         }
     </style>
 </head>
 
 <body>
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo-main">
-            <img src="/images/logo.png" alt="MediTrack Logo">
-            <span class="brand-name">MediTrack</span>
-        </div>
-        <ul>
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="/add-caretaker">Add Caretaker</a></li>
-            <li><a href="/guardian-profile">Caretaker Profile</a></li>
-            <li><a href="/add-patient">Add Patient</a></li>
-            <li><a href="/patient-profile">Patient Profile</a></li>
-            <li><a href="/add-medicines">Add Medicines</a></li>
-            <li><a href="/refill-alerts">Refill Alerts</a></li>
-        </ul>
-    </aside>
+    
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
 
     <!-- Main Content -->
     <div class="main-content">
@@ -187,10 +102,6 @@
         </div>
     </div>
 
-    <!-- JavaScript Files -->
-    <script src="/js/core/libs.min.js"></script>
-    <script src="/js/xray.js?v=1.2.0" defer></script>
-    <script src="/js/sidebar.js?v=1.2.0" defer></script>
     <script>
         document.getElementById('add-caretaker-form').addEventListener('submit', async (event) => {
             event.preventDefault(); // Prevent the form from submitting traditionally
@@ -239,6 +150,7 @@
             }
         });
     </script>
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 
 </body>
 

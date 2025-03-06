@@ -31,12 +31,14 @@ const authenticateUser = (req, res, next) => {
 
     if (!token) {
         console.log('No token found, redirecting to home.'); // Debug: No token
-        return res.redirect('/');
+        return res.render('pages/index', {
+            isLoggedIn: false,
+            message: 'Kindly sign in before accessing this page.', // Pass a message to the client
+        });
     }
 
     try {
         const decoded = jwt.verify(token, SECRET_KEY); // Verify the token
-        console.log('Decoded token:', decoded); // Debug: Log decoded token
         req.userId = decoded.userId;
         req.email = decoded.email;
         req.name = decoded.name;
@@ -44,10 +46,15 @@ const authenticateUser = (req, res, next) => {
     } catch (error) {
         console.error('Token verification failed:', error.message); // Debug: Token verification error
         res.clearCookie('authToken'); // Clear invalid token
-        return res.redirect('/');
+        return res.render('pages/index', {
+            isLoggedIn: false,
+            message: 'Session expired. Please sign in again.', // Pass a message to the client
+        });
     }
 };
 
+
+//GET Routes
 app.get('/', (req, res) => {
     console.log('Rendering home page. Is logged in:', !!req.cookies.authToken); // Debug: Log login status
 
@@ -73,47 +80,99 @@ app.get('/sign-up', (req, res) => res.render('pages/auth/sign-up'));
 app.get('/recover-password', (req, res) => res.render('pages/auth/recover-password'));
 app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen'));
 app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail'));
-
-app.get('/dashboard', authenticateUser, (req, res) => res.render('pages/dashboard/dashboard'));
-app.get('/add-medicines', authenticateUser, (req, res) => res.render('pages/dashboard/add-medicines'));
-app.get('/guardian-profile', authenticateUser, (req, res) => res.render('pages/dashboard/guardian-profile'));
-app.get('/patient-profile', authenticateUser, (req, res) => res.render('pages/dashboard/patient-profile'));
-app.get('/refill-alerts', authenticateUser, (req, res) => res.render('pages/dashboard/refill-alerts'));
-
 app.get('/privacy-policy', (req, res) => res.render('pages/extra/privacy-policy'));
 app.get('/terms-of-service', (req, res) => res.render('pages/extra/terms-of-service'));
 
-app.get('/dashboard/add-patient', authenticateUser, (req, res) => {
-    console.log('Rendering add-patient page for user:', req.userId); // Debug: Log user ID
-    res.render('pages/dashboard/add-patient');
+app.get('/dashboard', authenticateUser, (req, res) => {
+    console.log('Rendering dashboard page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/dashboard', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
 });
+
+app.get('/add-medicines', authenticateUser, (req, res) => {
+    console.log('Rendering add-medicines page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/add-medicines', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+app.get('/caretaker-profile', authenticateUser, (req, res) => {
+    console.log('Rendering caretaker-profile page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/caretaker-profile', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+app.get('/patient-profile', authenticateUser, (req, res) => {
+    console.log('Rendering patient-profile page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/patient-profile', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+app.get('/refill-alerts', authenticateUser, (req, res) => {
+    console.log('Rendering refill-alerts page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/refill-alerts', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+app.get('/add-patient', authenticateUser, (req, res) => {
+    console.log('Rendering add-patient page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/add-patient', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+app.get('/add-caretaker', authenticateUser, (req, res) => {
+    console.log('Rendering add-caretaker page for user:', req.userId); // Debug: Log user ID
+
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/add-caretaker', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name, // Pass the user's name to the template
+    });
+});
+
+// POST Functions
 
 app.post('/dashboard/add-patient', authenticateUser, (req, res) => {
     const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
     console.log('New Patient Added:', req.body); // Debug: Log new patient data
     res.redirect('/dashboard');
-});
-
-app.get('/add-caretaker', authenticateUser, (req, res) => {
-    console.log('Rendering add-caretaker page for user:', req.userId); // Debug: Log user ID
-    res.render('pages/dashboard/add-caretaker');
-});
-
-app.post('/new-caretaker', authenticateUser, (req, res) => {
-    const { name, relation, email, phone } = req.body;
-    const patientId = req.userId; // Extract patientId from the authenticated request
-
-    console.log('New Caretaker Added:', { patientId, name, relation, email, phone }); // Debug: Log new caretaker data
-
-    // Forward the request to the middleware
-    axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
-        .then(() => {
-            res.redirect('/');
-        })
-        .catch((error) => {
-            console.error('Error adding caretaker:', error.message);
-            res.status(500).json({ error: 'Failed to add caretaker' });
-        });
 });
 
 app.post('/login',
@@ -142,6 +201,24 @@ app.post('/login',
           error: error.response?.data?.message || 'Login failed',
       });
   }
+});
+
+
+app.post('/new-caretaker', authenticateUser, (req, res) => {
+    const { name, relation, email, phone } = req.body;
+    const patientId = req.userId; // Extract patientId from the authenticated request
+
+    console.log('New Caretaker Added:', { patientId, name, relation, email, phone }); // Debug: Log new caretaker data
+
+    // Forward the request to the middleware
+    axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
+        .then(() => {
+            res.redirect('/');
+        })
+        .catch((error) => {
+            console.error('Error adding caretaker:', error.message);
+            res.status(500).json({ error: 'Failed to add caretaker' });
+        });
 });
 
 // Logout route

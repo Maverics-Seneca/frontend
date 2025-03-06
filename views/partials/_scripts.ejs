@@ -1,0 +1,46 @@
+<!-- Sidebar Toggle Script -->
+<% if (typeof message !== 'undefined' && message) { %>
+<script>
+    window.alert(<% - JSON.stringify(message) %>);
+</script>
+<% } %>
+
+<script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    // Sidebar toggle (existing functionality)
+    menuToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('shift'); // Toggle shift class on main content
+    });
+
+    // Submenu toggle
+    document.querySelectorAll('.has-submenu .menu-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            const parent = link.parentElement;
+            parent.classList.toggle('active'); // Toggle submenu visibility
+        });
+    });
+
+    // Sign-Out Functionality (existing functionality)
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch("/logout", { method: "POST", credentials: "include" });
+                if (response.ok) {
+                    window.location.href = '/'; // Redirect to home page after sign-out
+                } else {
+                    alert('Failed to sign out. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('An error occurred while signing out.');
+            }
+        });
+    }
+</script>

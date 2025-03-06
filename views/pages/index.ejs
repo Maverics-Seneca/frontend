@@ -2,167 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MediTrack Dashboard</title>
-    <link rel="stylesheet" href="/css/core/libs.min.css">
-    <link rel="stylesheet" href="/css/xray.min.css">
-    <link rel="stylesheet" href="/css/custom.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%- include('../partials/_header') %>
+    <%- include('../partials/_styles') %>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/images/background.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-        }
-
-        /* Sidebar Styling */
-        .sidebar {
-            width: 260px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            left: -250px;
-            /* Initially collapsed */
-            top: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: left 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-        }
-
-        /* Sidebar active class */
-        .sidebar.active {
-            left: 0;
-        }
-
-        /* Menu Toggle Button */
-        .menu-toggle {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 1001;
-        }
-
-        /* Logo Styling */
-        .sidebar .logo-main {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            /* Align logo and text to the left */
-            position: absolute;
-            top: 20px;
-            left: 70px;
-            /* Adjust to create space between menu button and logo */
-            height: 40px;
-            /* Same height as menu button */
-            width: 160px;
-            /* Adjust width to accommodate logo and text */
-        }
-
-        /* Logo Text Styling */
-        .sidebar .brand-name {
-            margin-left: 5px;
-            /* Space between logo and text */
-        }
-
-        /* Adjust the logo image width and height */
-        .sidebar .logo-main img {
-            width: 20px;
-            /* Adjust the logo size */
-            height: 20px;
-            /* Adjust the logo size */
-            object-fit: contain;
-        }
-
-        /* Logo Image Styling */
-        .sidebar .logo-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* Sidebar items and links */
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin-top: 70px;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            background: #3498db;
-        }
-
-        /* When sidebar is collapsed, hide the menu items */
-        .sidebar.collapsed ul {
-            display: none;
-        }
-
-        /* When the sidebar is active and open, show the items */
-        .sidebar.active.collapsed ul {
-            display: block;
-        }
-
-        /* Content Wrapper */
-        .main-content {
-            margin-left: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Title Styling */
-        .main-content h1 {
-            font-size: clamp(2rem, 4vw, 4.5rem);
-            font-weight: bold;
-            color: #000000;
-            text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5);
-            text-align: center;
-            margin-top: 10px;
-            word-wrap: break-word;
-            max-width: 90%;
-        }
-
-        /* Subtitle Styling */
-        .main-content p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: #000000;
-            margin-bottom: 30px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
         .card-container {
             display: flex;
             flex-wrap: wrap;
@@ -243,24 +86,6 @@
             opacity: 0.8;
         }
 
-        /* Content Wrapper */
-        .main-content {
-            margin-left: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        .main-content.shift {
-            margin-left: 250px;
-        }
-
         @media (max-width: 576px) {
             .card-container {
                 flex-direction: column;
@@ -272,104 +97,14 @@
                 gap: 10px;
             }
         }
-
-        /* Mobile & Tablet Styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 260px;
-                transform: translateX(-100%);
-                height: 100vh;
-                position: fixed;
-                z-index: 1000;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .menu-toggle {
-                position: fixed;
-                top: 15px;
-                left: 15px;
-                background: #3498db;
-                color: white;
-                border: none;
-                padding: 10px;
-                cursor: pointer;
-                border-radius: 5px;
-                z-index: 1001;
-            }
-        }
-
-        .user-greeting {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 1001;
-        }
-
-        .user-greeting span {
-            color: #000000;
-            font-size: 1.2em;
-            font-weight: bold;
-        }
-
-        .sign-out-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-
-        .sign-out-btn:hover {
-            background: #c0392b;
-        }
     </style>
+
 </head>
 
 <body>
 
-    <!-- Sidebar -->
-    <aside class="sidebar collapsed"> <!-- Initially collapsed -->
-        <div class="logo-main">
-            <img src="/images/logo.png" alt="MediTrack Logo">
-            <span class="brand-name">MediTrack</span>
-        </div>
-        <ul>
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="/add-caretaker">Add Caretaker</a></li>
-            <li><a href="/guardian-profile">Caretaker Profile</a></li>
-            <li><a href="/add-patient">Add Patient</a></li>
-            <li><a href="/patient-profile">Patient Profile</a></li>
-            <li><a href="/add-medicines">Add Medicines</a></li>
-            <li><a href="/refill-alerts">Refill Alerts</a></li>
-        </ul>
-    </aside>
-
-    <!-- Hamburger Menu Button -->
-    <button class="menu-toggle">☰</button>
-
-    <!-- User Greeting and Sign-Out Button -->
-    <% if (isLoggedIn) { %>
-    <div class="user-greeting">
-        <span>Hi, <%= userName %></span>
-        <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
-    </div>
-    <% } %>
+    <%- include('../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../partials/_auth') %> <!-- Include Auth partial -->
 
     <!-- Main Content -->
     <div class="main-content">
@@ -400,34 +135,8 @@
         <% } %>
     </div>
 
-    <script>
-        const menuToggle = document.querySelector('.menu-toggle');
-        const sidebar = document.querySelector('.sidebar');
+    <%- include('../partials/_scripts') %> <!-- Include JavaScript partial -->
 
-        menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            sidebar.classList.toggle('collapsed');
-        });
-
-        // Sign-Out Functionality
-        const signOutBtn = document.getElementById('sign-out-btn');
-        if (signOutBtn) {
-            signOutBtn.addEventListener('click', async () => {
-                try {
-                    const response = await fetch("/logout", { method: "POST", credentials: "include" });
-
-                    if (response.ok) {
-                        window.location.href = '/'; // Redirect to home page after sign-out
-                    } else {
-                        alert('Failed to sign out. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Error signing out:', error);
-                    alert('An error occurred while signing out.');
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>

@@ -2,234 +2,136 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>MediTrack Dashboard</title>
-    <link rel="stylesheet" href="/css/core/libs.min.css">
-    <link rel="stylesheet" href="/css/xray.min.css">
-    <link rel="stylesheet" href="/css/custom.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/images/background.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            /* Increased from 500px to 700px for wider layout */
+            width: 100%;
+            margin: 0 auto;
+            /* Center the container */
         }
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
+        /* Headings inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            /* Slightly more space */
+            text-align: center;
+            color: #333;
+            /* Softer color */
         }
 
-        .sidebar .logo-main {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .form-container h2 {
+            font-size: 1.75rem;
+            /* Slightly smaller than h1 for hierarchy */
+            margin: 30px 0 20px;
+            /* More top margin to separate sections */
+            color: #444;
+        }
+
+        .form-container h3 {
+            font-size: 1.5rem;
+            margin: 25px 0 15px;
+            /* Adjusted for section separation */
+            color: #555;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
             margin-bottom: 20px;
+            /* Increased for better spacing */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            /* Space between label and input */
         }
 
-        .sidebar .logo-main img {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        .sidebar .brand-name {
-            font-size: 20px;
+        /* Labels inside .form-container */
+        .form-container label {
             font-weight: bold;
+            color: #444;
+            /* Darker for contrast */
         }
 
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
+        /* Inputs, select, and textarea elements inside .form-container */
+        .form-container input,
+        .form-container select,
+        .form-container textarea {
+            padding: 12px;
+            /* Larger padding for comfort */
             border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            /* Ensure full width within container */
+            box-sizing: border-box;
+            /* Include padding in width */
+            transition: border-color 0.3s ease;
+            /* Smooth focus effect */
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            /* Allow vertical resizing only */
+            min-height: 80px;
+            /* Minimum height for medical history */
+        }
+
+        /* Focus state for inputs, select, and textarea */
+        .form-container input:focus,
+        .form-container select:focus,
+        .form-container textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* Button inside .form-container */
+        .form-container button {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
             transition: background 0.3s ease;
         }
 
-        .sidebar ul li a:hover {
-            background: #3498db;
+        /* Button hover state inside .form-container */
+        .form-container button:hover {
+            background: #2980b9;
         }
 
-        /* Content Wrapper */
-        .main-content {
-            margin-left: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
+        /* Button active state */
+        .form-container button:active {
+            background: #1f6a99;
         }
 
-        /* Title Styling */
-        .main-content h1 {
-            font-size: clamp(2rem, 4vw, 4.5rem);
-            font-weight: bold;
-            color: #000000;
-            text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5);
-            text-align: center;
-            margin-top: 10px;
-            word-wrap: break-word;
-            max-width: 90%;
-        }
-
-        /* Subtitle Styling */
-        .main-content p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: #000000;
-            margin-bottom: 30px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        /* Box Styling */
-        .card {
-            position: relative;
-            width: 320px;
-            height: 280px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            justify-content: space-between;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card img {
-            width: 90px;
-            height: 90px;
-            margin-bottom: 10px;
-        }
-
-        .card h3 {
-            font-size: 1.6em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #000000;
-        }
-
-        /* ✅ Restored Descriptions */
-        .card p {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #534c4c;
-            margin-bottom: 0;
-        }
-
-        /* Sign-in & Sign-up Buttons */
-        .auth-buttons {
-            margin-top: 40px;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .auth-buttons a {
-            text-decoration: none;
-            color: white;
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 12px 24px;
-            border-radius: 8px;
-            transition: 0.3s ease;
-        }
-
-        .sign-in-btn {
-            background: #3498db;
-        }
-
-        .sign-up-btn {
-            background: #2ecc71;
-        }
-
-        .auth-buttons a:hover {
-            opacity: 0.8;
-        }
-
-        /* Mobile & Tablet Styles */
+        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-                transform: translateX(-100%);
-                height: 100vh;
-                position: fixed;
-                z-index: 1000;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
+            .form-container {
+                max-width: 100%;
+                /* Full width on smaller screens */
                 padding: 20px;
             }
 
-            .sidebar.active {
-                transform: translateX(0);
+            .form-container h1 {
+                font-size: 1.8rem;
             }
 
-            .menu-toggle {
-                position: fixed;
-                top: 15px;
-                left: 15px;
-                background: #3498db;
-                color: white;
-                border: none;
-                padding: 10px;
-                cursor: pointer;
-                border-radius: 5px;
-                z-index: 1001;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .card-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .auth-buttons {
-                flex-direction: column;
-                gap: 10px;
+            .form-container button {
+                font-size: 1.1em;
             }
         }
     </style>
@@ -237,49 +139,31 @@
 
 <body>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="logo-main">
-            <img src="/images/logo.png" alt="MediTrack Logo">
-            <span class="brand-name">MediTrack</span>
-        </div>
-        <ul>
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="/add-caretaker">Add Caretaker</a></li>
-            <li><a href="/guardian-profile">Caretaker Profile</a></li>
-            <li><a href="/add-patient">Add Patient</a></li>
-            <li><a href="/patient-profile">Patient Profile</a></li>
-            <li><a href="/add-medicines">Add Medicines</a></li>
-            <li><a href="/refill-alerts">Refill Alerts</a></li>
-        </ul>
-    </aside>
-
-    <!-- Hamburger Menu Button -->
-    <button class="menu-toggle">☰ Menu</button>
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
 
     <!-- Main Content -->
     <div class="main-content">
-
         <div class="add-patient-page">
-            <div class="add-patient-container">
-                <h1 class="mb-4 text-center">Add Patient</h1>
+            <div class="form-container">
+                <h1>Add Patient</h1>
 
-                <form action="/dashboard/add-patient" method="POST">
+                <form action="/add-patient" method="POST">
                     <!-- Patient Details -->
-                    <h4>Patient Information</h4>
+                    <h2>Patient Information</h2>
                     <div class="form-group">
                         <label for="patientName">Full Name</label>
-                        <input type="text" class="form-control" name="patientName" required />
+                        <input type="text" name="patientName" id="patientName" required />
                     </div>
 
                     <div class="form-group">
                         <label for="dob">Date of Birth</label>
-                        <input type="date" class="form-control" name="dob" required />
+                        <input type="date" name="dob" id="dob" required />
                     </div>
 
                     <div class="form-group">
                         <label for="gender">Gender</label>
-                        <select class="form-control" name="gender">
+                        <select name="gender" id="gender">
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                             <option value="Other">Other</option>
@@ -288,19 +172,19 @@
 
                     <div class="form-group">
                         <label for="medicalHistory">Medical History</label>
-                        <textarea class="form-control" name="medicalHistory" rows="3"></textarea>
+                        <textarea name="medicalHistory" id="medicalHistory" rows="3"></textarea>
                     </div>
 
                     <!-- Guardian Details -->
-                    <h4 class="mt-4">Guardian Information</h4>
+                    <h3>Guardian Information</h3>
                     <div class="form-group">
                         <label for="guardianName">Guardian Name</label>
-                        <input type="text" class="form-control" name="guardianName" required />
+                        <input type="text" name="guardianName" id="guardianName" required />
                     </div>
 
                     <div class="form-group">
                         <label for="guardianRelation">Relation to Patient</label>
-                        <select class="form-control" name="guardianRelation">
+                        <select name="guardianRelation" id="guardianRelation">
                             <option value="Parent">Parent</option>
                             <option value="Spouse">Spouse</option>
                             <option value="Sibling">Sibling</option>
@@ -310,16 +194,15 @@
 
                     <div class="form-group">
                         <label for="guardianPhone">Guardian Contact Number</label>
-                        <input type="tel" class="form-control" name="guardianPhone" required />
+                        <input type="tel" name="guardianPhone" id="guardianPhone" required />
                     </div>
 
-                    <button type="submit" class="btn-primary-subtle mt-3">Add Patient</button>
+                    <button type="submit">Add Patient</button>
                 </form>
             </div>
         </div>
     </div>
-
-    <script>$(".menu-toggle").click(() => { $(".sidebar").toggleClass("active"); });</script>
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 </body>
 
 </html>

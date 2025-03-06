@@ -2,119 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Add Medicine - MediTrack</title>
-
-    <!-- CSS Links -->
-    <link rel="stylesheet" href="/css/core/libs.min.css">
-    <link rel="stylesheet" href="/css/xray.min.css">
-    <link rel="stylesheet" href="/css/custom.min.css">
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/images/background.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-        }
-
-        .sidebar {
-            width: 270px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .sidebar .logo-main {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 20px;
-            justify-content: center;
-        }
-
-        .sidebar .logo-main img {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        .sidebar .brand-name {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            width: 100%;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            background: #3498db;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .menu-toggle {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            z-index: 1001;
-        }
-
-        .main-content {
-            margin-left: 270px;
-            width: calc(100% - 270px);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: margin-left 0.3s ease-in-out;
-        }
-
-        .sidebar.collapsed+.main-content {
-            margin-left: 0;
-            width: 100%;
-        }
-
+        /* Container for the form */
         .form-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
@@ -123,27 +16,68 @@
             max-width: 500px;
             width: 100%;
         }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels inside .form-container */
+        .form-container label {
+            font-weight: bold;
+        }
+
+        /* Inputs and select elements inside .form-container */
+        .form-container input,
+        .form-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Button inside .form-container */
+        .form-container button {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button:hover {
+            background: #2980b9;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container h3 {
+            font-size: 1.5rem;
+            margin: 20px 0 10px;
+            color: #333; /* Softer color for hierarchy */
+        }
     </style>
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <button class="menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
-    <aside class="sidebar" id="sidebar">
-        <div class="logo-main">
-            <img src="/images/logo.png" alt="MediTrack Logo">
-            <span class="brand-name">MediTrack</span>
-        </div>
-        <ul>
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="/add-caretaker">Add Caretaker</a></li>
-            <li><a href="/guardian-profile">Caretaker Profile</a></li>
-            <li><a href="/add-patient">Add Patient</a></li>
-            <li><a href="/patient-profile">Patient Profile</a></li>
-            <li><a href="/add-medicines">Add Medicines</a></li>
-            <li><a href="/refill-alerts">Refill Alerts</a></li>
-        </ul>
-    </aside>
+
+
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
 
     <!-- Main Content -->
     <div class="main-content" id="main-content">
@@ -179,11 +113,7 @@
         </div>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        }
-    </script>
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 </body>
 
 </html>
