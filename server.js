@@ -75,9 +75,6 @@ app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen'));
 app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail'));
 
 app.get('/dashboard', authenticateUser, (req, res) => res.render('pages/dashboard/dashboard'));
-app.get('/dummy', (req, res) => res.render('pages/dashboard/dummy'));
-app.get('/dashboard-1', authenticateUser, (req, res) => res.render('pages/dashboard/dashboard-1'));
-app.get('/add-guardian', authenticateUser, (req, res) => res.render('pages/dashboard/add-guardian'));
 app.get('/add-medicines', authenticateUser, (req, res) => res.render('pages/dashboard/add-medicines'));
 app.get('/guardian-profile', authenticateUser, (req, res) => res.render('pages/dashboard/guardian-profile'));
 app.get('/patient-profile', authenticateUser, (req, res) => res.render('pages/dashboard/patient-profile'));
@@ -97,18 +94,30 @@ app.post('/dashboard/add-patient', authenticateUser, (req, res) => {
     res.redirect('/dashboard');
 });
 
-app.get('/dashboard/add-guardian', authenticateUser, (req, res) => {
-    console.log('Rendering add-guardian page for user:', req.userId); // Debug: Log user ID
-    res.render('pages/dashboard/add-guardian');
+app.get('/add-caretaker', authenticateUser, (req, res) => {
+    console.log('Rendering add-caretaker page for user:', req.userId); // Debug: Log user ID
+    res.render('pages/dashboard/add-caretaker');
 });
 
-app.post('/dashboard/add-guardian', authenticateUser, (req, res) => {
-    const { guardianName, relation, email, phone, address } = req.body;
-    console.log('New Guardian Added:', req.body); // Debug: Log new guardian data
-    res.redirect('/dashboard');
+app.post('/new-caretaker', authenticateUser, (req, res) => {
+    const { name, relation, email, phone } = req.body;
+    const patientId = req.userId; // Extract patientId from the authenticated request
+
+    console.log('New Caretaker Added:', { patientId, name, relation, email, phone }); // Debug: Log new caretaker data
+
+    // Forward the request to the middleware
+    axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
+        .then(() => {
+            res.redirect('/');
+        })
+        .catch((error) => {
+            console.error('Error adding caretaker:', error.message);
+            res.status(500).json({ error: 'Failed to add caretaker' });
+        });
 });
 
-app.post('/login', async (req, res) => {
+app.post('/login',
+     async (req, res) => {
   
   try {
       const response = await axios.post('http://middleware:3001/auth/login', req.body, {

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Add Guardian - MediTrack</title>
-    
+    <title>Add Caretaker - MediTrack</title>
+
     <!-- CSS Links -->
     <link rel="stylesheet" href="/css/core/libs.min.css">
     <link rel="stylesheet" href="/css/xray.min.css">
@@ -108,7 +109,8 @@
             font-weight: bold;
         }
 
-        input, select {
+        input,
+        select {
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
@@ -130,59 +132,114 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="logo-main">
-            <img src="/public/images/logo.png" alt="MediTrack Logo">
+            <img src="/images/logo.png" alt="MediTrack Logo">
             <span class="brand-name">MediTrack</span>
         </div>
         <ul>
             <li><a href="/">Dashboard</a></li>
-            <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
-            <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
-            <li><a href="/dashboard/add-patient">Add Patient</a></li>
-            <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
-            <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
-            <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
+            <li><a href="/add-caretaker">Add Caretaker</a></li>
+            <li><a href="/guardian-profile">Caretaker Profile</a></li>
+            <li><a href="/add-patient">Add Patient</a></li>
+            <li><a href="/patient-profile">Patient Profile</a></li>
+            <li><a href="/add-medicines">Add Medicines</a></li>
+            <li><a href="/refill-alerts">Refill Alerts</a></li>
         </ul>
     </aside>
 
     <!-- Main Content -->
     <div class="main-content">
         <div class="form-container">
-            <h1>Add Guardian</h1>
-            <form action="/dashboard/add-guardian" method="POST">
+            <h1>Add Caretaker</h1>
+            <form id="add-caretaker-form" action="/new-caretaker" method="POST">
                 <div class="form-group">
-                    <label for="guardianName">Guardian Name</label>
-                    <input type="text" name="guardianName" required />
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="guardianRelation">Relation to Patient</label>
-                    <select name="guardianRelation">
-                        <option value="Parent">Parent</option>
-                        <option value="Spouse">Spouse</option>
-                        <option value="Sibling">Sibling</option>
-                        <option value="Other">Other</option>
+                    <label for="relation">Relation to Patient</label>
+                    <select name="relation" id="relation">
+                        <option value="parent">Parent</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="guardianPhone">Guardian Contact Number</label>
-                    <input type="tel" name="guardianPhone" required />
+                    <label for="phone">Caretaker Contact Number</label>
+                    <input type="tel" name="phone" id="phone" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="guardianEmail">Guardian Email</label>
-                    <input type="email" name="guardianEmail" required />
+                    <label for="email">Caretaker Email</label>
+                    <input type="email" name="email" id="email" required />
                 </div>
 
-                <button type="submit">Add Guardian</button>
+                <button type="submit">Add Caretaker</button>
             </form>
         </div>
     </div>
 
+    <!-- JavaScript Files -->
+    <script src="/js/core/libs.min.js"></script>
+    <script src="/js/xray.js?v=1.2.0" defer></script>
+    <script src="/js/sidebar.js?v=1.2.0" defer></script>
+    <script>
+        document.getElementById('add-caretaker-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from submitting traditionally
+
+            // Get form inputs
+            const name = document.getElementById('name').value.trim();
+            const relation = document.getElementById('relation').value;
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            // Validation
+            if (!name || !relation || !phone || !email) {
+                alert('All fields are required.');
+                return;
+            }
+
+            if (!/^\d{10,}$/.test(phone)) {
+                alert('Please enter a valid phone number (at least 10 digits).');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            try {
+                // Submit the form data to /new-caretaker
+                const response = await fetch('/new-caretaker', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, relation, phone, email }),
+                });
+
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to the home page
+                } else {
+                    const errorText = await response.text();
+                    alert('Failed to add caretaker: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+
 </body>
+
 </html>
