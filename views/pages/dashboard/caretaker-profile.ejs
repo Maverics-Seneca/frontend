@@ -28,6 +28,14 @@
             color: #333;
         }
 
+        /* Header container for h1 and button */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         /* Table styling */
         .caretaker-table {
             width: 100%;
@@ -74,7 +82,8 @@
 
         /* Buttons */
         .caretaker-table .edit-btn,
-        .caretaker-table .save-btn {
+        .caretaker-table .save-btn,
+        .add-caretaker-btn {
             background: #3498db;
             color: white;
             padding: 6px 12px;
@@ -83,6 +92,9 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: background 0.3s ease;
+        }
+        .add-caretaker-btn:hover {
+            background: #2980b9;
         }
 
         .caretaker-table .save-btn {
@@ -110,6 +122,11 @@
             .caretaker-table td {
                 padding: 8px;
             }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
 
         /* Error message */
@@ -128,7 +145,10 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="form-container">
-            <h1>Caretaker List</h1>
+            <div class="header-container">
+                <h1>Caretaker List</h1>
+                <button class="add-caretaker-btn" onclick="window.location.href='/add-caretaker'">Add Caretaker</button>
+            </div>
             <% if (typeof error !== 'undefined' && error) { %>
             <p class="error-message"><%= error %></p>
             <% } %>
