@@ -13,159 +13,241 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            max-width: 900px;
+            /* Wider for table layout */
             width: 100%;
+            margin: 0 auto;
+            /* Center the container */
         }
 
         /* h1 inside .form-container */
         .form-container h1 {
             font-size: 2rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
         }
 
-        /* Form group inside .form-container */
-        .form-container .form-group {
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
+        /* Table styling */
+        .caretaker-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
         }
 
-        /* Labels inside .form-container */
-        .form-container label {
+        .caretaker-table th,
+        .caretaker-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .caretaker-table th {
+            background: #f5f5f5;
             font-weight: bold;
+            color: #444;
         }
 
-        /* Inputs and select elements inside .form-container */
-        .form-container input,
-        .form-container select {
-            padding: 10px;
+        .caretaker-table td {
+            background: #fafafa;
+        }
+
+        /* Inputs and select in table */
+        .caretaker-table input,
+        .caretaker-table select {
+            padding: 8px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        /* Button inside .form-container */
-        .form-container button {
+        /* Disabled state */
+        .caretaker-table input:disabled,
+        .caretaker-table select:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+            /* Remove border when disabled for cleaner look */
+        }
+
+        /* Buttons */
+        .caretaker-table .edit-btn,
+        .caretaker-table .save-btn {
             background: #3498db;
             color: white;
-            padding: 10px;
+            padding: 6px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            width: 100%;
-            font-size: 1.2em;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
         }
 
-        /* Button hover state inside .form-container */
-        .form-container button:hover {
+        .caretaker-table .save-btn {
+            background: #2ecc71;
+            /* Green for save */
+            display: none;
+            /* Hidden by default */
+        }
+
+        .caretaker-table .edit-btn:hover {
             background: #2980b9;
         }
 
-        .form-container h2 {
+        .caretaker-table .save-btn:hover {
+            background: #27ae60;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .caretaker-table {
+                font-size: 0.9em;
+            }
+
+            .caretaker-table th,
+            .caretaker-table td {
+                padding: 8px;
+            }
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
             text-align: center;
             margin-bottom: 20px;
-        }
-
-        /* Row for inputs and buttons */
-        .form-container .input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            /* Space between input and buttons */
-        }
-
-
-        /* Buttons styling */
-        .form-container .edit-btn,
-        .form-container .save-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            /* Slightly smaller for compactness */
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 0.9em;
-            /* Smaller text */
-            transition: background 0.2s ease;
-        }
-
-        .form-container .edit-btn:hover,
-        .form-container .save-btn:hover {
-            background: #2980b9;
-        }
-
-        /* Save button specific styling */
-        .form-container .save-btn {
-            background: #2ecc71;
-            /* Green to distinguish from Edit */
-        }
-
-        .form-container .save-btn:hover {
-            background: #27ae60;
         }
     </style>
 </head>
 
 <body>
-
     <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
     <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
 
     <!-- Main Content -->
-    <!-- Main Content -->
-    <div class="main-content" id="main-content">
+    <div class="main-content">
         <div class="form-container">
-            <h1>Caretaker Profile</h1>
-            <div class="form-group">
-                <label>Caretaker Name:</label>
-                <div class="input-row">
-                    <input type="text" value="Seneca" disabled />
-                    <button class="edit-btn">Edit</button>
-                    <button class="save-btn" style="display:none;">Save</button>
-                </div>
-            </div>
-            <!-- <h3>Patient Details</h3>
-        <div class="form-group">
-            <label>Full Name:</label>
-            <div class="input-row">
-                <input type="text" value="Seneca" disabled />
-                <button class="edit-btn">Edit</button>
-                <button class="save-btn" style="display:none;">Save</button>
-            </div>
-            <label>Date of Birth:</label>
-            <div class="input-row">
-                <input type="text" value="01-01-1980" disabled />
-            </div>
-            <label>Gender:</label>
-            <div class="input-row">
-                <input type="text" value="Male" disabled />
-            </div>
-            <label>Medical History:</label>
-            <div class="input-row">
-                <input type="text" value="Diabetes, Hypertension" disabled />
-            </div>
-        </div>
-        <h3>Medication Details</h3>
-        <div class="form-group">
-            <label>Medicine Name:</label>
-            <div class="input-row">
-                <input type="text" value="Metformin" disabled />
-                <button class="edit-btn">Edit</button>
-                <button class="save-btn" style="display:none;">Save</button>
-            </div>
-        </div>
-        <h3>Refill Alerts</h3>
-        <div class="form-group">
-            <label>Upcoming Refill:</label>
-            <div class="input-row">
-                <input type="text" value="Metformin - 7 days left" disabled />
-                <button class="edit-btn">Edit</button>
-                <button class="save-btn" style="display:none;">Save</button>
-            </div>
-        </div> -->
+            <h1>Caretaker List</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <table class="caretaker-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Relation</th>
+                        <th>Contact Number</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="caretaker-list">
+                    <% if (caretakers && caretakers.length > 0) { %>
+                    <% caretakers.forEach(caretaker => { %>
+                    <tr>
+                        <td>
+                            <input type="text" id="name-<%= caretaker.id %>" value="<%= caretaker.name %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <select id="relation-<%= caretaker.id %>" disabled>
+                                <option value="parent" <%= caretaker.relation === 'parent' ? 'selected' : '' %>>Parent
+                                </option>
+                                <option value="spouse" <%= caretaker.relation === 'spouse' ? 'selected' : '' %>>Spouse
+                                </option>
+                                <option value="sibling" <%= caretaker.relation === 'sibling' ? 'selected' : '' %>>
+                                    Sibling</option>
+                                <option value="other" <%= caretaker.relation === 'other' ? 'selected' : '' %>>Other
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="tel" id="phone-<%= caretaker.id %>" value="<%= caretaker.phone %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="email" id="email-<%= caretaker.id %>" value="<%= caretaker.email %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <button class="edit-btn" data-id="<%= caretaker.id %>">Edit</button>
+                            <button class="save-btn" data-id="<%= caretaker.id %>">Save</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No caretakers found.</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
     </div>
 
+    <script>
+        // Add event listeners for edit/save buttons
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const inputs = row.querySelectorAll('input, select');
+                const saveBtn = row.querySelector('.save-btn');
+                inputs.forEach(input => input.disabled = false);
+                e.target.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+            });
+        });
+
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const name = row.querySelector(`#name-${id}`).value.trim();
+                const relation = row.querySelector(`#relation-${id}`).value;
+                const phone = row.querySelector(`#phone-${id}`).value.trim();
+                const email = row.querySelector(`#email-${id}`).value.trim();
+
+                // Validation
+                if (!name || !relation || !phone || !email) {
+                    alert('All fields are required.');
+                    return;
+                }
+                if (!/^\d{10,}$/.test(phone)) {
+                    alert('Please enter a valid phone number (at least 10 digits).');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/caretakers/${id}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, relation, phone, email }),
+                    });
+
+                    if (response.ok) {
+                        const inputs = row.querySelectorAll('input, select');
+                        const editBtn = row.querySelector('.edit-btn');
+                        inputs.forEach(input => input.disabled = true);
+                        e.target.style.display = 'none';
+                        editBtn.style.display = 'inline-block';
+                        alert('Caretaker updated successfully!'); // Success alert
+                    } else {
+                        const errorText = await response.text();
+                        alert('Failed to update caretaker: ' + errorText); // Error alert
+                    }
+                } catch (error) {
+                    console.error('Error updating caretaker:', error);
+                    alert('An error occurred. Please try again.'); // Network error alert
+                }
+            });
+        });
+    </script>
     <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 </body>
 

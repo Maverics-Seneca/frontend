@@ -107,16 +107,35 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
     });
 });
 
-app.get('/caretaker-profile', authenticateUser, (req, res) => {
-    console.log('Rendering caretaker-profile page for user:', req.userId); // Debug: Log user ID
+app.get('/caretaker-profile', authenticateUser, async (req, res) => {
+    const patientId = req.userId; // Extract patientId from authenticated user
+    const isLoggedIn = !!req.cookies.authToken; // Check if user is logged in
 
-    // Check if the user is logged in
-    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering caretaker-profile page for user:', patientId); // Debug log
 
-    res.render('pages/dashboard/caretaker-profile', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
-    });
+    try {
+        // Forward the request to the middleware to get caretakers
+        const response = await axios.get('http://middleware:3001/caretaker/get', {
+            params: { patientId }
+        });
+        const caretakers = response.data;
+
+        // Render the page with caretaker data
+        res.render('pages/dashboard/caretaker-profile', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            caretakers: caretakers // Pass caretakers to the template
+        });
+    } catch (error) {
+        console.error('Error fetching caretakers for profile:', error.message);
+        // Render with an empty array if fetching fails
+        res.render('pages/dashboard/caretaker-profile', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            caretakers: [],
+            error: 'Failed to load caretakers'
+        });
+    }
 });
 
 app.get('/patient-profile', authenticateUser, (req, res) => {
@@ -167,9 +186,31 @@ app.get('/add-caretaker', authenticateUser, (req, res) => {
     });
 });
 
+app.post('/caretakers/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params; // Caretaker ID from URL
+    const { name, relation, phone, email } = req.body; // Data from request body
+    const patientId = req.userId; // Ensure the update is tied to the authenticated user
+
+    console.log('Updating caretaker:', { id, patientId, name, relation, phone, email }); // Debug log
+
+    try {
+        const response = await axios.post('http://middleware:3001/caretaker/update', {
+            id,
+            patientId, // Include patientId for validation
+            name,
+            relation,
+            phone,
+            email
+        });
+        res.status(200).json({ message: 'Caretaker updated successfully' }); // Send success response
+    } catch (error) {
+        console.error('Error updating caretaker:', error.message);
+        res.status(500).json({ error: 'Failed to update caretaker' });
+    }
+});
 // POST Functions
 
-app.post('/dashboard/add-patient', authenticateUser, (req, res) => {
+app.post('/add-patient', authenticateUser, (req, res) => {
     const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
     console.log('New Patient Added:', req.body); // Debug: Log new patient data
     res.redirect('/dashboard');
@@ -203,7 +244,6 @@ app.post('/login',
   }
 });
 
-
 app.post('/new-caretaker', authenticateUser, (req, res) => {
     const { name, relation, email, phone } = req.body;
     const patientId = req.userId; // Extract patientId from the authenticated request
@@ -213,7 +253,7 @@ app.post('/new-caretaker', authenticateUser, (req, res) => {
     // Forward the request to the middleware
     axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
         .then(() => {
-            res.redirect('/');
+            res.redirect('/add-caretaker');
         })
         .catch((error) => {
             console.error('Error adding caretaker:', error.message);
