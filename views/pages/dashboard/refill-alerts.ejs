@@ -143,3 +143,57 @@
             </div>
         </div>
     </div>
+
+    <script>
+        let refillHistory = [];
+
+        // Load medications dynamically (Mock API call)
+        function loadMedications() {
+            fetch('/api/medications') // Replace with actual API URL
+                .then(response => response.json())
+                .then(medications => {
+                    let medicationSelect = document.getElementById("medication");
+                    medicationSelect.innerHTML = '<option value="">-- Select --</option>'; // Reset dropdown
+                    medications.forEach(med => {
+                        let option = document.createElement("option");
+                        option.value = med.name;
+                        option.textContent = med.name;
+                        medicationSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching medications:", error));
+        }
+
+        function populateFields() {
+            let selectedMedication = document.getElementById("medication").value;
+            document.getElementById("dosage").value = "";
+            document.getElementById("doctor").value = "";
+        }
+
+        function calculateDaysLeft() {
+            let remaining = parseInt(document.getElementById("remainingQty").value) || 0;
+            let daily = parseInt(document.getElementById("dailyConsumption").value) || 1;
+            let daysLeft = remaining > 0 ? Math.floor(remaining / daily) : 0;
+            document.getElementById("daysLeft").value = daysLeft;
+        }
+
+        function requestRefill() {
+            let med = document.getElementById("medication").value;
+            let dosage = document.getElementById("dosage").value;
+            let doctor = document.getElementById("doctor").value;
+            let date = new Date().toLocaleDateString();
+            
+            if (!med || !dosage || !doctor) {
+                alert("Please fill in all details before requesting a refill.");
+                return;
+            }
+
+            refillHistory.push({ medicine: med, dosage: dosage, doctor: doctor, date: date, quantity: 30 });
+            alert(`Refill requested for ${med} (${dosage}mg) prescribed by ${doctor}`);
+        }
+
+        document.addEventListener("DOMContentLoaded", loadMedications);
+    </script>
+
+</body>
+</html>
