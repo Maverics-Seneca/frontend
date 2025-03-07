@@ -169,4 +169,53 @@
                         <th>Inventory</th>
                         <th>Action</th>
                     </tr>
-                </thead>
+                </thead><tbody id="medication-list">
+                    <% if (medications && medications.length > 0) { %>
+                    <% medications.forEach(medication => { %>
+                    <tr data-id="<%= medication.id %>">
+                        <td>
+                            <input type="text" id="name-<%= medication.id %>" value="<%= medication.name %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="number" id="dosage-<%= medication.id %>" value="<%= medication.dosage %>"
+                                disabled required />
+                        </td>
+                        <td>
+                            <select id="frequency-<%= medication.id %>" disabled>
+                                <option value="Once a day" <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
+                                    Once a day</option>
+                                <option value="Twice a day" <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>
+                                    >Twice a day</option>
+                                <option value="Thrice a day"
+                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" id="prescribingDoctor-<%= medication.id %>"
+                                value="<%= medication.prescribingDoctor %>" disabled required />
+                        </td>
+                        <td>
+                            <input type="date" id="endDate-<%= medication.id %>" value="<%= medication.endDate %>"
+                                disabled required />
+                        </td>
+                        <td>
+                            <input type="number" id="inventory-<%= medication.id %>" value="<%= medication.inventory %>"
+                                disabled required min="0" />
+                        </td>
+                        <td>
+                            <button class="edit-btn" data-id="<%= medication.id %>">Edit</button>
+                            <button class="save-btn" data-id="<%= medication.id %>">Save</button>
+                            <button class="delete-btn" data-id="<%= medication.id %>">Delete</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="7" style="text-align: center;">No medications found.</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
