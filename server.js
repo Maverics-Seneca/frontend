@@ -437,6 +437,86 @@ app.post("/reset-password", async (req, res) => {
     }
 });
 
+// Settings page route 
+app.get('/settings', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering settings page for user:', userId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/auth/user', {
+            params: { userId }
+        });
+        const user = response.data;
+
+        res.render('pages/auth/settings', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            user: { userId, name: user.name, email: user.email }
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error.message);
+        res.render('pages/auth/settings', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            user: null,
+            error: 'Failed to load user data'
+        });
+    }
+});
+
+// Update settings route with cookie refresh
+app.post('/settings/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const { name, email, password, currentPassword } = req.body;
+    const userId = req.userId;
+
+    if (id !== userId) {
+        return res.status(403).json({ error: 'Unauthorized to update this user' });
+    }
+
+    console.log('Updating settings:', { id, name, email, password: password || 'unchanged', currentPassword: currentPassword || 'not provided' });
+
+    try {
+        // Update user data, including currentPassword if provided
+        const updateResponse = await axios.post('http://middleware:3001/auth/update', {
+            userId,
+            name,
+            email,
+            password,
+            currentPassword: password ? currentPassword : undefined // Only send if password is changing
+        });
+
+        // Fetch updated user data to generate a new token
+        const userResponse = await axios.get('http://middleware:3001/auth/user', {
+            params: { userId }
+        });
+        const updatedUser = userResponse.data;
+
+        // Generate a new token with updated user info
+        const newToken = jwt.sign(
+            { userId: userId, email: updatedUser.email, name: updatedUser.name },
+            SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+
+        // Refresh the authToken cookie
+        res.cookie('authToken', newToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            path: '/',
+        });
+        console.log('Cookie refreshed with new token:', newToken);
+
+        res.status(200).json({ message: 'Settings updated successfully' });
+    } catch (error) {
+        console.error('Error updating settings:', error.message);
+        res.status(error.response?.status || 500).json({ error: error.response?.data?.error || 'Failed to update settings' });
+    }
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Frontend running on http://localhost:${port}`);
