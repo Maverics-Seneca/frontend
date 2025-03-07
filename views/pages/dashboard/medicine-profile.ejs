@@ -246,3 +246,42 @@
                 const prescribingDoctor = row.querySelector(`#prescribingDoctor-${id}`).value.trim();
                 const endDate = row.querySelector(`#endDate-${id}`).value;
                 const inventory = row.querySelector(`#inventory-${id}`).value.trim();
+
+                // Validation
+                if (!name || !dosage || !frequency || !prescribingDoctor || !endDate || !inventory) {
+                    alert('All fields are required.');
+                    return;
+                }
+                if (!/^\d+$/.test(dosage) || Number(dosage) <= 0) {
+                    alert('Please enter a valid positive dosage.');
+                    return;
+                }
+                if (!/^\d+$/.test(inventory) || Number(inventory) < 0) {
+                    alert('Please enter a valid non-negative inventory.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/medicines/${id}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, dosage: Number(dosage), frequency, prescribingDoctor, endDate, inventory: Number(inventory) }),
+                    });
+
+                    if (response.ok) {
+                        const inputs = row.querySelectorAll('input, select');
+                        const editBtn = row.querySelector('.edit-btn');
+                        inputs.forEach(input => input.disabled = true);
+                        e.target.style.display = 'none';
+                        editBtn.style.display = 'inline-block';
+                        alert('Medicine updated successfully!');
+                    } else {
+                        const errorText = await response.text();
+                        alert('Failed to update medicine: ' + errorText);
+                    }
+                } catch (error) {
+                    console.error('Error updating medicine:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
