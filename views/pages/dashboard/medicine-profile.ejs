@@ -169,7 +169,8 @@
                         <th>Inventory</th>
                         <th>Action</th>
                     </tr>
-                </thead><tbody id="medication-list">
+                </thead>
+                <tbody id="medication-list">
                     <% if (medications && medications.length > 0) { %>
                     <% medications.forEach(medication => { %>
                     <tr data-id="<%= medication.id %>">
@@ -219,3 +220,17 @@
             </table>
         </div>
     </div>
+
+    <script>
+        // Edit button logic
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const inputs = row.querySelectorAll('input, select');
+                const saveBtn = row.querySelector('.save-btn');
+                inputs.forEach(input => input.disabled = false);
+                e.target.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+            });
+        });
