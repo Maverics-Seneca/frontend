@@ -175,41 +175,57 @@ app.get('/add-patient', authenticateUser, (req, res) => {
 });
 
 app.get('/add-caretaker', authenticateUser, (req, res) => {
-    console.log('Rendering add-caretaker page for user:', req.userId); // Debug: Log user ID
-
-    // Check if the user is logged in
+    console.log('Rendering add-caretaker page for user:', req.userId);
     const isLoggedIn = !!req.cookies.authToken;
 
     res.render('pages/dashboard/add-caretaker', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
+        isLoggedIn: isLoggedIn,
+        userName: req.name,
     });
 });
 
 app.post('/caretakers/:id', authenticateUser, async (req, res) => {
-    const { id } = req.params; // Caretaker ID from URL
-    const { name, relation, phone, email } = req.body; // Data from request body
-    const patientId = req.userId; // Ensure the update is tied to the authenticated user
+    const { id } = req.params;
+    const { name, relation, phone, email } = req.body;
+    const patientId = req.userId;
 
-    console.log('Updating caretaker:', { id, patientId, name, relation, phone, email }); // Debug log
+    console.log('Updating caretaker:', { id, patientId, name, relation, phone, email });
 
     try {
         const response = await axios.post('http://middleware:3001/caretaker/update', {
             id,
-            patientId, // Include patientId for validation
+            patientId,
             name,
             relation,
             phone,
             email
         });
-        res.status(200).json({ message: 'Caretaker updated successfully' }); // Send success response
+        res.status(200).json({ message: 'Caretaker updated successfully' });
     } catch (error) {
         console.error('Error updating caretaker:', error.message);
         res.status(500).json({ error: 'Failed to update caretaker' });
     }
 });
-// POST Functions
 
+// Delete a caretaker
+app.delete('/caretakers/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const patientId = req.userId;
+
+    console.log('Deleting caretaker:', { id, patientId });
+
+    try {
+        const response = await axios.delete('http://middleware:3001/caretaker/delete', {
+            data: { id, patientId } // Send data in body for DELETE
+        });
+        res.status(200).json({ message: 'Caretaker deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting caretaker:', error.message);
+        res.status(500).json({ error: 'Failed to delete caretaker' });
+    }
+});
+
+// POST Functions
 app.post('/add-patient', authenticateUser, (req, res) => {
     const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
     console.log('New Patient Added:', req.body); // Debug: Log new patient data
