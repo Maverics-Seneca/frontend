@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-
     <title>Add Medicine - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
@@ -15,24 +14,31 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             width: 100%;
+            margin: 0 auto;
         }
 
         /* h1 inside .form-container */
         .form-container h1 {
             font-size: 2rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
         }
 
         /* Form group inside .form-container */
         .form-container .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            /* Center all form groups */
         }
 
         /* Labels inside .form-container */
         .form-container label {
             font-weight: bold;
+            color: #444;
         }
 
         /* Inputs and select elements inside .form-container */
@@ -41,10 +47,52 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            /* Ensure inputs stretch to fit */
+            max-width: 300px;
+            /* Limit width for consistency */
+        }
+
+        /* Inventory counter specific styling */
+        .inventory-counter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Center the counter horizontally */
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+            /* Match input width */
+        }
+
+        .inventory-counter input {
+            width: 60px;
+            text-align: center;
+        }
+
+        .inventory-counter button {
+            background: #3498db;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+
+        .inventory-counter button:hover {
+            background: #2980b9;
+        }
+
+        .inventory-counter button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
         }
 
         /* Button inside .form-container */
-        .form-container button {
+        .form-container button[type="submit"] {
             background: #3498db;
             color: white;
             padding: 10px;
@@ -52,30 +100,31 @@
             border-radius: 5px;
             cursor: pointer;
             width: 100%;
+            max-width: 300px;
+            /* Match input width */
             font-size: 1.2em;
+            transition: background 0.3s ease;
+            margin: 0 auto;
+            /* Center the submit button */
+            display: block;
+            /* Ensure it behaves as a block element */
         }
 
         /* Button hover state inside .form-container */
-        .form-container button:hover {
+        .form-container button[type="submit"]:hover {
             background: #2980b9;
         }
 
-        .form-container h2 {
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
             text-align: center;
             margin-bottom: 20px;
-        }
-
-        .form-container h3 {
-            font-size: 1.5rem;
-            margin: 20px 0 10px;
-            color: #333; /* Softer color for hierarchy */
         }
     </style>
 </head>
 
 <body>
-
-
     <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
     <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
 
@@ -83,20 +132,23 @@
     <div class="main-content" id="main-content">
         <div class="form-container">
             <h1>Add Medicine</h1>
-            <form action="/dashboard/add-medicines" method="POST">
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <form action="/add-medicines" method="POST" id="add-medicine-form">
                 <div class="form-group">
-                    <label for="medicineName">Medicine Name</label>
-                    <input type="text" name="medicineName" required />
+                    <label for="name">Medicine Name</label>
+                    <input type="text" name="name" id="name" required />
                 </div>
 
                 <div class="form-group">
                     <label for="dosage">Dosage (mg)</label>
-                    <input type="number" name="dosage" required />
+                    <input type="number" name="dosage" id="dosage" required />
                 </div>
 
                 <div class="form-group">
                     <label for="frequency">Frequency</label>
-                    <select name="frequency">
+                    <select name="frequency" id="frequency">
                         <option value="Once a day">Once a day</option>
                         <option value="Twice a day">Twice a day</option>
                         <option value="Thrice a day">Thrice a day</option>
@@ -105,13 +157,58 @@
 
                 <div class="form-group">
                     <label for="prescribingDoctor">Prescribing Doctor</label>
-                    <input type="text" name="prescribingDoctor" required />
+                    <input type="text" name="prescribingDoctor" id="prescribingDoctor" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" name="endDate" id="endDate" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="inventory">Inventory</label>
+                    <div class="inventory-counter">
+                        <button type="button" class="minus-btn">-</button>
+                        <input type="number" name="inventory" id="inventory" value="0" min="0" required />
+                        <button type="button" class="plus-btn">+</button>
+                    </div>
                 </div>
 
                 <button type="submit">Add Medicine</button>
             </form>
         </div>
     </div>
+
+    <script>
+        // Inventory counter logic
+        const inventoryInput = document.getElementById('inventory');
+        const minusBtn = document.querySelector('.minus-btn');
+        const plusBtn = document.querySelector('.plus-btn');
+
+        minusBtn.addEventListener('click', () => {
+            let value = parseInt(inventoryInput.value) || 0;
+            if (value > 0) {
+                inventoryInput.value = value - 1;
+            }
+        });
+
+        plusBtn.addEventListener('click', () => {
+            let value = parseInt(inventoryInput.value) || 0;
+            inventoryInput.value = value + 1;
+        });
+
+        // Prevent negative values on manual input
+        inventoryInput.addEventListener('input', () => {
+            if (inventoryInput.value < 0) {
+                inventoryInput.value = 0;
+            }
+        });
+
+        // Restrict endDate to today and future dates
+        const endDateInput = document.getElementById('endDate');
+        const today = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
+        endDateInput.setAttribute('min', today); // Set minimum date to today
+    </script>
 
     <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 </body>

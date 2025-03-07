@@ -244,6 +244,40 @@ app.post('/login',
   }
 });
 
+app.post('/add-medicines', authenticateUser, async (req, res) => {
+    const { name, dosage, frequency, prescribingDoctor, endDate, inventory } = req.body;
+    const patientId = req.userId; // Extract patientId from authenticated user
+
+    console.log('Adding new medicine:', { patientId, name, dosage, frequency, prescribingDoctor, endDate, inventory }); // Debug log
+
+    try {
+        const response = await axios.post('http://middleware:3001/medicine/add', {
+            patientId,
+            name,
+            dosage: Number(dosage), // Convert to number
+            frequency,
+            prescribingDoctor,
+            endDate,
+            inventory: Number(inventory) // Convert to number
+        }, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('Medicine added successfully:', response.data); // Debug log
+        res.redirect('/caretaker-profile'); // Redirect on success
+    } catch (error) {
+        console.error('Error adding medicine:', {
+            message: error.message,
+            status: error.response?.status,
+            data: error.response?.data
+        });
+        res.render('pages/dashboard/add-medicines', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            error: error.response?.data?.error || 'Failed to add medicine'
+        });
+    }
+});
+
 app.post('/new-caretaker', authenticateUser, (req, res) => {
     const { name, relation, email, phone } = req.body;
     const patientId = req.userId; // Extract patientId from the authenticated request
