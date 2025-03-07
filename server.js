@@ -217,32 +217,32 @@ app.post('/add-patient', authenticateUser, (req, res) => {
 });
 
 app.post('/login',
-     async (req, res) => {
-  
-  try {
-      const response = await axios.post('http://middleware:3001/auth/login', req.body, {
-          withCredentials: true,
-      });
+    async (req, res) => {
 
-      console.log('Middleware response:', response.data); // Debug: Log middleware response
+        try {
+            const response = await axios.post('http://middleware:3001/auth/login', req.body, {
+                withCredentials: true,
+            });
 
-      // Set the authToken cookie
-      res.cookie('authToken', response.data.token, {
-          httpOnly: true,
-          secure: true, // Ensure this is true in production (HTTPS only)
-          sameSite: 'None', // Required for cross-origin cookies
-          path: '/', // Cookie accessible across all paths
-      });
+            console.log('Middleware response:', response.data); // Debug: Log middleware response
 
-      console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
-      res.redirect('/');
-  } catch (error) {
-      console.error('Login error:', error.message); // Debug: Log login error
-      res.status(error.response?.status || 500).json({
-          error: error.response?.data?.message || 'Login failed',
-      });
-  }
-});
+            // Set the authToken cookie
+            res.cookie('authToken', response.data.token, {
+                httpOnly: true,
+                secure: true, // Ensure this is true in production (HTTPS only)
+                sameSite: 'None', // Required for cross-origin cookies
+                path: '/', // Cookie accessible across all paths
+            });
+
+            console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
+            res.redirect('/');
+        } catch (error) {
+            console.error('Login error:', error.message); // Debug: Log login error
+            res.status(error.response?.status || 500).json({
+                error: error.response?.data?.message || 'Login failed',
+            });
+        }
+    });
 
 app.post('/add-medicines', authenticateUser, async (req, res) => {
     const { name, dosage, frequency, prescribingDoctor, endDate, inventory } = req.body;
@@ -263,7 +263,7 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             headers: { 'Content-Type': 'application/json' }
         });
         console.log('Medicine added successfully:', response.data); // Debug log
-        res.redirect('/caretaker-profile'); // Redirect on success
+        res.redirect('/medication-profile'); // Redirect on success
     } catch (error) {
         console.error('Error adding medicine:', {
             message: error.message,
@@ -275,6 +275,79 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             userName: req.name,
             error: error.response?.data?.error || 'Failed to add medicine'
         });
+    }
+});
+
+// Fetch all medications for the user
+app.get('/medication-profile', authenticateUser, async (req, res) => {
+    const patientId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering medication-profile page for user:', patientId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/medicine/get', {
+            params: { patientId }
+        });
+        const medications = response.data;
+
+        res.render('pages/dashboard/medication-profile', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: medications
+        });
+    } catch (error) {
+        console.error('Error fetching medications:', error.message);
+        res.render('pages/dashboard/medication-profile', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: [],
+            error: 'Failed to load medications'
+        });
+    }
+});
+
+// Update a medicine
+app.post('/medicines/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const { name, dosage, frequency, prescribingDoctor, endDate, inventory } = req.body;
+    const patientId = req.userId;
+
+    console.log('Updating medicine:', { id, patientId, name, dosage, frequency, prescribingDoctor, endDate, inventory });
+
+    try {
+        const response = await axios.post('http://middleware:3001/medicine/update', {
+            id,
+            patientId,
+            name,
+            dosage,
+            frequency,
+            prescribingDoctor,
+            endDate,
+            inventory
+        });
+        res.status(200).json({ message: 'Medicine updated successfully' });
+    } catch (error) {
+        console.error('Error updating medicine:', error.message);
+        res.status(500).json({ error: 'Failed to update medicine' });
+    }
+});
+
+// Delete a medicine
+app.delete('/medicines/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const patientId = req.userId;
+
+    console.log('Deleting medicine:', { id, patientId });
+
+    try {
+        const response = await axios.delete('http://middleware:3001/medicine/delete', {
+            data: { id, patientId } // Send data in body for DELETE
+        });
+        res.status(200).json({ message: 'Medicine deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting medicine:', error.message);
+        res.status(500).json({ error: 'Failed to delete medicine' });
     }
 });
 
