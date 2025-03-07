@@ -86,3 +86,29 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Medication Details Section -->
+        <div class="card p-4">
+            <h3 class="card-title text-primary">💊 Medication Details</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="medication" class="form-label">Select Medication</label>
+                    <select class="form-control" id="medication" onchange="populateFields()">
+                        <option value="">-- Select --</option>
+                        <% medications.forEach(med => { %>
+                            <option value="<%= med.name %>"></option>
+                        <% }) %>
+                    </select>
+                    <p class="mt-2">
+                        <a href="/dashboard/add-medicines" class="link-button">➕ Add New Medicine</a>
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Dosage (mg)</label>
+                    <input type="number" class="form-control" id="dosage">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Prescribed By</label>
+                    <input type="text" class="form-control" id="doctor">
+                </div>
+            </div>
