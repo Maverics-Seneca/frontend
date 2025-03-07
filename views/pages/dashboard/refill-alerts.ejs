@@ -112,3 +112,19 @@
                     <input type="text" class="form-control" id="doctor">
                 </div>
             </div>
+
+            <h3 class="card-title mt-4 text-primary">📦 Inventory Status</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="form-label">Remaining Quantity</label>
+                    <input type="number" class="form-control" id="remainingQty" oninput="calculateDaysLeft()">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Daily Consumption</label>
+                    <input type="number" class="form-control" id="dailyConsumption" oninput="calculateDaysLeft()">
+                </div>
+                <div class="col-md-6 mt-3">
+                    <label class="form-label">Estimated Days Left</label>
+                    <input type="text" class="form-control" id="daysLeft" readonly>
+                </div>
+            </div>
