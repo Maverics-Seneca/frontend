@@ -234,3 +234,15 @@
                 saveBtn.style.display = 'inline-block';
             });
         });
+
+        // Save button logic
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const name = row.querySelector(`#name-${id}`).value.trim();
+                const dosage = row.querySelector(`#dosage-${id}`).value.trim();
+                const frequency = row.querySelector(`#frequency-${id}`).value;
+                const prescribingDoctor = row.querySelector(`#prescribingDoctor-${id}`).value.trim();
+                const endDate = row.querySelector(`#endDate-${id}`).value;
+                const inventory = row.querySelector(`#inventory-${id}`).value.trim();
