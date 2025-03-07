@@ -147,3 +147,26 @@
 <body>
     <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
     <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Medication List</h1>
+                <button class="add-medicine-btn" onclick="window.location.href='/add-medicines'">Add Medicine</button>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <table class="medication-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Dosage (mg)</th>
+                        <th>Frequency</th>
+                        <th>Prescribing Doctor</th>
+                        <th>End Date</th>
+                        <th>Inventory</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
