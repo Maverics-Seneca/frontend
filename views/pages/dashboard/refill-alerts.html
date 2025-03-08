@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Refill Alerts - MediTrack</title>
+    <link rel="stylesheet" href="/css/core/libs.min.css">
+    <link rel="stylesheet" href="/css/xray.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('/public/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: -260px;
+            top: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.shift {
+            margin-left: 260px;
+        }
+
+        .alert-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .alert-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-main">
+            <img src="/images/logo.png" alt="MediTrack Logo">
+            <span class="brand-name">MediTrack</span>
+        </div>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
+            <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
+            <li><a href="/dashboard/add-patient">Add Patient</a></li>
+            <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
+            <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
+            <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content" id="main-content">
+        <div class="alert-container">
+            <h2>Refill Alerts</h2>
+            <div class="profile-details">
+                <label>Medicine Name:</label>
+                <p>Metformin</p>
+                <label>Current Stock:</label>
+                <p>10 Tablets</p>
+                <label>Dosage Per Day:</label>
+                <p>2 Tablets</p>
+                <label>Days Left:</label>
+                <p>5 Days</p>
+                <button class="refill-btn">Refill Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('main-content').classList.toggle('shift');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Guardian Profile - MediTrack</title>
+    <link rel="stylesheet" href="/css/core/libs.min.css">
+    <link rel="stylesheet" href="/css/xray.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('/public/images/background.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #2c3e50;
+            color: white;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
+            left: -260px;
+            top: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 1001;
+        }
+
+        .main-content {
+            margin-left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .main-content.shift {
+            margin-left: 260px;
+        }
+
+        .profile-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .profile-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-details {
+            margin-bottom: 20px;
+        }
+
+        .profile-details label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .edit-btn, .save-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <aside class="sidebar" id="sidebar">
+        <div class="logo-main">
+            <img src="/images/logo.png" alt="MediTrack Logo">
+            <span class="brand-name">MediTrack</span>
+        </div>
+        <ul>
+            <li><a href="/">Dashboard</a></li>
+            <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
+            <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
+            <li><a href="/dashboard/add-patient">Add Patient</a></li>
+            <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
+            <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
+            <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content" id="main-content">
+        <div class="profile-container">
+            <h2>Guardian Profile</h2>
+            <div class="profile-details">
+                <label>Guardian Name:</label>
+                <input type="text" value="Seneca" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+            <h3>Patient Details</h3>
+            <div class="profile-details">
+                <label>Full Name:</label>
+                <input type="text" value="Seneca" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+                <label>Date of Birth:</label>
+                <input type="text" value="01-01-1980" disabled />
+                <label>Gender:</label>
+                <input type="text" value="Male" disabled />
+                <label>Medical History:</label>
+                <input type="text" value="Diabetes, Hypertension" disabled />
+            </div>
+            <h3>Medication Details</h3>
+            <div class="profile-details">
+                <label>Medicine Name:</label>
+                <input type="text" value="Metformin" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+            <h3>Refill Alerts</h3>
+            <div class="profile-details">
+                <label>Upcoming Refill:</label>
+                <input type="text" value="Metformin - 7 days left" disabled />
+                <button class="edit-btn">Edit</button>
+                <button class="save-btn" style="display:none;">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('main-content').classList.toggle('shift');
+        }
+    </script>
+</body>
+</html>
