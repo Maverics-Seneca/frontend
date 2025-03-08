@@ -107,6 +107,19 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
     });
 });
 
+app.get('/refill-alerts', authenticateUser, (req, res) => {
+    console.log('Rendering refill-alerts page for user:', req.userId); // Debug: Log user ID
+    let medications = []; 
+    // Check if the user is logged in
+    const isLoggedIn = !!req.cookies.authToken;
+
+    res.render('pages/dashboard/refill-alerts', {
+        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        userName: req.name,
+        medications // Pass the user's name to the template
+    });
+});
+
 app.get('/caretaker-profile', authenticateUser, async (req, res) => {
     const patientId = req.userId; // Extract patientId from authenticated user
     const isLoggedIn = !!req.cookies.authToken; // Check if user is logged in
@@ -145,18 +158,6 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
 
     res.render('pages/dashboard/patient-profile', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
-    });
-});
-
-app.get('/refill-alerts', authenticateUser, (req, res) => {
-    console.log('Rendering refill-alerts page for user:', req.userId); // Debug: Log user ID
-
-    // Check if the user is logged in
-    const isLoggedIn = !!req.cookies.authToken;
-
-    res.render('pages/dashboard/refill-alerts', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name, // Pass the user's name to the template
     });
@@ -376,7 +377,7 @@ app.post('/new-caretaker', authenticateUser, (req, res) => {
     // Forward the request to the middleware
     axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
         .then(() => {
-            res.redirect('/add-caretaker');
+            res.redirect('/caretaker-profile');
         })
         .catch((error) => {
             console.error('Error adding caretaker:', error.message);
