@@ -245,8 +245,8 @@ app.post('/login',
             // Set the authToken cookie
             res.cookie('authToken', response.data.token, {
                 httpOnly: true,
-                secure: true, // Ensure this is true in production (HTTPS only)
-                sameSite: 'None', // Required for cross-origin cookies
+                secure: false, // Ensure this is true in production (HTTPS only)
+                sameSite: 'Lax', // Required for cross-origin cookies
                 path: '/', // Cookie accessible across all paths
             });
 
@@ -391,8 +391,8 @@ app.post('/logout', (req, res) => {
     try {
         res.clearCookie('authToken', {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            secure: false,
+            sameSite: 'Lax',
             path: '/',
         });
 
@@ -504,8 +504,8 @@ app.post('/settings/:id', authenticateUser, async (req, res) => {
         // Refresh the authToken cookie
         res.cookie('authToken', newToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None',
+            secure: false,
+            sameSite: 'Lax',
             path: '/',
         });
         console.log('Cookie refreshed with new token:', newToken);
