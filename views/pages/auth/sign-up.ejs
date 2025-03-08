@@ -4,6 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <title>Sign Up - MediTrack</title>
 
     <!-- Favicon -->
@@ -130,7 +135,32 @@
         </div>
     </div>
 
+    <!-- Bootstrap Modal for Dynamic Alerts -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">Notification</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="alertModalBody">
+            <!-- Message will be dynamically inserted here -->
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
     <script>
+        function showAlert(title, message) {
+            document.getElementById("alertModalLabel").innerText = title;
+            document.getElementById("alertModalBody").innerText = message;
+            var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
+            myModal.show();
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const registerForm = document.getElementById("signupForm");
 
@@ -147,31 +177,31 @@
                 let phoneRegex = /^\d{10,15}$/;
 
                 if (fullName === "") {
-                    alert("Please enter your full name.");
+                    showAlert("Error", "Please enter your full name.");
                     return;
                 }
 
                 if (!emailRegex.test(email)) {
-                    alert("Please enter a valid email address.");
+                    showAlert("Error", "Please enter a valid email address.");
                     return;
                 }
                 if (!phoneRegex.test(phone)) {
-                    alert("Please enter a valid phone number (10-15 digits).");
+                    showAlert("Error", "Please enter a valid phone number (10-15 digits).");
                     return;
                 }
 
                 if (password.length < 8) {
-                    alert("Password must be at least 8 characters long.");
+                    showAlert("Error", "Password must be at least 8 characters long.");
                     return;
                 }
 
                 if (!termsChecked) {
-                    alert("You must accept the Terms and Conditions.");
+                    showAlert("Error", "You must accept the Terms and Conditions.");
                     return;
                 }
 
                 if (password !== confirmPassword) {
-                    alert("Passwords do not match!");
+                    showAlert("Error", "Passwords do not match!");
                     return;
                 }
 
@@ -187,14 +217,14 @@
 
                     const result = await response.json();
                     if (response.ok) {
-                        alert("Registration successful! Redirecting...");
+                        showAlert("Success", "Registration successful! Redirecting...");
                         window.location.href = "/sign-in";
                     } else {
-                        alert(result.error || "Registration failed. Please try again.");
+                        showAlert("Error", "Registration failed. Please try again.");
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("Something went wrong. Please try again later.");
+                    showAlert("Error", "Something went wrong. Please try again later.");
                 }
             });
         });
