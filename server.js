@@ -109,7 +109,7 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
 
 app.get('/refill-alerts', authenticateUser, (req, res) => {
     console.log('Rendering refill-alerts page for user:', req.userId); // Debug: Log user ID
-    let medications = []; 
+    let medications = [];
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
@@ -575,7 +575,7 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
         });
 
         if (response.status === 201) {
-            res.redirect('/medication-profile'); // Redirect to a relevant page after success
+            res.redirect('/timely-reminders');
         }
     } catch (error) {
         console.error('Error adding reminder:', error.message);
@@ -584,6 +584,76 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
             userName: req.name,
             error: 'Failed to add reminder'
         });
+    }
+});
+
+// Render Timely Reminders page
+app.get('/timely-reminders', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering timely-reminders page for user:', userId);
+
+    try {
+        const response = await axios.get(`http://middleware:3001/reminders/${userId}`);
+        const reminders = response.data.reminders || [];
+
+        res.render('pages/dashboard/timely-reminders', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            userId: userId, // Pass userId to EJS
+            reminders: reminders
+        });
+    } catch (error) {
+        console.error('Error fetching reminders:', error.message);
+        res.render('pages/dashboard/timely-reminders', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            userId: userId,
+            reminders: [],
+            error: 'Failed to load reminders'
+        });
+    }
+});
+
+// Update a Reminder
+app.put('/reminders/:reminderId', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const { reminderId } = req.params;
+    const { title, description, datetime, completed } = req.body;
+
+    console.log('Updating reminder:', { reminderId, userId, title, description, datetime, completed });
+
+    try {
+        const response = await axios.put(`http://middleware:3001/reminders/${reminderId}`, {
+            userId,
+            title,
+            description,
+            datetime,
+            completed
+        });
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error updating reminder:', error.message);
+        res.status(error.response?.status || 500).send('Failed to update reminder');
+    }
+});
+
+// Delete a Reminder
+app.delete('/reminders/:reminderId', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const { reminderId } = req.params;
+
+    console.log('Deleting reminder:', { reminderId, userId });
+
+    try {
+        const response = await axios.delete(`http://middleware:3001/reminders/${reminderId}`, {
+            data: { userId } // Send userId in body for DELETE
+        });
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error deleting reminder:', error.message);
+        res.status(error.response?.status || 500).send('Failed to delete reminder');
     }
 });
 
