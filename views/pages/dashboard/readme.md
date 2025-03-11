@@ -77,6 +77,16 @@ MediTrack is a **medication management platform** designed to help users track t
   5. **Changes to Terms** – Updates to policies.
 - Users must **agree to the terms** before proceeding.
 
+## **📌 Dashboard **
+### **🌟 Overview:**
+
+## **📌 Guardian profile **
+### **🌟 Overview:**
+## **📌 Patient Profile **
+### **🌟 Overview:**
+## **📌 medication profile **
+### **🌟 Overview:**
+
 
 
 
