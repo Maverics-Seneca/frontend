@@ -81,7 +81,7 @@
 
         /* Add padding to the first details-column only */
         .card-details .details-column:first-child {
-            padding-left: 10px; /* Left padding for first column */
+            padding-left: 10px;
         }
 
         .card-title {
@@ -176,43 +176,45 @@
         /* Mobile view (max-width: 768px) */
         @media (max-width: 768px) {
             .scroll-container {
-                max-width: 100%; /* Full width on mobile */
-                padding: 3px; /* Reduced padding */
+                max-width: 100%;
+                padding: 3px;
             }
 
             .card {
-                min-height: 200px; /* Increased for stacked layout */
+                min-height: 180px; /* Adjusted for two-column layout */
                 padding: 3px;
             }
 
             .card-row {
-                flex-direction: column; /* Stack columns and chart */
-                height: auto; /* Allow natural height */
+                flex-direction: row; /* Two columns */
+                height: auto;
                 align-items: flex-start;
+                gap: 5px; /* Gap between columns */
             }
 
             .card-details {
-                flex-direction: column; /* Stack columns vertically */
-                width: 100%;
+                flex: 2; /* Larger share for details */
+                flex-direction: column; /* Stack details columns */
                 padding: 0;
+                width: auto;
             }
 
             .details-column {
-                gap: 3px; /* Reduced gap for compactness */
-                padding: 5px 0; /* Consistent padding */
+                gap: 3px;
+                padding: 5px 0;
             }
 
             .card-details .details-column:first-child {
-                padding-left: 5px; /* Adjusted left padding for mobile */
+                padding-left: 5px;
             }
 
             .card-title {
-                font-size: 0.95rem; /* Slightly smaller for mobile */
+                font-size: 0.95rem;
                 margin-bottom: 5px;
             }
 
             .card-text {
-                font-size: 0.8rem; /* Slightly smaller for mobile */
+                font-size: 0.8rem;
             }
 
             .card-text, .card-text * {
@@ -220,13 +222,14 @@
             }
 
             .chart-container {
-                flex: 0 0 70px; /* Smaller pie chart */
+                flex: 1; /* Smaller share for chart */
                 height: 70px;
-                margin: 5px auto; /* Centered with gap */
+                width: 70px;
+                margin: 5px 0;
             }
 
             .progress {
-                margin: 15px 0 0 0; /* Reduced gap for mobile */
+                margin: 15px 0 0 0;
             }
         }
     </style>
