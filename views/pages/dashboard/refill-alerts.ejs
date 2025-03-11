@@ -1,243 +1,325 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Refill Alerts - MediTrack</title>
-    
-    <!-- Bootstrap for modern UI -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #e3f2fd;
+        /* Main content */
+        .main-content {
+            padding: 2px 5px 5px 5px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            width: 100%;
+            margin: 0;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
+        /* Scrollable container */
+        .scroll-container {
+            height: 98vh;
+            overflow-y: scroll;
+            width: 100%;
+            max-width: 1000px;
+            padding: 5px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
         }
 
+        /* Card */
         .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
-            background: #ffffff;
+            margin-bottom: 10px;
+            padding: 5px 3px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background: #fff;
+            min-height: 130px;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-row {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .card-details {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            padding: 2px;
+        }
+
+        .details-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            text-align: left;
+            justify-content: center;
+        }
+
+        /* Add padding to the first details-column only */
+        .card-details .details-column:first-child {
+            padding-left: 10px; /* Left padding for first column */
         }
 
         .card-title {
-            font-size: 1.4rem;
-            font-weight: bold;
+            font-size: 1rem;
+            color: #000000;
+            margin: 0 0 2px 0;
+            padding: 0;
+            font-weight: 700;
+            line-height: 1;
+            text-align: left;
+        }
+
+        .card-text {
+            font-size: 0.85rem;
+            color: #34495e;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1.1;
+        }
+
+        .card-text, .card-text * {
+            font-size: 0.85rem !important;
+            color: inherit;
+        }
+
+        .card-text strong {
+            font-weight: 500;
             color: #2c3e50;
         }
 
-        .btn {
-            border-radius: 8px;
+        .details-column p.card-text {
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1.1 !important;
         }
 
-        .btn-primary {
-            background-color: #1e88e5;
-            border: none;
+        /* Status indicators */
+        .status-low { color: #e74c3c; }
+        .status-warning { color: #e67e22; }
+        .status-good { color: #27ae60; }
+
+        /* Pie chart */
+        .chart-container {
+            flex: 0 0 90px;
+            height: 90px;
+            margin: 0;
         }
 
-        .btn-warning {
-            background-color: #ffb300;
-            border: none;
+        /* Progress bar */
+        .progress {
+            height: 4px;
+            margin: 25px 0 0 0;
+            width: 100%;
+            background: #ecf0f1;
         }
 
-        .btn-secondary {
-            background-color: #546e7a;
-            border: none;
+        .progress-bar {
+            transition: width 0.3s ease;
         }
 
-        .badge {
+        /* Messages */
+        .no-medications, .error-message {
+            text-align: center;
             font-size: 0.9rem;
-            padding: 5px 10px;
+            color: #7f8c8d;
+            padding: 10px;
         }
 
-        .link-button {
-            color: #1e88e5;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
+        .error-message {
+            color: #e74c3c;
         }
 
-        .link-button:hover {
-            text-decoration: underline;
+        /* Scrollbar */
+        .scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scroll-container::-webkit-scrollbar-track {
+            background: #ecf0f1;
+            border-radius: 3px;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 3px;
+        }
+
+        .scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+
+        /* Mobile view (max-width: 768px) */
+        @media (max-width: 768px) {
+            .scroll-container {
+                max-width: 100%; /* Full width on mobile */
+                padding: 3px; /* Reduced padding */
+            }
+
+            .card {
+                min-height: 200px; /* Increased for stacked layout */
+                padding: 3px;
+            }
+
+            .card-row {
+                flex-direction: column; /* Stack columns and chart */
+                height: auto; /* Allow natural height */
+                align-items: flex-start;
+            }
+
+            .card-details {
+                flex-direction: column; /* Stack columns vertically */
+                width: 100%;
+                padding: 0;
+            }
+
+            .details-column {
+                gap: 3px; /* Reduced gap for compactness */
+                padding: 5px 0; /* Consistent padding */
+            }
+
+            .card-details .details-column:first-child {
+                padding-left: 5px; /* Adjusted left padding for mobile */
+            }
+
+            .card-title {
+                font-size: 0.95rem; /* Slightly smaller for mobile */
+                margin-bottom: 5px;
+            }
+
+            .card-text {
+                font-size: 0.8rem; /* Slightly smaller for mobile */
+            }
+
+            .card-text, .card-text * {
+                font-size: 0.8rem !important;
+            }
+
+            .chart-container {
+                flex: 0 0 70px; /* Smaller pie chart */
+                height: 70px;
+                margin: 5px auto; /* Centered with gap */
+            }
+
+            .progress {
+                margin: 15px 0 0 0; /* Reduced gap for mobile */
+            }
         }
     </style>
 </head>
+
 <body>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
 
-    <div class="container">
-        <div class="mb-3">
-            <a href="javascript:history.back()" class="btn btn-secondary">⬅ Back</a>
-        </div>
-        <!-- Refill Alerts Table -->
-        <div class="card p-4 mb-4">
-            <h2 class="card-title text-center text-primary">📢 Refill Alerts</h2>
-            <table class="table table-hover mt-3">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Medication</th>
-                    </tr>
-                </thead>
-                <tbody id="alertBody">
-                    <!-- Populate dynamically via JS -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Medication Details Section -->
-        <div class="card p-4">
-            <h3 class="card-title text-primary">💊 Medication Details</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <label for="medication" class="form-label">Select Medication</label>
-                    <select class="form-control" id="medication" onchange="populateFields()">
-                        <option value="">-- Select --</option>
-                        <% if (medications && medications.length > 0) { %>
-                            <% medications.forEach(med => { %>
-                                <option value="<%= med.name %>"><%= med.name %></option>
-                            <% }) %>
-                        <% } else { %>
-                            <option value="" disabled>No medications available</option>
-                        <% } %>
-                    </select>
-                    <p class="mt-2">
-                        <a href="/dashboard/add-medicines" class="link-button">➕ Add New Medicine</a>
-                    </p>
+    <div class="main-content">
+        <div class="scroll-container">
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } else if (medications && medications.length > 0) { %>
+            <% medications.forEach((medication, index) => { %>
+            <div class="card">
+                <h2 class="card-title"><%= medication.name %></h2>
+                <div class="card-row">
+                    <div class="card-details">
+                        <div class="details-column">
+                            <p class="card-text"><strong>Dosage:</strong> <%= medication.dosage %> mg</p>
+                            <p class="card-text"><strong>Freq:</strong> <%= medication.frequency %></p>
+                            <p class="card-text"><strong>Dr:</strong> <%= medication.prescribingDoctor %></p>
+                        </div>
+                        <div class="details-column">
+                            <p class="card-text"><strong>End:</strong> <%= new Date(medication.endDate).toLocaleDateString() %></p>
+                            <p class="card-text"><strong>Inv:</strong> <%= medication.inventory %> units 
+                                <span class="<%= medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good' %>">
+                                    (<%= medication.inventoryStatus %>)
+                                </span>
+                            </p>
+                            <p class="card-text"><strong>Days:</strong> <%= medication.daysRemaining %> 
+                                <% if (medication.daysRemaining <= 7 && medication.daysRemaining > 0) { %>
+                                    <span class="status-low">(Urgent)</span>
+                                <% } else if (medication.daysRemaining <= 14 && medication.daysRemaining > 0) { %>
+                                    <span class="status-warning">(Soon)</span>
+                                <% } else if (medication.daysRemaining === 0 && medication.inventory === 0) { %>
+                                    <span class="status-low">(Out)</span>
+                                <% } %>
+                            </p>
+                            <p class="card-text"><strong>Refill:</strong> <%= medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString() %></p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="pieChart-<%= index %>"></canvas>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Dosage (mg)</label>
-                    <input type="number" class="form-control" id="dosage">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Prescribed By</label>
-                    <input type="text" class="form-control" id="doctor">
+                <div class="progress">
+                    <div class="progress-bar <%= medication.inventoryStatus === 'Low' ? 'bg-danger' : medication.inventoryStatus === 'Warning' ? 'bg-warning' : 'bg-success' %>"
+                         role="progressbar" style="width: <%= medication.inventoryPercentage %>%;"
+                         aria-valuenow="<%= medication.inventoryPercentage %>" aria-valuemin="0" aria-valuemax="100">
+                    </div>
                 </div>
             </div>
-
-            <h3 class="card-title mt-4 text-primary">📦 Inventory Status</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <label class="form-label">Remaining Quantity</label>
-                    <input type="number" class="form-control" id="remainingQty" oninput="calculateDaysLeft()">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Daily Consumption</label>
-                    <input type="number" class="form-control" id="dailyConsumption" oninput="calculateDaysLeft()">
-                </div>
-                <div class="col-md-6 mt-3">
-                    <label class="form-label">Estimated Days Left</label>
-                    <input type="text" class="form-control" id="daysLeft" readonly>
-                </div>
-            </div>
-
-            <h3 class="card-title mt-4 text-primary">🔔 Refill Settings</h3>
-            <div class="row">
-                <div class="col-md-6">
-                    <label class="form-label">Refill Reminder Date</label>
-                    <input type="date" class="form-control" id="refillDate">
-                </div>
-            </div>
-
-            <div class="mt-4">
-                <button class="btn btn-warning me-2" onclick="requestRefill()">Refill Now</button>
-            </div>
+            <% }) %>
+            <% } else { %>
+            <p class="no-medications">No active medications found.</p>
+            <% } %>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
     <script>
-        let refillHistory = [];
-
-        // Load medications dynamically (client-side fetch)
-        function loadMedications() {
-            fetch('/api/medications')
-                .then(response => response.json())
-                .then(medications => {
-                    let medicationSelect = document.getElementById("medication");
-                    medicationSelect.innerHTML = '<option value="">-- Select --</option>';
-                    if (medications && medications.length > 0) {
-                        medications.forEach(med => {
-                            let option = document.createElement("option");
-                            option.value = med.name;
-                            option.textContent = med.name;
-                            medicationSelect.appendChild(option);
-                        });
-                    } else {
-                        let option = document.createElement("option");
-                        option.value = "";
-                        option.textContent = "No medications available";
-                        option.disabled = true;
-                        medicationSelect.appendChild(option);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching medications:", error);
-                    let medicationSelect = document.getElementById("medication");
-                    medicationSelect.innerHTML = '<option value="">-- Select --</option><option value="" disabled>Error loading medications</option>';
-                });
-        }
-
-        function populateFields() {
-            let selectedMedication = document.getElementById("medication").value;
-            if (!selectedMedication) {
-                document.getElementById("dosage").value = "";
-                document.getElementById("doctor").value = "";
-                document.getElementById("remainingQty").value = "";
-                document.getElementById("dailyConsumption").value = "";
-                document.getElementById("daysLeft").value = "";
-                return;
-            }
-
-            fetch('/api/medications')
-                .then(response => response.json())
-                .then(medications => {
-                    const med = medications.find(m => m.name === selectedMedication);
-                    if (med) {
-                        document.getElementById("dosage").value = med.dosage || "";
-                        document.getElementById("doctor").value = med.doctor || "";
-                        document.getElementById("remainingQty").value = med.remainingQty || "";
-                        document.getElementById("dailyConsumption").value = med.dailyConsumption || 1;
-                        calculateDaysLeft();
-                    } else {
-                        document.getElementById("dosage").value = "";
-                        document.getElementById("doctor").value = "";
-                        document.getElementById("remainingQty").value = "";
-                        document.getElementById("dailyConsumption").value = "";
-                        document.getElementById("daysLeft").value = "";
-                    }
-                })
-                .catch(error => console.error("Error fetching medication details:", error));
-        }
-
-        function calculateDaysLeft() {
-            let remaining = parseInt(document.getElementById("remainingQty").value) || 0;
-            let daily = parseInt(document.getElementById("dailyConsumption").value) || 1;
-            let daysLeft = remaining > 0 ? Math.floor(remaining / daily) : 0;
-            document.getElementById("daysLeft").value = daysLeft;
-        }
-
-        function requestRefill() {
-            let med = document.getElementById("medication").value;
-            let dosage = document.getElementById("dosage").value;
-            let doctor = document.getElementById("doctor").value;
-            let date = new Date().toLocaleDateString();
-            
-            if (!med || !dosage || !doctor) {
-                alert("Please fill in all details before requesting a refill.");
-                return;
-            }
-
-            refillHistory.push({ medicine: med, dosage: dosage, doctor: doctor, date: date, quantity: 30 });
-            alert(`Refill requested for ${med} (${dosage}mg) prescribed by ${doctor}`);
-        }
-
-        document.addEventListener("DOMContentLoaded", loadMedications);
+        document.addEventListener('DOMContentLoaded', () => {
+            <% medications.forEach((medication, index) => { %>
+                const ctx<%= index %> = document.getElementById('pieChart-<%= index %>')?.getContext('2d');
+                if (ctx<%= index %>) {
+                    new Chart(ctx<%= index %>, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Remaining', 'Used'],
+                            datasets: [{
+                                data: [<%= medication.inventoryPercentage || 0 %>, <%= 100 - (medication.inventoryPercentage || 0) %>],
+                                backgroundColor: ['#27ae60', '#e74c3c'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            }
+                        }
+                    });
+                }
+            <% }) %>
+        });
     </script>
 
+    <%- include('../../partials/_scripts') %>
 </body>
+
 </html>

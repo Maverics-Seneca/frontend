@@ -24,6 +24,41 @@ app.use((req, res, next) => {
     next();
 });
 
+//functions:
+function calculateRefillAnalytics(medication, currentDate) {
+    const endDate = new Date(medication.endDate);
+    const dosesPerDay = {
+        'Once a day': 1,
+        'Twice a day': 2,
+        'Thrice a day': 3
+    }[medication.frequency] || 1;
+    const dailyUsage = dosesPerDay;
+    const totalDosesNeeded = Math.max(1, Math.ceil((endDate - currentDate) / (1000 * 60 * 60 * 24)) * dailyUsage); // Avoid division by zero
+    const inventoryDays = medication.inventory > 0 ? Math.floor(medication.inventory / dailyUsage) : 0;
+    const daysToEnd = Math.max(0, Math.floor((endDate - currentDate) / (1000 * 60 * 60 * 24)));
+    const daysRemaining = Math.min(inventoryDays, daysToEnd);
+    const nextRefillDate = new Date(currentDate);
+    if (inventoryDays > 0) {
+        nextRefillDate.setDate(currentDate.getDate() + inventoryDays);
+    } else {
+        nextRefillDate.setDate(currentDate.getDate());
+    }
+
+    let inventoryStatus = 'Good';
+    if (daysRemaining <= 7) inventoryStatus = 'Low';
+    else if (daysRemaining <= 14) inventoryStatus = 'Warning';
+
+    const inventoryPercentage = totalDosesNeeded > 0 ? Math.min(100, Math.max(0, (medication.inventory / totalDosesNeeded) * 100)) : 0;
+
+    return {
+        ...medication,
+        daysRemaining,
+        inventoryStatus,
+        nextRefillDate: nextRefillDate.toISOString().split('T')[0],
+        inventoryPercentage: inventoryPercentage.toFixed(2)
+    };
+}
+
 // Authentication middleware
 const authenticateUser = (req, res, next) => {
     const token = req.cookies.authToken; // Extract the authToken cookie
@@ -107,17 +142,34 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
     });
 });
 
-app.get('/refill-alerts', authenticateUser, (req, res) => {
-    console.log('Rendering refill-alerts page for user:', req.userId); // Debug: Log user ID
-    let medications = [];
-    // Check if the user is logged in
+// Render Refill-Alert page
+app.get('/refill-alerts', authenticateUser, async (req, res) => {
+    const patientId = req.userId;
     const isLoggedIn = !!req.cookies.authToken;
+    const currentDate = new Date('2025-03-10'); // Hardcoded for testing
 
-    res.render('pages/dashboard/refill-alerts', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name,
-        medications // Pass the user's name to the template
-    });
+    console.log('Rendering refill-alert page for user:', patientId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/medicine/get', {
+            params: { patientId }
+        });
+        const medications = response.data.map(med => calculateRefillAnalytics(med, currentDate));
+
+        res.render('pages/dashboard/refill-alerts', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: medications
+        });
+    } catch (error) {
+        console.error('Error fetching medications:', error.message);
+        res.render('pages/dashboard/refill-alerts', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: [],
+            error: 'Failed to load active medications'
+        });
+    }
 });
 
 app.get('/caretaker-profile', authenticateUser, async (req, res) => {
