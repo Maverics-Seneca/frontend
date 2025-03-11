@@ -547,6 +547,46 @@ app.post('/settings/:id', authenticateUser, async (req, res) => {
     }
 });
 
+// Render Add Reminder page
+app.get('/add-reminder', authenticateUser, (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering add-reminder page for user:', req.userId);
+
+    res.render('pages/dashboard/add-reminder', {
+        isLoggedIn: isLoggedIn,
+        userName: req.name
+    });
+});
+
+// Handle Add Reminder form submission
+app.post('/add-reminder', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const { title, description, datetime } = req.body;
+
+    console.log('Adding reminder for user:', { userId, title, description, datetime });
+
+    try {
+        const response = await axios.post('http://middleware:3001/reminders', {
+            userId,
+            title,
+            description,
+            datetime
+        });
+
+        if (response.status === 201) {
+            res.redirect('/medication-profile'); // Redirect to a relevant page after success
+        }
+    } catch (error) {
+        console.error('Error adding reminder:', error.message);
+        res.render('pages/dashboard/add-reminder', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            error: 'Failed to add reminder'
+        });
+    }
+});
+
 // Start the server
 app.listen(port, () => {
     console.log(`Frontend running on http://localhost:${port}`);
