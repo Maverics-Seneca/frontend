@@ -368,6 +368,35 @@ app.delete('/medicines/:id', authenticateUser, async (req, res) => {
     }
 });
 
+// Fetch all expired medications for the user
+app.get('/medication-history', authenticateUser, async (req, res) => {
+    const patientId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering medication-history page for user:', patientId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/medicine/history', {
+            params: { patientId }
+        });
+        const medications = response.data;
+
+        res.render('pages/dashboard/medication-history', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: medications
+        });
+    } catch (error) {
+        console.error('Error fetching medication history:', error.message);
+        res.render('pages/dashboard/medication-history', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: [],
+            error: 'Failed to load medication history'
+        });
+    }
+});
+
 app.post('/new-caretaker', authenticateUser, (req, res) => {
     const { name, relation, email, phone } = req.body;
     const patientId = req.userId; // Extract patientId from the authenticated request
