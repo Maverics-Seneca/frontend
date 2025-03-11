@@ -319,7 +319,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             medications: [],
-            error: 'Failed to load medications'
+            error: 'Failed to load active medications'
         });
     }
 });
@@ -365,6 +365,35 @@ app.delete('/medicines/:id', authenticateUser, async (req, res) => {
     } catch (error) {
         console.error('Error deleting medicine:', error.message);
         res.status(500).json({ error: 'Failed to delete medicine' });
+    }
+});
+
+// Fetch all expired medications for the user
+app.get('/medication-history', authenticateUser, async (req, res) => {
+    const patientId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering medication-history page for user:', patientId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/medicine/history', {
+            params: { patientId }
+        });
+        const medications = response.data;
+
+        res.render('pages/dashboard/medication-history', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: medications
+        });
+    } catch (error) {
+        console.error('Error fetching medication history:', error.message);
+        res.render('pages/dashboard/medication-history', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: [],
+            error: 'Failed to load medication history'
+        });
     }
 });
 
