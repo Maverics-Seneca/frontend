@@ -58,3 +58,36 @@
             resize: vertical;
             min-height: 100px;
         }
+
+        /* Button inside .form-container */
+        .form-container button[type="submit"] {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            /* Match input width */
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            margin: 0 auto;
+            /* Center the submit button */
+            display: block;
+            /* Ensure it behaves as a block element */
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button[type="submit"]:hover {
+            background: #2980b9;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
