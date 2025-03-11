@@ -319,7 +319,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             medications: [],
-            error: 'Failed to load medications'
+            error: 'Failed to load active medications'
         });
     }
 });

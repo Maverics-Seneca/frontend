@@ -90,7 +90,8 @@
             cursor: pointer;
             font-size: 0.9em;
             transition: background 0.3s ease;
-            margin-right: 5px; /* Space between buttons */
+            margin-right: 5px;
+            /* Space between buttons */
         }
 
         .add-medicine-btn:hover {
@@ -103,7 +104,8 @@
         }
 
         .medication-table .delete-btn {
-            background: #e74c3c; /* Red for delete */
+            background: #e74c3c;
+            /* Red for delete */
         }
 
         .medication-table .edit-btn:hover {
@@ -184,12 +186,14 @@
                         </td>
                         <td>
                             <select id="frequency-<%= medication.id %>" disabled>
-                                <option value="Once a day" <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
+                                <option value="Once a day"
+                                    <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
                                     Once a day</option>
-                                <option value="Twice a day" <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>
-                                    >Twice a day</option>
+                                <option value="Twice a day"
+                                    <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>>Twice a day</option>
                                 <option value="Thrice a day"
-                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day</option>
+                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day
+                                </option>
                             </select>
                         </td>
                         <td>
