@@ -40,3 +40,21 @@
             font-weight: bold;
             color: #444;
         }
+
+        /* Inputs and textarea inside .form-container */
+        .form-container input,
+        .form-container textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            /* Ensure inputs stretch to fit */
+            max-width: 300px;
+            /* Limit width for consistency */
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
