@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Add Reminder - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            /* Center all form groups */
+        }
+
+        /* Labels inside .form-container */
+        .form-container label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        /* Inputs and textarea inside .form-container */
+        .form-container input,
+        .form-container textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            /* Ensure inputs stretch to fit */
+            max-width: 300px;
+            /* Limit width for consistency */
+        }
+
+        .form-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Button inside .form-container */
+        .form-container button[type="submit"] {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            /* Match input width */
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            margin: 0 auto;
+            /* Center the submit button */
+            display: block;
+            /* Ensure it behaves as a block element */
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button[type="submit"]:hover {
+            background: #2980b9;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="form-container">
+            <h1>Add Reminder</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <form action="/add-reminder" method="POST" id="add-reminder-form">
+                <div class="form-group">
+                    <label for="title">Reminder Title</label>
+                    <input type="text" name="title" id="title" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="datetime">Date & Time</label>
+                    <input type="datetime-local" name="datetime" id="datetime" required />
+                </div>
+
+                <button type="submit">Add Reminder</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Restrict datetime to current and future dates
+        const datetimeInput = document.getElementById('datetime');
+        const now = new Date().toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM format
+        datetimeInput.setAttribute('min', now); // Set minimum to current date/time
+
+        // Form submission feedback
+        document.getElementById('add-reminder-form').addEventListener('submit', (e) => {
+            const title = document.getElementById('title').value.trim();
+            const datetime = document.getElementById('datetime').value;
+
+            if (!title || !datetime) {
+                e.preventDefault();
+                alert('Title and Date & Time are required.');
+            }
+        });
+    </script>
+
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
+</body>
+
+</html>
