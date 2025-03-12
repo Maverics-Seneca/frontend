@@ -130,6 +130,21 @@ The **Medication History** page displays a user's past medication details in a s
 ![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
 ### **🌟 Overview:**
 
+
+The **Add Patient** page enables users or caretakers to register new patients within MediTrack. It provides a straightforward form for entering essential patient details, including:
+
+- **Full Name**
+- **Date of Birth**
+- **Gender**
+- **Medical History**
+
+Additionally, there's a section to input the **Guardian Details**, comprising:
+
+- Guardian's Name
+- Relationship to Patient
+- Contact Information
+
+This form ensures efficient and accurate entry of patient-related information into the MediTrack system.
 ## **📌 Add Reminder **
 ![image](https://github.com/user-attachments/assets/216a8d24-4d72-4da6-a1eb-bd7d67e5b09d)
 ### **🌟 Overview:**
