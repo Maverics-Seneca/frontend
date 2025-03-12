@@ -78,16 +78,48 @@ MediTrack is a **medication management platform** designed to help users track t
 - Users must **agree to the terms** before proceeding.
 
 ## **📌 Dashboard **
-### **🌟 Overview:**
+![image](https://github.com/user-attachments/assets/0b489749-6386-4f54-abf0-999d979f92df)
 
-## **📌 Guardian profile **
-### **🌟 Overview:**
-## **📌 Patient Profile **
-### **🌟 Overview:**
-## **📌 medication profile **
 ### **🌟 Overview:**
 
 
+## **📌 Add Patient details **
+![image](https://github.com/user-attachments/assets/2d5c79c6-7135-40a4-8d3b-5e9a633e9d0c)
+
+### **🌟 Overview:**
+
+## **📌 Patient Information **
+![image](https://github.com/user-attachments/assets/fc680996-659c-44e4-a2e3-1f1dec31f755)
+
+### **🌟 Overview:**
+
+## **📌 Medication List**
+![image](https://github.com/user-attachments/assets/edb9758b-e183-405a-9075-fb21af32aaac)
+
+### **🌟 Overview:**
+
+## **📌 Medication History**
+![image](https://github.com/user-attachments/assets/f3c0f3bb-c8d9-4eed-b024-1430e0619415)
+### **🌟 Overview:**
+
+## **📌 Add Medication **
+![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
+### **🌟 Overview:**
+
+## **📌 Add Reminder **
+![image](https://github.com/user-attachments/assets/216a8d24-4d72-4da6-a1eb-bd7d67e5b09d)
+### **🌟 Overview:**
+
+## **📌 Caretaker list **
+![image](https://github.com/user-attachments/assets/33ac2cfa-9bc0-4e1d-a46f-aa6f989b72f9)
+### **🌟 Overview:**
+
+## **📌 Add Caretaker **
+![image](https://github.com/user-attachments/assets/b76c099f-6c67-4088-aebf-ddc1647d26a2)
+### **🌟 Overview:**
+
+## **📌 Account settings **
+![image](https://github.com/user-attachments/assets/733820e2-0e64-49ca-91aa-7eac64b7690f)
 
 
 
