@@ -81,6 +81,22 @@ MediTrack is a **medication management platform** designed to help users track t
 ![image](https://github.com/user-attachments/assets/0b489749-6386-4f54-abf0-999d979f92df)
 
 ### **🌟 Overview:**
+The **MediTrack Dashboard** serves as the central hub of the application, designed for intuitive navigation and easy access to essential features. The main content includes:
+
+- **Application Title and Tagline**:
+  - Clearly displays the name "**MediTrack**" along with the tagline: "*Track your medications, manage your health easily*," emphasizing its primary purpose.
+
+- **Feature Highlights**:
+  Three interactive cards prominently showcase core functionalities:
+  
+  1. **Manage Medications**:
+     - Allows users to add new medications, update existing prescriptions, and monitor dosage information effectively.
+
+  2. **Refill Alerts**:
+     - Provides timely notifications to ensure users never run out of their medications.
+
+  3. **Timely Reminders**:
+     - Helps users maintain adherence to medication schedules by sending timely reminders for each dose.
 
 
 ## **📌 Add Patient details **
