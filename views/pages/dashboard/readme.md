@@ -109,6 +109,13 @@ The **MediTrack Dashboard** serves as the central hub of the application, design
 
 ### **🌟 Overview:**
 
+The Patient Details page provides comprehensive information about an individual patient. It includes personal and medical information such as:
+
+Full Name of the patient
+Date of Birth
+Gender
+Medical History, listing known medical conditions (e.g., Diabetes, Hypertension)
+
 ## **📌 Medication List**
 ![image](https://github.com/user-attachments/assets/edb9758b-e183-405a-9075-fb21af32aaac)
 
