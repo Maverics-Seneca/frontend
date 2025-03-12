@@ -7,7 +7,8 @@
     <%- include('../../partials/_styles') %>
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -102,7 +103,8 @@
             line-height: 1.1;
         }
 
-        .card-text, .card-text * {
+        .card-text,
+        .card-text * {
             font-size: 0.85rem !important;
             color: inherit;
         }
@@ -119,9 +121,17 @@
         }
 
         /* Status indicators */
-        .status-low { color: #e74c3c; }
-        .status-warning { color: #e67e22; }
-        .status-good { color: #27ae60; }
+        .status-low {
+            color: #e74c3c;
+        }
+
+        .status-warning {
+            color: #e67e22;
+        }
+
+        .status-good {
+            color: #27ae60;
+        }
 
         /* Pie chart */
         .chart-container {
@@ -143,7 +153,8 @@
         }
 
         /* Messages */
-        .no-medications, .error-message {
+        .no-medications,
+        .error-message {
             text-align: center;
             font-size: 0.9rem;
             color: #7f8c8d;
@@ -181,20 +192,25 @@
             }
 
             .card {
-                min-height: 180px; /* Adjusted for two-column layout */
+                min-height: 180px;
+                /* Adjusted for two-column layout */
                 padding: 3px;
             }
 
             .card-row {
-                flex-direction: row; /* Two columns */
+                flex-direction: row;
+                /* Two columns */
                 height: auto;
                 align-items: flex-start;
-                gap: 5px; /* Gap between columns */
+                gap: 5px;
+                /* Gap between columns */
             }
 
             .card-details {
-                flex: 2; /* Larger share for details */
-                flex-direction: column; /* Stack details columns */
+                flex: 2;
+                /* Larger share for details */
+                flex-direction: column;
+                /* Stack details columns */
                 padding: 0;
                 width: auto;
             }
@@ -217,12 +233,14 @@
                 font-size: 0.8rem;
             }
 
-            .card-text, .card-text * {
+            .card-text,
+            .card-text * {
                 font-size: 0.8rem !important;
             }
 
             .chart-container {
-                flex: 1; /* Smaller share for chart */
+                flex: 1;
+                /* Smaller share for chart */
                 height: 70px;
                 width: 70px;
                 margin: 5px 0;
@@ -255,22 +273,26 @@
                             <p class="card-text"><strong>Dr:</strong> <%= medication.prescribingDoctor %></p>
                         </div>
                         <div class="details-column">
-                            <p class="card-text"><strong>End:</strong> <%= new Date(medication.endDate).toLocaleDateString() %></p>
-                            <p class="card-text"><strong>Inv:</strong> <%= medication.inventory %> units 
-                                <span class="<%= medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good' %>">
+                            <p class="card-text"><strong>End:</strong>
+                                <%= new Date(medication.endDate).toLocaleDateString() %></p>
+                            <p class="card-text"><strong>Inv:</strong> <%= medication.inventory %> units
+                                <span
+                                    class="<%= medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good' %>">
                                     (<%= medication.inventoryStatus %>)
                                 </span>
                             </p>
-                            <p class="card-text"><strong>Days:</strong> <%= medication.daysRemaining %> 
+                            <p class="card-text"><strong>Days:</strong> <%= medication.daysRemaining %>
                                 <% if (medication.daysRemaining <= 7 && medication.daysRemaining > 0) { %>
-                                    <span class="status-low">(Urgent)</span>
+                                <span class="status-low">(Urgent)</span>
                                 <% } else if (medication.daysRemaining <= 14 && medication.daysRemaining > 0) { %>
-                                    <span class="status-warning">(Soon)</span>
+                                <span class="status-warning">(Soon)</span>
                                 <% } else if (medication.daysRemaining === 0 && medication.inventory === 0) { %>
-                                    <span class="status-low">(Out)</span>
+                                <span class="status-low">(Out)</span>
                                 <% } %>
                             </p>
-                            <p class="card-text"><strong>Refill:</strong> <%= medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString() %></p>
+                            <p class="card-text"><strong>Refill:</strong>
+                                <%= medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString() %>
+                            </p>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -279,8 +301,8 @@
                 </div>
                 <div class="progress">
                     <div class="progress-bar <%= medication.inventoryStatus === 'Low' ? 'bg-danger' : medication.inventoryStatus === 'Warning' ? 'bg-warning' : 'bg-success' %>"
-                         role="progressbar" style="width: <%= medication.inventoryPercentage %>%;"
-                         aria-valuenow="<%= medication.inventoryPercentage %>" aria-valuemin="0" aria-valuemax="100">
+                        role="progressbar" style="width: <%= medication.inventoryPercentage %>%;"
+                        aria-valuenow="<%= medication.inventoryPercentage %>" aria-valuemin="0" aria-valuemax="100">
                     </div>
                 </div>
             </div>
@@ -291,33 +313,35 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             <% medications.forEach((medication, index) => { %>
                 const ctx<%= index %> = document.getElementById('pieChart-<%= index %>')?.getContext('2d');
-                if (ctx<%= index %>) {
-                    new Chart(ctx<%= index %>, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Remaining', 'Used'],
-                            datasets: [{
-                                data: [<%= medication.inventoryPercentage || 0 %>, <%= 100 - (medication.inventoryPercentage || 0) %>],
-                                backgroundColor: ['#27ae60', '#e74c3c'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            animation: {
-                                animateScale: true,
-                                animateRotate: true
-                            }
+            if (ctx <%= index %>) {
+                new Chart(ctx <%= index %>, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Remaining', 'Used'],
+                        datasets: [{
+                            data: [<%= medication.inventoryPercentage || 0 %>, <%= 100 - (medication.inventoryPercentage || 0) %>],
+                            backgroundColor: ['#27ae60', '#e74c3c'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
                         }
-                    });
-                }
+                    }
+                });
+            }
             <% }) %>
         });
     </script>

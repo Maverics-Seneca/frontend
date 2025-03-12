@@ -128,12 +128,14 @@
                         </td>
                         <td>
                             <select disabled>
-                                <option value="Once a day" <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
+                                <option value="Once a day"
+                                    <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
                                     Once a day</option>
-                                <option value="Twice a day" <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>
-                                    >Twice a day</option>
+                                <option value="Twice a day"
+                                    <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>>Twice a day</option>
                                 <option value="Thrice a day"
-                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day</option>
+                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day
+                                </option>
                             </select>
                         </td>
                         <td>
