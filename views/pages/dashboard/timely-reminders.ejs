@@ -17,7 +17,38 @@
                 <button class="add-reminder-btn" onclick="window.location.href='/add-reminder'">Add Reminder</button>
             </div>
         </div>        
-        <!-- Content will be added here -->
+
+        <!-- Reminders Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Date & Time</th>
+                    <th>Completed</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="reminders-list">
+                <% if (reminders && reminders.length > 0) { %>
+                    <% reminders.forEach(reminder => { %>
+                    <tr data-id="<%= reminder.reminderId %>">
+                        <td><input type="text" id="title-<%= reminder.reminderId %>" value="<%= reminder.title %>" disabled required /></td>
+                        <td><textarea id="description-<%= reminder.reminderId %>" disabled><%= reminder.description %></textarea></td>
+                        <td><input type="datetime-local" id="datetime-<%= reminder.reminderId %>" value="<%= reminder.datetime %>" disabled required /></td>
+                        <td><input type="checkbox" id="completed-<%= reminder.reminderId %>" <%= reminder.completed ? 'checked' : '' %> disabled /></td>
+                        <td>
+                            <button class="edit-btn" data-id="<%= reminder.reminderId %>">Edit</button>
+                            <button class="save-btn" data-id="<%= reminder.reminderId %>">Save</button>
+                            <button class="delete-btn" data-id="<%= reminder.reminderId %>">Delete</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="5" style="text-align: center;">No reminders found.</td></tr>
+                <% } %>
+            </tbody>
+        </table>
     </div>
 
     <%- include('../../partials/_scripts') %>
