@@ -4,6 +4,90 @@
     <title>Timely Reminders - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
+    <style>
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .reminders-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+
+        .reminders-table th,
+        .reminders-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .reminders-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .reminders-table td {
+            background: #fafafa;
+        }
+
+        .reminders-table input,
+        .reminders-table textarea {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .reminders-table textarea {
+            resize: vertical;
+            min-height: 50px;
+        }
+
+        .reminders-table input:disabled,
+        .reminders-table textarea:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+        }
+
+        .edit-btn,
+        .save-btn,
+        .delete-btn,
+        .add-reminder-btn {
+            color: white;
+            padding: 6px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .edit-btn { background: #3498db; }
+        .save-btn { background: #2ecc71; display: none; }
+        .delete-btn { background: #e74c3c; }
+        .add-reminder-btn { background: #3498db; }
+
+        .add-reminder-btn:hover { background: #2980b9; }
+
+        @media (max-width: 768px) {
+            .header-container { flex-direction: column; }
+            .reminders-table { font-size: 0.9em; }
+        }
+    </style>
 </head>
 <body>
     <%- include('../../partials/_sidebar') %>
@@ -16,10 +100,10 @@
                 <h1>Timely Reminders</h1>
                 <button class="add-reminder-btn" onclick="window.location.href='/add-reminder'">Add Reminder</button>
             </div>
-        </div>        
+        </div>
 
         <!-- Reminders Table -->
-        <table>
+        <table class="reminders-table">
             <thead>
                 <tr>
                     <th>Title</th>
