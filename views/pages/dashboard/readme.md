@@ -151,8 +151,16 @@ This structured view enables users to efficiently track and manage their ongoing
 ## **📌 Medication History**
 ![image](https://github.com/user-attachments/assets/f3c0f3bb-c8d9-4eed-b024-1430e0619415)
 ### **🌟 Overview:**
-### Medication History Page
-The **Medication History** page displays a user's past medication details in a structured table format, including medication name, dosage (mg), frequency, prescribing doctor, end date, and inventory status. If no past medication records exist or if the data fails to load, a clear message, such as *"No past medications found"* or *"Failed to load medication history,"* is presented to inform the user accordingly.
+The **Medication History** page provides an overview of past medications that the user has taken. It includes a structured table displaying key details for each past medication, such as:
+
+**Name**: The name of the medication.
+**Dosage (mg)**: The prescribed dosage per intake.
+**Frequency**: How often the medication was taken (e.g., once a day).
+**Prescribing Doctor**: The name of the doctor who prescribed the medication.
+**End Date**: The date when the medication course was completed.
+**Inventory**: The remaining stock of the medication at the time of completion.
+If there are no past medications or if the data fails to load, a message is displayed stating "No past medications found" or "Failed to load medication history." This ensures clarity for users regarding their medication records.
+
 ## **📌 Add Medication **
 ![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
 ### **🌟 Overview:**
