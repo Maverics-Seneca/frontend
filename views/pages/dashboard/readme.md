@@ -188,6 +188,13 @@ At the bottom, an "**Add Reminder**" button allows users to save the reminder, e
 ## **📌 Caretaker list **
 ![image](https://github.com/user-attachments/assets/33ac2cfa-9bc0-4e1d-a46f-aa6f989b72f9)
 ### **🌟 Overview:**
+The **Caretaker List** page displays a list of caretakers associated with the user. It includes a table with the following columns:
+
+**Name**: The caretaker’s full name.
+**Relation**: The relationship between the caretaker and the patient (e.g., spouse, parent, sibling).
+**Contact Number**: The caretaker's phone number for easy communication.
+**Email**: The caretaker’s email address.
+**Action**: Provides options to manage caretakers, such as editing or deleting their details.
 
 ## **📌 Add Caretaker **
 ![image](https://github.com/user-attachments/assets/b76c099f-6c67-4088-aebf-ddc1647d26a2)
