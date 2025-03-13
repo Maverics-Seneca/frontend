@@ -199,7 +199,12 @@ The **Caretaker List** page displays a list of caretakers associated with the us
 ## **📌 Add Caretaker **
 ![image](https://github.com/user-attachments/assets/b76c099f-6c67-4088-aebf-ddc1647d26a2)
 ### **🌟 Overview:**
+The **Add Caretaker** page allows users to register a caretaker who can assist with managing medications and health tracking. The form includes the following fields:
 
+**Name**: The full name of the caretaker.
+**Relation to Patient**: A dropdown menu to specify the caretaker’s relationship with the patient (e.g., parent, spouse, sibling).
+**Caretaker Contact Number**: The caretaker’s phone number for communication.
+**Caretaker Email**: The caretaker’s email address for notifications and updates.
 ## **📌 Account settings **
 ![image](https://github.com/user-attachments/assets/733820e2-0e64-49ca-91aa-7eac64b7690f)
 
