@@ -164,6 +164,15 @@ If there are no past medications or if the data fails to load, a message is disp
 ## **📌 Add Medication **
 ![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
 ### **🌟 Overview:**
+The **Add Medicine** page allows users to add new medications to the MediTrack system. It features a structured form with input fields for essential medication details, including:
+
+**Medicine Name**: The name of the prescribed medication.
+**Dosage (mg)**: The amount of medication to be taken per dose.
+**Frequency**: A dropdown menu to select how often the medication should be taken (e.g., once a day).
+**Prescribing Doctor**: The name of the doctor who prescribed the medication.
+**End Date**: A date picker to specify the duration of the medication course.
+**Inventory**: A counter input field to set the initial stock of the medication.
+At the bottom of the form, an "Add Medicine" button is provided to submit the details and save the medication in the system. This page ensures that users can efficiently log and manage their medications within the MediTrack platform.
 
 
 ## **📌 Add Reminder **
