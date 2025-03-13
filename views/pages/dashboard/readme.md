@@ -207,6 +207,12 @@ The **Add Caretaker** page allows users to register a caretaker who can assist w
 **Caretaker Email**: The caretaker’s email address for notifications and updates.
 ## **📌 Account settings **
 ![image](https://github.com/user-attachments/assets/733820e2-0e64-49ca-91aa-7eac64b7690f)
+### **🌟 Overview:**
 
+The **Account Settings** page allows users to manage their personal information and update their credentials. It contains the following fields:
 
+**Name**: Displays the user’s registered name.
+**Email**: Shows the user’s email address (non-editable).
+**New Password**: A field for entering a new password to update account security.
+At the bottom, an "**Edit**" button allows users to submit changes. This page ensures that users can update their login credentials securely.
 
