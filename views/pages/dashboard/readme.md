@@ -102,35 +102,6 @@ The **MediTrack Dashboard** serves as the central hub of the application, design
 ## **📌 Add Patient details **
 ![image](https://github.com/user-attachments/assets/2d5c79c6-7135-40a4-8d3b-5e9a633e9d0c)
 
-### **🌟 Overview:**
-
-## **📌 Patient Information **
-![image](https://github.com/user-attachments/assets/fc680996-659c-44e4-a2e3-1f1dec31f755)
-
-### **🌟 Overview:**
-
-The Patient Details page provides comprehensive information about an individual patient. It includes personal and medical information such as:
-
-Full Name of the patient
-Date of Birth
-Gender
-Medical History, listing known medical conditions (e.g., Diabetes, Hypertension)
-
-## **📌 Medication List**
-![image](https://github.com/user-attachments/assets/edb9758b-e183-405a-9075-fb21af32aaac)
-
-### **🌟 Overview:**
-
-## **📌 Medication History**
-![image](https://github.com/user-attachments/assets/f3c0f3bb-c8d9-4eed-b024-1430e0619415)
-### **🌟 Overview:**
-### Medication History Page
-The **Medication History** page displays a user's past medication details in a structured table format, including medication name, dosage (mg), frequency, prescribing doctor, end date, and inventory status. If no past medication records exist or if the data fails to load, a clear message, such as *"No past medications found"* or *"Failed to load medication history,"* is presented to inform the user accordingly.
-## **📌 Add Medication **
-![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
-### **🌟 Overview:**
-
-
 The **Add Patient** page enables users or caretakers to register new patients within MediTrack. It provides a straightforward form for entering essential patient details, including:
 
 - **Full Name**
@@ -145,6 +116,48 @@ Additionally, there's a section to input the **Guardian Details**, comprising:
 - Contact Information
 
 This form ensures efficient and accurate entry of patient-related information into the MediTrack system.
+
+### **🌟 Overview:**
+
+## **📌 Patient Information **
+![image](https://github.com/user-attachments/assets/fc680996-659c-44e4-a2e3-1f1dec31f755)
+
+### **🌟 Overview:**
+
+The **Patient Details** page provides comprehensive information about an individual patient. It includes personal and medical information such as:
+
+**Full Name** of the patient
+**Date of Birth**
+**Gender**
+**Medical History**, listing known medical conditions (e.g., Diabetes, Hypertension)
+
+## **📌 Medication List**
+![image](https://github.com/user-attachments/assets/edb9758b-e183-405a-9075-fb21af32aaac)
+
+### **🌟 Overview:**
+
+The **Medication List** section displays a table containing details of all currently tracked medications. Each row in the table represents a medication entry with the following key attributes:
+
+**Name**: The name of the medication (e.g., Aspirin).
+**Dosage (mg)**: The prescribed dosage amount (e.g., 10 mg).
+**Frequency**: The schedule for taking the medication (e.g., Once a day).
+**Prescribing Doctor**: The name of the healthcare professional who prescribed the medication (e.g., Aisha).
+**End Date**: The date until which the medication should be taken (e.g., 31/03/2025).
+**Inventory**: The remaining stock of the medication (e.g., 10 tablets).
+**Action Buttons**:
+**Edit**: Allows modification of medication details.
+**Delete**: Removes the medication from the list.
+This structured view enables users to efficiently track and manage their ongoing medications, ensuring timely adherence and refills.
+## **📌 Medication History**
+![image](https://github.com/user-attachments/assets/f3c0f3bb-c8d9-4eed-b024-1430e0619415)
+### **🌟 Overview:**
+### Medication History Page
+The **Medication History** page displays a user's past medication details in a structured table format, including medication name, dosage (mg), frequency, prescribing doctor, end date, and inventory status. If no past medication records exist or if the data fails to load, a clear message, such as *"No past medications found"* or *"Failed to load medication history,"* is presented to inform the user accordingly.
+## **📌 Add Medication **
+![image](https://github.com/user-attachments/assets/567fedd8-a18b-46e5-a82d-8372a258021e)
+### **🌟 Overview:**
+
+
 ## **📌 Add Reminder **
 ![image](https://github.com/user-attachments/assets/216a8d24-4d72-4da6-a1eb-bd7d67e5b09d)
 ### **🌟 Overview:**
