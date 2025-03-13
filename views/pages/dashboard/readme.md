@@ -178,6 +178,12 @@ At the bottom of the form, an "Add Medicine" button is provided to submit the de
 ## **📌 Add Reminder **
 ![image](https://github.com/user-attachments/assets/216a8d24-4d72-4da6-a1eb-bd7d67e5b09d)
 ### **🌟 Overview:**
+The **Add Reminder** page allows users to create medication reminders to ensure timely adherence to their prescriptions. It consists of a structured form with the following input fields:
+
+**Reminder Title**: A short title for the reminder.
+**Description**: An optional text box to provide additional details about the reminder.
+**Date & Time**: A date and time picker to schedule the reminder.
+At the bottom, an "**Add Reminder**" button allows users to save the reminder, ensuring they receive timely notifications for their medications. This page helps users stay consistent with their medication schedules.
 
 ## **📌 Caretaker list **
 ![image](https://github.com/user-attachments/assets/33ac2cfa-9bc0-4e1d-a46f-aa6f989b72f9)
