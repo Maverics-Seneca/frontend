@@ -1,80 +1,81 @@
-## figma designs ##
+# **📌 Figma Designs - MediTrack UI**  
 
-1. LOGIN PAGE :
+Welcome to the **Figma UI Designs** section for **MediTrack**! Below are the initial UI layouts for different pages of the application, designed to provide a seamless **medication tracking experience**.  
 
-Overview
-This is the initial UI design for the Login Page of MediTrack, a medication tracking application. The login page allows users to access their accounts securely and provides options for password recovery and account registration.
+Each page includes an overview and key features to help users navigate the platform efficiently.  
 
-Features
-User Authentication:
 
-Login using Username/Email and Password.
-"Forgot Password?" option for account recovery.
-"Create one" link for new users to register.
-Modern UI Design:
 
-A futuristic medical-themed background featuring hexagonal elements representing pills, heart rate monitoring, a calendar, and other healthcare-related icons.
-Visually appealing and user-friendly layout.
-Login Action:
+## **1️⃣ Login Page - Secure User Access**  
 
-A prominent "LOGIN NOW" button for submitting credentials.
+🔹 **Design Preview:**  
+![Login Page](https://github.com/user-attachments/assets/b01f9022-6e8e-4953-acce-1ab1fbc3bdeb)  
 
-2.SIGN UP
+🔹 **Overview:**  
+The **Login Page** is the entry point for users to access **MediTrack** securely. It features a futuristic, **medical-themed** interface with easy-to-use authentication options.  
 
-Overview
-This is the Sign-Up Page design for MediTrack, a medication tracking application. The page allows new users to create an account by providing their details.
+🔹 **Key Features:**  
+✅ **User Authentication** – Login using **Username/Email & Password**  
+✅ **Password Recovery** – "Forgot Password?" link for easy reset  
+✅ **New User Registration** – "Create one" option for seamless sign-up  
+✅ **Modern UI** – A **futuristic background** with medical elements  
 
-Features
-User Information Fields:
+🚀 **Action:** Click on "**LOGIN NOW**" to enter the dashboard!  
 
-First Name & Last Name
-Gender Selection
-Email Address
-Password & Confirm Password
-Phone Number
-Date of Birth (MM/DD/YY format)
-Terms & Privacy Agreement:
 
-Users must check a box to accept the Terms of Use Agreement and Privacy Policy before creating an account.
-Account Creation:
 
-A "CREATE ACCOUNT" button allows users to submit the form and register.
+## **2️⃣ Sign-Up Page - Easy Account Creation**  
 
-3.FORGOT PASSWORD
+🔹 **Design Preview:**  
+![Sign-Up Page](https://github.com/user-attachments/assets/97fe8bec-84ce-4fcc-8cb5-c788e9fbe83e)  
 
-Overview
-This is the Forgot Password Page for MediTrack, designed to help users recover access to their accounts by resetting their passwords via email.
+🔹 **Overview:**  
+The **Sign-Up Page** allows new users to register and start tracking their medications easily.  
 
-Features
-Email Input Field:
+🔹 **Key Features:**  
+✅ **Personal Details** – First Name, Last Name, Gender, Email  
+✅ **Secure Password Setup** – Enter & Confirm Password  
+✅ **Additional Info** – Phone Number, Date of Birth (MM/DD/YY)  
+✅ **Legal Compliance** – Users must accept **Terms of Use & Privacy Policy**  
+✅ **Quick Account Creation** – Hit "**CREATE ACCOUNT**" to register instantly  
 
-Users enter their registered email address to receive a password reset link.
-Reset Link Action:
 
-A prominent "Send Reset Link" button in green allows users to submit their request.
-Navigation Options:
 
-A "Back to Login" link is provided for users who remember their password and want to return to the login page.
+## **3️⃣ Forgot Password Page - Easy Recovery**  
 
-4. DASHBOARD PAGE
+🔹 **Design Preview:**  
+![Forgot Password Page](https://github.com/user-attachments/assets/4d7c5781-fb25-4e4d-b3c5-958d0dcf669c)  
 
-Overview
-This is the Dashboard Page for MediTrack, providing users with an overview of their medication schedule, refill alerts, and medication history.
+🔹 **Overview:**  
+The **Forgot Password Page** ensures a hassle-free **password recovery** process for users.  
 
-Features
-User Greeting:
+🔹 **Key Features:**  
+✅ **Email Input Field** – Enter a registered email for password reset  
+✅ **Reset Link** – "**Send Reset Link**" button for quick action  
+✅ **Navigation** – "**Back to Login**" for users who recall their password  
 
-Displays a personalized welcome message ("HELLO JOHN!") to enhance user engagement.
-Next Medication Section:
+🔐 **Security First!** Users receive a **secure email link** to reset their password safely.  
 
-Shows the upcoming medication with its name, time, and remaining days.
-Refill Alert Section:
 
-Notifies the user about medications that need refilling, along with the remaining days.
-Medication History Section:
 
-Displays details of previously taken medications.
-Action Buttons:
+## **4️⃣ Dashboard Page - Centralized Medication Tracking**  
 
-"Add Medication" button to allow users to add new medications.
-"Log Out" button to securely exit the application.
+🔹 **Design Preview:**  
+![Dashboard Page](https://github.com/user-attachments/assets/d8760787-0b90-4094-a432-09cf9bcb136d)  
+
+🔹 **Overview:**  
+The **Dashboard Page** serves as the main hub for medication tracking, refill alerts, and history.  
+
+🔹 **Key Features:**  
+✅ **Personalized Greeting** – Displays **"Hello, [User]!"**  
+✅ **Next Medication Tracker** – Lists upcoming medications with time & remaining days  
+✅ **Refill Alerts** – Notifications on soon-to-expire medications  
+✅ **Medication History** – Logs previously taken medications  
+✅ **Quick Actions** –  
+   ➡ **"Add Medication"** – Easily add new prescriptions  
+   ➡ **"Log Out"** – Securely exit the application  
+
+
+
+🎯 **Conclusion:**  
+These Figma designs form the **foundation** of MediTrack’s user-friendly and secure interface. With a well-structured dashboard, effortless login, and a seamless sign-up process, the app ensures **efficient medication management**.  
