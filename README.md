@@ -55,3 +55,26 @@ A prominent "Send Reset Link" button in green allows users to submit their reque
 Navigation Options:
 
 A "Back to Login" link is provided for users who remember their password and want to return to the login page.
+
+4. DASHBOARD PAGE
+
+Overview
+This is the Dashboard Page for MediTrack, providing users with an overview of their medication schedule, refill alerts, and medication history.
+
+Features
+User Greeting:
+
+Displays a personalized welcome message ("HELLO JOHN!") to enhance user engagement.
+Next Medication Section:
+
+Shows the upcoming medication with its name, time, and remaining days.
+Refill Alert Section:
+
+Notifies the user about medications that need refilling, along with the remaining days.
+Medication History Section:
+
+Displays details of previously taken medications.
+Action Buttons:
+
+"Add Medication" button to allow users to add new medications.
+"Log Out" button to securely exit the application.
