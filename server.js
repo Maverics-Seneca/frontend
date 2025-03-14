@@ -376,6 +376,31 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
     }
 });
 
+// Logs page route
+app.get('/logs', authenticateUser, async (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering logs page for user:', req.userId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/logs');
+        const logs = response.data;
+
+        res.render('pages/dashboard/logs', {
+            isLoggedIn,
+            userName: req.name,
+            logs,
+        });
+    } catch (error) {
+        console.error('Error fetching logs:', error.message);
+        res.render('pages/dashboard/logs', {
+            isLoggedIn,
+            userName: req.name,
+            logs: [],
+            error: 'Failed to load logs',
+        });
+    }
+});
+
 // Update a medicine
 app.post('/medicines/:id', authenticateUser, async (req, res) => {
     const { id } = req.params;
