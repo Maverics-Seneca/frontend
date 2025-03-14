@@ -18,3 +18,24 @@ Visually appealing and user-friendly layout.
 Login Action:
 
 A prominent "LOGIN NOW" button for submitting credentials.
+
+2.SIGN -UP
+
+Overview
+This is the Sign-Up Page design for MediTrack, a medication tracking application. The page allows new users to create an account by providing their details.
+
+Features
+User Information Fields:
+
+First Name & Last Name
+Gender Selection
+Email Address
+Password & Confirm Password
+Phone Number
+Date of Birth (MM/DD/YY format)
+Terms & Privacy Agreement:
+
+Users must check a box to accept the Terms of Use Agreement and Privacy Policy before creating an account.
+Account Creation:
+
+A "CREATE ACCOUNT" button allows users to submit the form and register.
