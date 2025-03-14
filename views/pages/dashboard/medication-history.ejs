@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Medication History - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
-
     <style>
         /* Container for the form */
         .form-container {
@@ -52,6 +50,31 @@
             background: #f5f5f5;
             font-weight: bold;
             color: #444;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .medication-table th:hover {
+            background: #e9ecef;
+        }
+
+        /* Default sort indicator */
+        .medication-table th::after {
+            content: ' ↕'; /* Neutral sort icon */
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        /* Sorted column indicators */
+        .medication-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .medication-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
         }
 
         .medication-table td {
@@ -91,10 +114,9 @@
         }
     </style>
 </head>
-
 <body>
-    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
-    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -103,63 +125,157 @@
                 <h1>Medication History</h1>
             </div>
             <% if (typeof error !== 'undefined' && error) { %>
-            <p class="error-message"><%= error %></p>
+                <p class="error-message"><%= error %></p>
             <% } %>
-            <table class="medication-table">
+            <table class="medication-table" id="medicationTable">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Dosage (mg)</th>
-                        <th>Frequency</th>
-                        <th>Prescribing Doctor</th>
-                        <th>End Date</th>
-                        <th>Inventory</th>
+                        <th onclick="sortTable(0)">Name</th>
+                        <th onclick="sortTable(1)">Dosage (mg)</th>
+                        <th onclick="sortTable(2)">Frequency</th>
+                        <th onclick="sortTable(3)">Prescribing Doctor</th>
+                        <th onclick="sortTable(4)">End Date</th>
+                        <th onclick="sortTable(5)">Inventory</th>
                     </tr>
                 </thead>
-                <tbody id="medication-history">
+                <tbody id="medicationBody">
                     <% if (medications && medications.length > 0) { %>
-                    <% medications.forEach(medication => { %>
-                    <tr data-id="<%= medication.id %>">
-                        <td>
-                            <input type="text" value="<%= medication.name %>" disabled />
-                        </td>
-                        <td>
-                            <input type="number" value="<%= medication.dosage %>" disabled />
-                        </td>
-                        <td>
-                            <select disabled>
-                                <option value="Once a day"
-                                    <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>
-                                    Once a day</option>
-                                <option value="Twice a day"
-                                    <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>>Twice a day</option>
-                                <option value="Thrice a day"
-                                    <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day
-                                </option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" value="<%= medication.prescribingDoctor %>" disabled />
-                        </td>
-                        <td>
-                            <input type="date" value="<%= medication.endDate %>" disabled />
-                        </td>
-                        <td>
-                            <input type="number" value="<%= medication.inventory %>" disabled />
-                        </td>
-                    </tr>
-                    <% }) %>
+                        <% medications.forEach(medication => { %>
+                            <tr data-id="<%= medication.id %>">
+                                <td>
+                                    <input type="text" value="<%= medication.name %>" disabled />
+                                </td>
+                                <td>
+                                    <input type="number" value="<%= medication.dosage %>" disabled />
+                                </td>
+                                <td>
+                                    <select disabled>
+                                        <option value="Once a day" <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>Once a day</option>
+                                        <option value="Twice a day" <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>>Twice a day</option>
+                                        <option value="Thrice a day" <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" value="<%= medication.prescribingDoctor %>" disabled />
+                                </td>
+                                <td>
+                                    <input type="date" value="<%= medication.endDate %>" disabled />
+                                </td>
+                                <td>
+                                    <input type="number" value="<%= medication.inventory %>" disabled />
+                                </td>
+                            </tr>
+                        <% }) %>
                     <% } else { %>
-                    <tr>
-                        <td colspan="6" style="text-align: center;">No past medications found.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="6" style="text-align: center;">No past medications found.</td>
+                        </tr>
                     <% } %>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
-</body>
+    <script>
+        // Pass initial medications data from EJS to JavaScript
+        let medicationsData = <%- JSON.stringify(medications || []) %>;
 
+        // Track current sort column and direction
+        let sortColumn = -1;
+        let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        function sortTable(columnIndex) {
+            // Toggle sort direction if clicking the same column, otherwise reset to ascending
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            // Sort the medications data
+            medicationsData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Name
+                        aValue = a.name || '';
+                        bValue = b.name || '';
+                        break;
+                    case 1: // Dosage
+                        aValue = Number(a.dosage) || 0;
+                        bValue = Number(b.dosage) || 0;
+                        break;
+                    case 2: // Frequency
+                        aValue = a.frequency || '';
+                        bValue = b.frequency || '';
+                        break;
+                    case 3: // Prescribing Doctor
+                        aValue = a.prescribingDoctor || '';
+                        bValue = b.prescribingDoctor || '';
+                        break;
+                    case 4: // End Date
+                        aValue = a.endDate ? new Date(a.endDate).getTime() : -Infinity;
+                        bValue = b.endDate ? new Date(b.endDate).getTime() : -Infinity;
+                        break;
+                    case 5: // Inventory
+                        aValue = Number(a.inventory) || 0;
+                        bValue = Number(b.inventory) || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+
+            // Update the table body
+            renderTable();
+
+            // Update sort indicators
+            updateSortIndicators(columnIndex);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('medicationBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (medicationsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No past medications found.</td></tr>';
+                return;
+            }
+
+            medicationsData.forEach(medication => {
+                const row = document.createElement('tr');
+                row.dataset.id = medication.id;
+                row.innerHTML = `
+                    <td><input type="text" value="${medication.name}" disabled /></td>
+                    <td><input type="number" value="${medication.dosage}" disabled /></td>
+                    <td>
+                        <select disabled>
+                            <option value="Once a day" ${medication.frequency === 'Once a day' ? 'selected' : ''}>Once a day</option>
+                            <option value="Twice a day" ${medication.frequency === 'Twice a day' ? 'selected' : ''}>Twice a day</option>
+                            <option value="Thrice a day" ${medication.frequency === 'Thrice a day' ? 'selected' : ''}>Thrice a day</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${medication.prescribingDoctor}" disabled /></td>
+                    <td><input type="date" value="${medication.endDate}" disabled /></td>
+                    <td><input type="number" value="${medication.inventory}" disabled /></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#medicationTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+    </script>
+    <%- include('../../partials/_scripts') %>
+</body>
 </html>

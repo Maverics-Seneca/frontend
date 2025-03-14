@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Timely Reminders - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
-
     <style>
         /* Container for the form */
         .form-container {
@@ -52,6 +50,36 @@
             background: #f5f5f5;
             font-weight: bold;
             color: #444;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .reminders-table th:hover {
+            background: #e9ecef;
+        }
+
+        /* Default sort indicator */
+        .reminders-table th::after {
+            content: ' ↕'; /* Neutral sort icon */
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        /* Sorted column indicators */
+        .reminders-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .reminders-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        /* No sort indicator for Action column */
+        .reminders-table th:last-child::after {
+            content: '';
         }
 
         .reminders-table td {
@@ -148,10 +176,9 @@
         }
     </style>
 </head>
-
 <body>
-    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
-    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -161,48 +188,45 @@
                 <button class="add-reminder-btn" onclick="window.location.href='/add-reminder'">Add Reminder</button>
             </div>
             <% if (typeof error !== 'undefined' && error) { %>
-            <p class="error-message"><%= error %></p>
+                <p class="error-message"><%= error %></p>
             <% } %>
-            <table class="reminders-table">
+            <table class="reminders-table" id="remindersTable">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Date & Time</th>
-                        <th>Completed</th>
-                        <th>Action</th>
+                        <th onclick="sortTable(0)">Title</th>
+                        <th onclick="sortTable(1)">Description</th>
+                        <th onclick="sortTable(2)">Date & Time</th>
+                        <th onclick="sortTable(3)">Completed</th>
+                        <th>Action</th> <!-- No sorting for Action -->
                     </tr>
                 </thead>
-                <tbody id="reminders-list">
+                <tbody id="remindersBody">
                     <% if (reminders && reminders.length > 0) { %>
-                    <% reminders.forEach(reminder => { %>
-                    <tr data-id="<%= reminder.reminderId %>">
-                        <td>
-                            <input type="text" id="title-<%= reminder.reminderId %>" value="<%= reminder.title %>"
-                                disabled required />
-                        </td>
-                        <td>
-                            <textarea id="description-<%= reminder.reminderId %>" disabled><%= reminder.description %></textarea>
-                        </td>
-                        <td>
-                            <input type="datetime-local" id="datetime-<%= reminder.reminderId %>"
-                                value="<%= reminder.datetime %>" disabled required />
-                        </td>
-                        <td>
-                            <input type="checkbox" id="completed-<%= reminder.reminderId %>"
-                                <%= reminder.completed ? 'checked' : '' %> disabled />
-                        </td>
-                        <td>
-                            <button class="edit-btn" data-id="<%= reminder.reminderId %>">Edit</button>
-                            <button class="save-btn" data-id="<%= reminder.reminderId %>">Save</button>
-                            <button class="delete-btn" data-id="<%= reminder.reminderId %>">Delete</button>
-                        </td>
-                    </tr>
-                    <% }) %>
+                        <% reminders.forEach(reminder => { %>
+                            <tr data-id="<%= reminder.reminderId %>">
+                                <td>
+                                    <input type="text" id="title-<%= reminder.reminderId %>" value="<%= reminder.title %>" disabled required />
+                                </td>
+                                <td>
+                                    <textarea id="description-<%= reminder.reminderId %>" disabled><%= reminder.description %></textarea>
+                                </td>
+                                <td>
+                                    <input type="datetime-local" id="datetime-<%= reminder.reminderId %>" value="<%= reminder.datetime %>" disabled required />
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="completed-<%= reminder.reminderId %>" <%= reminder.completed ? 'checked' : '' %> disabled />
+                                </td>
+                                <td>
+                                    <button class="edit-btn" data-id="<%= reminder.reminderId %>">Edit</button>
+                                    <button class="save-btn" data-id="<%= reminder.reminderId %>">Save</button>
+                                    <button class="delete-btn" data-id="<%= reminder.reminderId %>">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) %>
                     <% } else { %>
-                    <tr>
-                        <td colspan="5" style="text-align: center;">No reminders found.</td>
-                    </tr>
+                        <tr>
+                            <td colspan="5" style="text-align: center;">No reminders found.</td>
+                        </tr>
                     <% } %>
                 </tbody>
             </table>
@@ -210,90 +234,190 @@
     </div>
 
     <script>
-        // Edit button logic
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = e.target.dataset.id;
-                const row = e.target.closest('tr');
-                const inputs = row.querySelectorAll('input, textarea');
-                const saveBtn = row.querySelector('.save-btn');
-                inputs.forEach(input => input.disabled = false);
-                e.target.style.display = 'none';
-                saveBtn.style.display = 'inline-block';
-            });
-        });
+        // Pass initial reminders data from EJS to JavaScript
+        let remindersData = <%- JSON.stringify(reminders || []) %>;
 
-        // Save button logic
-        document.querySelectorAll('.save-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = e.target.dataset.id;
-                const row = e.target.closest('tr');
-                const title = row.querySelector(`#title-${id}`).value.trim();
-                const description = row.querySelector(`#description-${id}`).value.trim();
-                const datetime = row.querySelector(`#datetime-${id}`).value;
-                const completed = row.querySelector(`#completed-${id}`).checked;
+        // Track current sort column and direction
+        let sortColumn = -1;
+        let sortDirection = 1; // 1 for ascending, -1 for descending
 
-                // Validation
-                if (!title || !datetime) {
-                    alert('Title and Date & Time are required.');
-                    return;
+        function sortTable(columnIndex) {
+            // Toggle sort direction if clicking the same column, otherwise reset to ascending
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            // Sort the reminders data
+            remindersData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Title
+                        aValue = a.title || '';
+                        bValue = b.title || '';
+                        break;
+                    case 1: // Description
+                        aValue = a.description || '';
+                        bValue = b.description || '';
+                        break;
+                    case 2: // Date & Time
+                        aValue = a.datetime ? new Date(a.datetime).getTime() : -Infinity;
+                        bValue = b.datetime ? new Date(b.datetime).getTime() : -Infinity;
+                        break;
+                    case 3: // Completed
+                        aValue = a.completed ? 1 : 0;
+                        bValue = b.completed ? 1 : 0;
+                        break;
+                    default:
+                        return 0;
                 }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
 
-                try {
-                    const response = await fetch(`/reminders/${id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ userId: '<%= userId %>', title, description, datetime, completed })
-                    });
+            // Update the table body
+            renderTable();
 
-                    if (response.ok) {
-                        const inputs = row.querySelectorAll('input, textarea');
-                        const editBtn = row.querySelector('.edit-btn');
-                        inputs.forEach(input => input.disabled = true);
-                        e.target.style.display = 'none';
-                        editBtn.style.display = 'inline-block';
-                        alert('Reminder updated successfully!');
-                    } else {
-                        const errorText = await response.text();
-                        alert('Failed to update reminder: ' + errorText);
+            // Update sort indicators
+            updateSortIndicators(columnIndex);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('remindersBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (remindersData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No reminders found.</td></tr>';
+                return;
+            }
+
+            remindersData.forEach(reminder => {
+                const row = document.createElement('tr');
+                row.dataset.id = reminder.reminderId;
+                row.innerHTML = `
+                    <td><input type="text" id="title-${reminder.reminderId}" value="${reminder.title}" disabled required /></td>
+                    <td><textarea id="description-${reminder.reminderId}" disabled>${reminder.description}</textarea></td>
+                    <td><input type="datetime-local" id="datetime-${reminder.reminderId}" value="${reminder.datetime}" disabled required /></td>
+                    <td><input type="checkbox" id="completed-${reminder.reminderId}" ${reminder.completed ? 'checked' : ''} disabled /></td>
+                    <td>
+                        <button class="edit-btn" data-id="${reminder.reminderId}">Edit</button>
+                        <button class="save-btn" data-id="${reminder.reminderId}">Save</button>
+                        <button class="delete-btn" data-id="${reminder.reminderId}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Reattach event listeners after rendering
+            attachEventListeners();
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#remindersTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
+        function attachEventListeners() {
+            // Edit button logic
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const inputs = row.querySelectorAll('input, textarea');
+                    const saveBtn = row.querySelector('.save-btn');
+                    inputs.forEach(input => input.disabled = false);
+                    e.target.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
+                });
+            });
+
+            // Save button logic
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const title = row.querySelector(`#title-${id}`).value.trim();
+                    const description = row.querySelector(`#description-${id}`).value.trim();
+                    const datetime = row.querySelector(`#datetime-${id}`).value;
+                    const completed = row.querySelector(`#completed-${id}`).checked;
+
+                    // Validation
+                    if (!title || !datetime) {
+                        alert('Title and Date & Time are required.');
+                        return;
                     }
-                } catch (error) {
-                    console.error('Error updating reminder:', error);
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        });
 
-        // Delete button logic
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = e.target.dataset.id;
-                const row = e.target.closest('tr');
-
-                if (confirm('Are you sure you want to delete this reminder?')) {
                     try {
                         const response = await fetch(`/reminders/${id}`, {
-                            method: 'DELETE',
+                            method: 'PUT',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ userId: '<%= userId %>' })
+                            body: JSON.stringify({ userId: '<%= userId %>', title, description, datetime, completed })
                         });
 
                         if (response.ok) {
-                            row.remove();
-                            alert('Reminder deleted successfully!');
+                            const inputs = row.querySelectorAll('input, textarea');
+                            const editBtn = row.querySelector('.edit-btn');
+                            inputs.forEach(input => input.disabled = true);
+                            e.target.style.display = 'none';
+                            editBtn.style.display = 'inline-block';
+                            // Update remindersData with new values
+                            const reminderIndex = remindersData.findIndex(r => r.reminderId === id);
+                            remindersData[reminderIndex] = { reminderId: id, title, description, datetime, completed };
+                            alert('Reminder updated successfully!');
                         } else {
                             const errorText = await response.text();
-                            alert('Failed to delete reminder: ' + errorText);
+                            alert('Failed to update reminder: ' + errorText);
                         }
                     } catch (error) {
-                        console.error('Error deleting reminder:', error);
+                        console.error('Error updating reminder:', error);
                         alert('An error occurred. Please try again.');
                     }
-                }
+                });
             });
-        });
-    </script>
-    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
-</body>
 
+            // Delete button logic
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+
+                    if (confirm('Are you sure you want to delete this reminder?')) {
+                        try {
+                            const response = await fetch(`/reminders/${id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ userId: '<%= userId %>' })
+                            });
+
+                            if (response.ok) {
+                                remindersData = remindersData.filter(r => r.reminderId !== id); // Remove from data
+                                row.remove(); // Remove the row from the table
+                                if (remindersData.length === 0) renderTable(); // Update if empty
+                                alert('Reminder deleted successfully!');
+                            } else {
+                                const errorText = await response.text();
+                                alert('Failed to delete reminder: ' + errorText);
+                            }
+                        } catch (error) {
+                            console.error('Error deleting reminder:', error);
+                            alert('An error occurred. Please try again.');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Initial call to attach event listeners
+        attachEventListeners();
+    </script>
+    <%- include('../../partials/_scripts') %>
+</body>
 </html>
