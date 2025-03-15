@@ -104,3 +104,46 @@
     </tr>
     <% } %>
 </tbody>
+
+<style>
+    .truncate-url {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    @media (max-width: 768px) {
+        .medication-table {
+            font-size: 0.9em;
+        }
+
+        .medication-table th,
+        .medication-table td {
+            padding: 8px;
+        }
+
+        .col-name {
+            width: 20%;
+        }
+
+        .col-description {
+            width: 40%;
+        }
+
+        .col-side-effects {
+            width: 25%;
+        }
+
+        .col-url {
+            width: 15%;
+        }
+
+        .truncate-url {
+            max-width: 100px;
+        }
+    }
+</style>
+
+
