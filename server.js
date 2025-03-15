@@ -112,6 +112,7 @@ app.get('/', (req, res) => {
 
 app.get('/sign-in', (req, res) => res.render('pages/auth/sign-in'));
 app.get('/sign-up', (req, res) => res.render('pages/auth/sign-up'));
+app.get('/sign-up-admin', (req, res) => res.render('pages/auth/sign-up-admin'));
 app.get('/recover-password', (req, res) => res.render('pages/auth/recover-password'));
 app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen'));
 app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail'));
@@ -553,6 +554,25 @@ app.post('/register', async (req, res) => {
         res.json(response.data);
     } catch (error) {
         console.error('Registration error:', error.message); // Debug: Log registration error
+        res.status(error.response?.status || 500).json({
+            error: error.response?.data?.message || 'Registration failed',
+        });
+    }
+});
+
+// Register route (for admin)
+app.post('/register-admin', async (req, res) => {
+    console.log('Register request received:', req.body);
+
+    try {
+        const response = await axios.post('http://middleware:3001/auth/register-admin', req.body, {
+            withCredentials: true,
+        });
+
+        console.log('Middleware response:', response.data);
+        res.json(response.data);
+    } catch (error) {
+        console.error('Registration error:', error.message);
         res.status(error.response?.status || 500).json({
             error: error.response?.data?.message || 'Registration failed',
         });

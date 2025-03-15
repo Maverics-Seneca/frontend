@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -85,9 +84,25 @@
         .btn-primary-subtle:hover {
             background-color: #087f75;
         }
+
+        .admin-signup-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .admin-signup-text a {
+            color: #0aab93;
+            text-decoration: none;
+        }
+
+        .admin-signup-text a:hover {
+            text-decoration: underline;
+            color: #087f75;
+        }
     </style>
 </head>
-
 <body>
     <div class="sign-in-page">
         <div class="sign-in-container">
@@ -117,8 +132,7 @@
                     </div>
                     <div class="form-group">
                         <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password"
-                            required />
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required />
                     </div>
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input" id="termsCheck" required />
@@ -127,6 +141,9 @@
                         </label>
                     </div>
                     <button type="submit" class="btn-primary-subtle">Sign Up</button>
+                    <div class="admin-signup-text">
+                        Signing up as an admin? <a href="/sign-up-admin">Click here</a>
+                    </div>
                     <div class="text-center mt-3">
                         <span>Already have an account? <a href="/sign-in">Sign In</a></span>
                     </div>
@@ -138,18 +155,18 @@
     <!-- Bootstrap Modal for Dynamic Alerts -->
     <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="alertModalLabel">Notification</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alertModalLabel">Notification</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="alertModalBody">
+                    <!-- Message will be dynamically inserted here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-body" id="alertModalBody">
-            <!-- Message will be dynamically inserted here -->
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
         </div>
     </div>
 
@@ -165,7 +182,7 @@
             const registerForm = document.getElementById("signupForm");
 
             registerForm.addEventListener("submit", async function (event) {
-                event.preventDefault(); // Prevent form from submitting normally
+                event.preventDefault();
 
                 const fullName = document.getElementById("fullName").value.trim();
                 const email = document.getElementById("email").value.trim();
@@ -180,7 +197,6 @@
                     showAlert("Error", "Please enter your full name.");
                     return;
                 }
-
                 if (!emailRegex.test(email)) {
                     showAlert("Error", "Please enter a valid email address.");
                     return;
@@ -189,19 +205,16 @@
                     showAlert("Error", "Please enter a valid phone number (10-15 digits).");
                     return;
                 }
-
                 if (password.length < 8) {
                     showAlert("Error", "Password must be at least 8 characters long.");
                     return;
                 }
-
-                if (!termsChecked) {
-                    showAlert("Error", "You must accept the Terms and Conditions.");
-                    return;
-                }
-
                 if (password !== confirmPassword) {
                     showAlert("Error", "Passwords do not match!");
+                    return;
+                }
+                if (!termsChecked) {
+                    showAlert("Error", "You must accept the Terms and Conditions.");
                     return;
                 }
 
@@ -218,9 +231,9 @@
                     const result = await response.json();
                     if (response.ok) {
                         showAlert("Success", "Registration successful! Redirecting...");
-                        window.location.href = "/sign-in";
+                        setTimeout(() => window.location.href = "/sign-in", 2000); // Added delay
                     } else {
-                        showAlert("Error", "Registration failed. Please try again.");
+                        showAlert("Error", result.message || "Registration failed. Please try again.");
                     }
                 } catch (error) {
                     console.error("Error:", error);
@@ -228,8 +241,6 @@
                 }
             });
         });
-
     </script>
 </body>
-
 </html>
