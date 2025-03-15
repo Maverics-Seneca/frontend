@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Medicine Details - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+</head>
+<body>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
+</body>
+</html>
+
+<style>
+    .form-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .form-container h1 {
+        font-size: 2rem;
+        margin-bottom: 25px;
+        text-align: center;
+        color: #333;
+    }
+
+    .header-container {
+        padding: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+</style>
+
+<style>
+    .table-container {
+        width: 100%;
+        max-height: 70vh;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        position: relative;
+    }
+
+    .medication-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+    }
+
+    .medication-table thead {
+        position: sticky;
+        top: 0;
+        background: #f5f5f5;
+        z-index: 1000;
+    }
+</style>
+
+<div class="table-container">
+    <table class="medication-table">
+        <thead>
+            <tr>
+                <th class="col-name">Name</th>
+                <th class="col-description">Description</th>
+                <th class="col-side-effects">Side Effects</th>
+                <th class="col-url">More Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="4" style="text-align: center;">No medications found.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<tbody>
+    <% if (medications && medications.length > 0) { %>
+    <% medications.forEach(medication => { %>
+    <tr>
+        <td><%= medication.name %></td>
+        <td class="text-content"><%= medication.description %></td>
+        <td>
+            <ul class="side-effects-list">
+                <% medication.side_effects.forEach(effect => { %>
+                    <li><%= effect %></li>
+                <% }) %>
+            </ul>
+        </td>
+        <td>
+            <a href="<%= medication.url %>" target="_blank" class="truncate-url"><%= medication.url %></a>
+        </td>
+    </tr>
+    <% }) %>
+    <% } else { %>
+    <tr>
+        <td colspan="4" style="text-align: center;">No medications found.</td>
+    </tr>
+    <% } %>
+</tbody>
