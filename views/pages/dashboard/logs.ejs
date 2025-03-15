@@ -60,3 +60,49 @@
         </div>
     </div>
     
+
+    <script>
+        let sortDirection = 1;
+        let sortColumn = -1;
+        
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) sortDirection *= -1;
+            else sortDirection = 1;
+        
+            sortColumn = columnIndex;
+        
+            logsData.sort((a, b) => {
+                const keyMap = ['timestamp', 'action', 'userId', 'userName', 'entity', 'entityName', 'entityId'];
+                let aVal = a[keyMap[columnIndex]] || '';
+                let bVal = b[keyMap[columnIndex]] || '';
+        
+                if (columnIndex === 0) { // timestamp
+                    aVal = new Date(aVal).getTime();
+                    bVal = new Date(b[keyMap[columnIndex]]).getTime();
+                }
+        
+                return aVal > bVal ? sortDirection : -sortDirection;
+            });
+        
+            renderTable();
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('logsBody');
+            tbody.innerHTML = '';
+            logsData.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</td>
+                    <td>${log.action || 'N/A'}</td>
+                    <td>${log.userId ? log.userId.slice(0,6) + '....' : 'N/A'}</td>
+                    <td>${log.userName || 'N/A'}</td>
+                    <td>${log.entity || 'N/A'}</td>
+                    <td>${log.entityName || 'N/A'}</td>
+                    <td>${log.entityId ? log.entityId.slice(0,6) + '....' : 'N/A'}</td>
+                    <td>${log.details ? '...' : 'N/A'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
