@@ -376,6 +376,35 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
     }
 });
 
+// Fetch Medicine details for the user
+app.get('/medicine-details', authenticateUser, async (req, res) => {
+    const patientId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+
+    console.log('Rendering medicine details page for user:', patientId);
+
+    try {
+        const response = await axios.get('http://middleware:3001/medicine/details', {
+            params: { patientId }
+        });
+        const medications = response.data;
+
+        res.render('pages/dashboard/medicine-details', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: medications
+        });
+    } catch (error) {
+        console.error('Error fetching medicine details:', error.message);
+        res.render('pages/dashboard/medicine-details', {
+            isLoggedIn: isLoggedIn,
+            userName: req.name,
+            medications: [],
+            error: 'Failed to load Medicine details'
+        });
+    }
+});
+
 // Logs page route
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
