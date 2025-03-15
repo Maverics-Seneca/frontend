@@ -22,3 +22,41 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
+    <div class="main-content">
+        <div class="logs-container">
+            <h1>System Logs</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Action</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Entity</th>
+                        <th>Entity Name</th>
+                        <th>Entity ID</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (logs && logs.length > 0) { %>
+                        <% logs.forEach(log => { %>
+                            <tr>
+                                <td><%= log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A' %></td>
+                                <td><%= log.action || 'N/A' %></td>
+                                <td><%= log.userId ? log.userId.slice(0,6) + '....' : 'N/A' %></td>
+                                <td><%= log.userName || 'N/A' %></td>
+                                <td><%= log.entity || 'N/A' %></td>
+                                <td><%= log.entityName || 'N/A' %></td>
+                                <td><%= log.entityId ? log.entityId.slice(0,6) + '....' : 'N/A' %></td>
+                                <td>N/A</td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr><td colspan="8">No logs available.</td></tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
