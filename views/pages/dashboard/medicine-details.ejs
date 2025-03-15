@@ -79,3 +79,28 @@
     </table>
 </div>
 
+
+<tbody>
+    <% if (medications && medications.length > 0) { %>
+    <% medications.forEach(medication => { %>
+    <tr>
+        <td><%= medication.name %></td>
+        <td class="text-content"><%= medication.description %></td>
+        <td>
+            <ul class="side-effects-list">
+                <% medication.side_effects.forEach(effect => { %>
+                    <li><%= effect %></li>
+                <% }) %>
+            </ul>
+        </td>
+        <td>
+            <a href="<%= medication.url %>" target="_blank" class="truncate-url"><%= medication.url %></a>
+        </td>
+    </tr>
+    <% }) %>
+    <% } else { %>
+    <tr>
+        <td colspan="4" style="text-align: center;">No medications found.</td>
+    </tr>
+    <% } %>
+</tbody>
