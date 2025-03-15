@@ -20,6 +20,7 @@ app.set('views', path.join(__dirname, 'views'));
 // Debug: Log incoming requests
 app.use((req, res, next) => {
     console.log(`Incoming request: ${req.method} ${req.url}`);
+    console.log(`Incoming role: ${req.Role}`);
     console.log('Cookies:', req.cookies); // Log cookies for debugging
     next();
 });
@@ -59,16 +60,15 @@ function calculateRefillAnalytics(medication, currentDate) {
     };
 }
 
-// Authentication middleware
 const authenticateUser = (req, res, next) => {
     const token = req.cookies.authToken; // Extract the authToken cookie
     console.log('Token from cookie:', token); // Debug: Log the token
 
     if (!token) {
-        console.log('No token found, redirecting to home.'); // Debug: No token
+        console.log('No token found, redirecting to home.');
         return res.render('pages/index', {
             isLoggedIn: false,
-            message: 'Kindly sign in before accessing this page.', // Pass a message to the client
+            message: 'Kindly sign in before accessing this page.',
         });
     }
 
@@ -77,13 +77,15 @@ const authenticateUser = (req, res, next) => {
         req.userId = decoded.userId;
         req.email = decoded.email;
         req.name = decoded.name;
+        req.role = decoded.role; // Add role to req
+        console.log('Decoded token:', decoded); // Debug: Log the decoded token including role
         next();
     } catch (error) {
-        console.error('Token verification failed:', error.message); // Debug: Token verification error
+        console.error('Token verification failed:', error.message);
         res.clearCookie('authToken'); // Clear invalid token
         return res.render('pages/index', {
             isLoggedIn: false,
-            message: 'Session expired. Please sign in again.', // Pass a message to the client
+            message: 'Session expired. Please sign in again.',
         });
     }
 };
@@ -106,7 +108,8 @@ app.get('/', (req, res) => {
 
     res.render('pages/index', {
         isLoggedIn: !!req.cookies.authToken, // Boolean indicating if the user is logged in
-        userName: userName, // Pass the user's name to the template
+        userName: userName,
+        role: req.role,
     });
 });
 
@@ -127,7 +130,8 @@ app.get('/dashboard', authenticateUser, (req, res) => {
 
     res.render('pages/dashboard/dashboard', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
+        userName: req.name,
+        role: req.role,
     });
 });
 
@@ -139,7 +143,8 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
 
     res.render('pages/dashboard/add-medicines', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
+        userName: req.name,
+        role: req.role,
     });
 });
 
@@ -160,6 +165,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: medications
         });
     } catch (error) {
@@ -167,6 +173,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: [],
             error: 'Failed to load active medications'
         });
@@ -190,6 +197,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/caretaker-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             caretakers: caretakers // Pass caretakers to the template
         });
     } catch (error) {
@@ -198,6 +206,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/caretaker-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             caretakers: [],
             error: 'Failed to load caretakers'
         });
@@ -212,7 +221,8 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
 
     res.render('pages/dashboard/patient-profile', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
+        userName: req.name,
+        role: req.role // Pass the user's name to the template
     });
 });
 
@@ -222,9 +232,21 @@ app.get('/add-patient', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
+        // Check if the user has the 'admin' role
+        if (req.role !== 'admin') {
+            console.log('Access denied: User is not an admin');
+            return res.status(403).render('pages/error', {
+                isLoggedIn,
+                userName: req.name,
+                role: req.role,
+                message: 'Access denied. You must be an admin to view patients.',
+            });
+        }
+
     res.render('pages/dashboard/add-patient', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name, // Pass the user's name to the template
+        userName: req.name,
+        role: req.role // Pass the user's name to the template
     });
 });
 
@@ -235,6 +257,7 @@ app.get('/add-caretaker', authenticateUser, (req, res) => {
     res.render('pages/dashboard/add-caretaker', {
         isLoggedIn: isLoggedIn,
         userName: req.name,
+        role: req.role
     });
 });
 
@@ -281,6 +304,16 @@ app.delete('/caretakers/:id', authenticateUser, async (req, res) => {
 
 // POST Functions
 app.post('/add-patient', authenticateUser, (req, res) => {
+        // Check if the user has the 'admin' role
+        if (req.role !== 'admin') {
+            console.log('Access denied: User is not an admin');
+            return res.status(403).render('pages/error', {
+                isLoggedIn,
+                userName: req.name,
+                role: req.role,
+                message: 'Access denied. You must be an admin to add patients.',
+            });
+        }
     const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
     console.log('New Patient Added:', req.body); // Debug: Log new patient data
     res.redirect('/dashboard');
@@ -343,6 +376,7 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/add-medicines', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
+            role: req.role,
             error: error.response?.data?.error || 'Failed to add medicine'
         });
     }
@@ -364,6 +398,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: medications
         });
     } catch (error) {
@@ -371,6 +406,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: [],
             error: 'Failed to load active medications'
         });
@@ -393,6 +429,7 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: medications
         });
     } catch (error) {
@@ -400,16 +437,28 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: [],
             error: 'Failed to load Medicine details'
         });
     }
 });
 
-// Logs page route
+// Logs pageI want logs to shows only if the role is admin page route
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
-    console.log('Rendering logs page for user:', req.userId);
+    console.log('Rendering logs page for user:', req.userId, 'with role:', req.role);
+
+    // Check if the user has the 'admin' role
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view logs.',
+        });
+    }
 
     try {
         const response = await axios.get('http://middleware:3001/logs');
@@ -418,6 +467,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/logs', {
             isLoggedIn,
             userName: req.name,
+            role: req.role,
             logs,
         });
     } catch (error) {
@@ -425,6 +475,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/logs', {
             isLoggedIn,
             userName: req.name,
+            role: req.role,
             logs: [],
             error: 'Failed to load logs',
         });
@@ -491,6 +542,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: medications
         });
     } catch (error) {
@@ -498,6 +550,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             medications: [],
             error: 'Failed to load medication history'
         });
@@ -609,6 +662,7 @@ app.get('/settings', authenticateUser, async (req, res) => {
         res.render('pages/auth/settings', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             user: { userId, name: user.name, email: user.email }
         });
     } catch (error) {
@@ -616,6 +670,7 @@ app.get('/settings', authenticateUser, async (req, res) => {
         res.render('pages/auth/settings', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             user: null,
             error: 'Failed to load user data'
         });
@@ -708,6 +763,7 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/add-reminder', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
+            role: req.role,
             error: 'Failed to add reminder'
         });
     }
@@ -727,6 +783,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             userId: userId, // Pass userId to EJS
             reminders: reminders
         });
@@ -735,6 +792,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         res.render('pages/dashboard/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
+            role: req.role,
             userId: userId,
             reminders: [],
             error: 'Failed to load reminders'

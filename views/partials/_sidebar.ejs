@@ -8,6 +8,7 @@
         <li class="menu-item">
             <a href="/" class="menu-link">Dashboard</a>
         </li>
+        <% if (role === 'admin') { %>     
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Patient</a>
             <ul class="submenu">
@@ -15,6 +16,7 @@
                 <li><a href="/add-patient">Add Patient</a></li>
             </ul>
         </li>
+        <% } %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Medicines</a>
             <ul class="submenu">
@@ -48,7 +50,9 @@
             <a href="#" class="menu-link">Settings</a>
             <ul class="submenu">
                 <li><a href="/settings">Edit Information</a></li>
-                <li><a href="/logs">Logs</a></li>
+                <% if (role === 'admin') { %>
+                    <li><a href="/logs">Logs</a></li>
+                <% } %>
             </ul>
         </li>
     </ul>
