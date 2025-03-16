@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>All Organizations - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>All Organizations</h1>
+                <button class="add-organization-btn" onclick="window.location.href='/add-organization'">Add Organization</button>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+        </div>
+    </div>
+</body>
+
+</html>
