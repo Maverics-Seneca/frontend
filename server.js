@@ -388,7 +388,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
         const caretakers = response.data;
 
         // Render the page with caretaker data
-        res.render('pages/dashboard/caretaker-profile', {
+        res.render('pages/caretaker/caretaker-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -397,7 +397,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
     } catch (error) {
         console.error('Error fetching caretakers for profile:', error.message);
         // Render with an empty array if fetching fails
-        res.render('pages/dashboard/caretaker-profile', {
+        res.render('pages/caretaker/caretaker-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -593,7 +593,7 @@ app.get('/add-caretaker', authenticateUser, (req, res) => {
     console.log('Rendering add-caretaker page for user:', req.userId);
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/dashboard/add-caretaker', {
+    res.render('pages/caretaker/add-caretaker', {
         isLoggedIn: isLoggedIn,
         userName: req.name,
         role: req.role
