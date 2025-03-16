@@ -152,7 +152,7 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/dashboard/add-medicines', {
+    res.render('pages/medicines/add-medicines', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role,
@@ -712,7 +712,7 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             status: error.response?.status,
             data: error.response?.data
         });
-        res.render('pages/dashboard/add-medicines', {
+        res.render('pages/medicines/add-medicines', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -734,7 +734,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/dashboard/medication-profile', {
+        res.render('pages/medicines/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -742,7 +742,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medications:', error.message);
-        res.render('pages/dashboard/medication-profile', {
+        res.render('pages/medicines/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -765,7 +765,7 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/dashboard/medicine-details', {
+        res.render('pages/medicines/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -773,7 +773,7 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medicine details:', error.message);
-        res.render('pages/dashboard/medicine-details', {
+        res.render('pages/medicines/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -878,7 +878,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/dashboard/medication-history', {
+        res.render('pages/medicines/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -886,7 +886,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medication history:', error.message);
-        res.render('pages/dashboard/medication-history', {
+        res.render('pages/medicines/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
