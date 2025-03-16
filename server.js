@@ -212,7 +212,7 @@ app.get('/add-admin', authenticateUser, async (req, res) => {
         const organizations = response.data;
         console.log('Fetched organizations for add-admin:', organizations);
 
-        res.render('pages/dashboard/add-admin', {
+        res.render('pages/owner/add-admin', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -221,7 +221,7 @@ app.get('/add-admin', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching organizations for add-admin:', error.message);
-        res.render('pages/dashboard/add-admin', {
+        res.render('pages/owner/add-admin', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -265,7 +265,7 @@ app.post('/add-admin', authenticateUser, async (req, res) => {
         const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
         const organizations = orgResponse.data;
 
-        res.render('pages/dashboard/add-admin', {
+        res.render('pages/owner/add-admin', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -278,7 +278,7 @@ app.post('/add-admin', authenticateUser, async (req, res) => {
         const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
         const organizations = orgResponse.data;
 
-        res.render('pages/dashboard/add-admin', {
+        res.render('pages/owner/add-admin', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -315,7 +315,7 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
         })) : [];
         console.log('Fetched admins:', admins);
 
-        res.render('pages/dashboard/all-admins', {
+        res.render('pages/owner/all-admins', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -323,7 +323,7 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching admins:', error.message);
-        res.render('pages/dashboard/all-admins', {
+        res.render('pages/owner/all-admins', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -436,7 +436,7 @@ app.get('/add-organization', authenticateUser, (req, res) => {
         });
     }
 
-    res.render('pages/dashboard/add-organization', {
+    res.render('pages/owner/add-organization', {
         isLoggedIn,
         userName: req.name,
         role: req.role,
@@ -470,7 +470,7 @@ app.post('/add-organization', authenticateUser, async (req, res) => {
         res.redirect('/all-organizations');
     } catch (error) {
         console.error('Error adding organization:', error.message);
-        res.render('pages/dashboard/add-organization', {
+        res.render('pages/owner/add-organization', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -512,7 +512,7 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
         }) : [];
         console.log('Processed organizations:', organizations);
 
-        res.render('pages/dashboard/all-organizations', {
+        res.render('pages/owner/all-organizations', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -520,7 +520,7 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching organizations:', error.message);
-        res.render('pages/dashboard/all-organizations', {
+        res.render('pages/owner/all-organizations', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
