@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>System Logs - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .main-content {
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .logs-container {
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        .logs-container h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+        th:hover {
+            background: #e9ecef;
+        }
+        /* Default sort indicator */
+        th::after {
+            content: ' ↕'; /* Neutral sort icon (up-down arrow) */
+            font-size: 0.9rem;
+            color: #888; /* Subtle gray */
+            margin-left: 5px;
+        }
+        /* Override default when sorted */
+        .sort-asc::after {
+            content: ' ↑';
+            color: #333; /* Darker for visibility */
+        }
+        .sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+        .details-list {
+            margin: 0;
+            padding-left: 15px;
+            list-style-type: none;
+            font-size: 0.9rem;
+        }
+        .details-list li {
+            margin-bottom: 5px;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 768px) {
+            .main-content { padding: 10px; }
+            .logs-container { padding: 10px; }
+            th, td { font-size: 0.85rem; padding: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
+
+    <div class="main-content">
+        <div class="logs-container">
+            <h1>System Logs</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+            <% if (logs && logs.length > 0) { %>
+                <table id="logsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Timestamp</th>
+                            <th onclick="sortTable(1)">Action</th>
+                            <th onclick="sortTable(2)">User ID</th>
+                            <th onclick="sortTable(3)">User Name</th>
+                            <th onclick="sortTable(4)">Entity</th>
+                            <th onclick="sortTable(5)">Entity Name</th>
+                            <th onclick="sortTable(6)">Entity ID</th>
+                            <th onclick="sortTable(7)">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody">
+                        <% logs.forEach(log => { %>
+                            <tr>
+                                <td><%= log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A' %></td>
+                                <td><%= log.action || 'N/A' %></td>
+                                <td><%= log.userId ? log.userId.slice(0, 6) + '....' : 'N/A' %></td>
+                                <td><%= log.userName || 'N/A' %></td>
+                                <td><%= log.entity || 'N/A' %></td>
+                                <td><%= log.entityName || 'N/A' %></td>
+                                <td><%= log.entityId ? log.entityId.slice(0, 6) + '....' : 'N/A' %></td>
+                                <td>
+                                    <% if (log.details && Object.keys(log.details).length > 0) { %>
+                                        <ul class="details-list">
+                                            <% if (log.entity === 'Medication') { %>
+                                                <% if (log.details.data) { %>
+                                                    <li><strong>Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.data.name || 'N/A' %></li>
+                                                            <li>Dosage: <%= log.details.data.dosage || 'N/A' %> mg</li>
+                                                            <li>Frequency: <%= log.details.data.frequency || 'N/A' %></li>
+                                                            <li>Doctor: <%= log.details.data.prescribingDoctor || 'N/A' %></li>
+                                                            <li>End Date: <%= log.details.data.endDate || 'N/A' %></li>
+                                                            <li>Inventory: <%= log.details.data.inventory || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.oldData) { %>
+                                                    <li><strong>Old Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.oldData.name || 'N/A' %></li>
+                                                            <li>Dosage: <%= log.details.oldData.dosage || 'N/A' %> mg</li>
+                                                            <li>Frequency: <%= log.details.oldData.frequency || 'N/A' %></li>
+                                                            <li>Doctor: <%= log.details.oldData.prescribingDoctor || 'N/A' %></li>
+                                                            <li>End Date: <%= log.details.oldData.endDate || 'N/A' %></li>
+                                                            <li>Inventory: <%= log.details.oldData.inventory || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.newData) { %>
+                                                    <li><strong>New Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.newData.name || 'N/A' %></li>
+                                                            <li>Dosage: <%= log.details.newData.dosage || 'N/A' %> mg</li>
+                                                            <li>Frequency: <%= log.details.newData.frequency || 'N/A' %></li>
+                                                            <li>Doctor: <%= log.details.newData.prescribingDoctor || 'N/A' %></li>
+                                                            <li>End Date: <%= log.details.newData.endDate || 'N/A' %></li>
+                                                            <li>Inventory: <%= log.details.newData.inventory || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                            <% } else if (log.entity === 'Caretaker') { %>
+                                                <% if (log.details.data) { %>
+                                                    <li><strong>Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.data.name || 'N/A' %></li>
+                                                            <li>Relation: <%= log.details.data.relation || 'N/A' %></li>
+                                                            <li>Email: <%= log.details.data.email || 'N/A' %></li>
+                                                            <li>Phone: <%= log.details.data.phone || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.oldData) { %>
+                                                    <li><strong>Old Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.oldData.name || 'N/A' %></li>
+                                                            <li>Relation: <%= log.details.oldData.relation || 'N/A' %></li>
+                                                            <li>Email: <%= log.details.oldData.email || 'N/A' %></li>
+                                                            <li>Phone: <%= log.details.oldData.phone || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.newData) { %>
+                                                    <li><strong>New Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.newData.name || 'N/A' %></li>
+                                                            <li>Relation: <%= log.details.newData.relation || 'N/A' %></li>
+                                                            <li>Email: <%= log.details.newData.email || 'N/A' %></li>
+                                                            <li>Phone: <%= log.details.newData.phone || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                            <% } else if (log.entity === 'User') { %>
+                                                <% if (log.details.data) { %>
+                                                    <li><strong>Data:</strong>
+                                                        <ul>
+                                                            <li>Email: <%= log.details.data.email || 'N/A' %></li>
+                                                            <% if (log.action === 'REGISTER') { %>
+                                                                <li>Name: <%= log.details.data.name || 'N/A' %></li>
+                                                                <li>Role: <%= log.details.data.role || 'N/A' %></li>
+                                                            <% } %>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.oldData) { %>
+                                                    <li><strong>Old Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.oldData.name || 'N/A' %></li>
+                                                            <li>Email: <%= log.details.oldData.email || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.newData) { %>
+                                                    <li><strong>New Data:</strong>
+                                                        <ul>
+                                                            <li>Name: <%= log.details.newData.name || 'N/A' %></li>
+                                                            <li>Email: <%= log.details.newData.email || 'N/A' %></li>
+                                                            <li>Password: <%= log.details.newData.password || 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.reason) { %>
+                                                    <li><strong>Reason:</strong> <%= log.details.reason %></li>
+                                                <% } %>
+                                            <% } else if (log.entity === 'Reminder') { %>
+                                                <% if (log.details.data) { %>
+                                                    <li><strong>Data:</strong>
+                                                        <ul>
+                                                            <li>Title: <%= log.details.data.title || 'N/A' %></li>
+                                                            <li>Description: <%= log.details.data.description || 'N/A' %></li>
+                                                            <li>Datetime: <%= log.details.data.datetime || 'N/A' %></li>
+                                                            <li>Completed: <%= log.details.data.completed !== undefined ? log.details.data.completed : 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.oldData) { %>
+                                                    <li><strong>Old Data:</strong>
+                                                        <ul>
+                                                            <li>Title: <%= log.details.oldData.title || 'N/A' %></li>
+                                                            <li>Description: <%= log.details.oldData.description || 'N/A' %></li>
+                                                            <li>Datetime: <%= log.details.oldData.datetime || 'N/A' %></li>
+                                                            <li>Completed: <%= log.details.oldData.completed !== undefined ? log.details.oldData.completed : 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                                <% if (log.details.newData) { %>
+                                                    <li><strong>New Data:</strong>
+                                                        <ul>
+                                                            <li>Title: <%= log.details.newData.title || 'N/A' %></li>
+                                                            <li>Description: <%= log.details.newData.description || 'N/A' %></li>
+                                                            <li>Datetime: <%= log.details.newData.datetime || 'N/A' %></li>
+                                                            <li>Completed: <%= log.details.newData.completed !== undefined ? log.details.newData.completed : 'N/A' %></li>
+                                                        </ul>
+                                                    </li>
+                                                <% } %>
+                                            <% } %>
+                                        </ul>
+                                    <% } else { %>
+                                        N/A
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No logs found. Logs variable: <%= JSON.stringify(logs) %></p>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <%- include('../../partials/_scripts') %>
+    <script>
+        // Pass the initial logs data from EJS to JavaScript
+        let logsData = <%- JSON.stringify(logs) %>;
+
+        // Track current sort column and direction
+        let sortColumn = -1;
+        let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        function sortTable(columnIndex) {
+            // Toggle sort direction if clicking the same column, otherwise reset to ascending
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            // Sort the logs data
+            logsData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Timestamp
+                        aValue = a.timestamp ? new Date(a.timestamp).getTime() : -Infinity;
+                        bValue = b.timestamp ? new Date(b.timestamp).getTime() : -Infinity;
+                        break;
+                    case 1: // Action
+                        aValue = a.action || 'N/A';
+                        bValue = b.action || 'N/A';
+                        break;
+                    case 2: // User ID
+                        aValue = a.userId || 'N/A';
+                        bValue = b.userId || 'N/A';
+                        break;
+                    case 3: // User Name
+                        aValue = a.userName || 'N/A';
+                        bValue = b.userName || 'N/A';
+                        break;
+                    case 4: // Entity
+                        aValue = a.entity || 'N/A';
+                        bValue = b.entity || 'N/A';
+                        break;
+                    case 5: // Entity Name
+                        aValue = a.entityName || 'N/A';
+                        bValue = b.entityName || 'N/A';
+                        break;
+                    case 6: // Entity ID
+                        aValue = a.entityId || 'N/A';
+                        bValue = b.entityId || 'N/A';
+                        break;
+                    case 7: // Details (sort by presence of details)
+                        aValue = a.details ? JSON.stringify(a.details) : 'N/A';
+                        bValue = b.details ? JSON.stringify(b.details) : 'N/A';
+                        break;
+                    default:
+                        return 0;
+                }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+
+            // Update the table body
+            renderTable();
+
+            // Update sort indicators
+            updateSortIndicators(columnIndex);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('logsBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            logsData.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</td>
+                    <td>${log.action || 'N/A'}</td>
+                    <td>${log.userId ? log.userId.slice(0, 6) + '....' : 'N/A'}</td>
+                    <td>${log.userName || 'N/A'}</td>
+                    <td>${log.entity || 'N/A'}</td>
+                    <td>${log.entityName || 'N/A'}</td>
+                    <td>${log.entityId ? log.entityId.slice(0, 6) + '....' : 'N/A'}</td>
+                    <td>${renderDetails(log)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderDetails(log) {
+            if (!log.details || Object.keys(log.details).length === 0) return 'N/A';
+            let html = '<ul class="details-list">';
+            
+            if (log.entity === 'Medication') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Name: ${log.details.data.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.data.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.data.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.data.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.data.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.data.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.oldData.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.oldData.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.oldData.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.oldData.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.oldData.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.newData.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.newData.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.newData.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.newData.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.newData.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+            } else if (log.entity === 'Caretaker') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Name: ${log.details.data.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.data.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.data.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.data.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.oldData.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.oldData.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.oldData.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.newData.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.newData.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.newData.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+            } else if (log.entity === 'User') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Email: ${log.details.data.email || 'N/A'}</li>`;
+                    if (log.action === 'REGISTER') {
+                        html += `<li>Name: ${log.details.data.name || 'N/A'}</li>
+                                 <li>Role: ${log.details.data.role || 'N/A'}</li>`;
+                    }
+                    html += `</ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Email: ${log.details.oldData.email || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Email: ${log.details.newData.email || 'N/A'}</li>
+                        <li>Password: ${log.details.newData.password || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.reason) {
+                    html += `<li><strong>Reason:</strong> ${log.details.reason}</li>`;
+                }
+            } else if (log.entity === 'Reminder') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Title: ${log.details.data.title || 'N/A'}</li>
+                        <li>Description: ${log.details.data.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.data.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.data.completed !== undefined ? log.details.data.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Title: ${log.details.oldData.title || 'N/A'}</li>
+                        <li>Description: ${log.details.oldData.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.oldData.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.oldData.completed !== undefined ? log.details.oldData.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Title: ${log.details.newData.title || 'N/A'}</li>
+                        <li>Description: ${log.details.newData.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.newData.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.newData.completed !== undefined ? log.details.newData.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+            }
+            html += '</ul>';
+            return html;
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#logsTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Add Organization - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+        .form-container .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .form-container label {
+            font-weight: bold;
+            color: #444;
+        }
+        .form-container input,
+        .form-container textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            max-width: 300px;
+        }
+        .form-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-container button[type="submit"] {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            margin: 0 auto;
+            display: block;
+        }
+        .form-container button[type="submit"]:hover {
+            background: #2980b9;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="form-container">
+            <h1>Add Organization</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+            <form action="/add-organization" method="POST" id="add-organization-form">
+                <div class="form-group">
+                    <label for="name">Organization Name</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description"></textarea>
+                </div>
+                <button type="submit">Add Organization</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-organization-form').addEventListener('submit', (e) => {
+            const name = document.getElementById('name').value.trim();
+            if (!name) {
+                e.preventDefault();
+                alert('Organization Name is required.');
+            }
+        });
+    </script>
+    <%- include('../../partials/_scripts') %>
+</body>
+</html>
