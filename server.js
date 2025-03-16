@@ -17,13 +17,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Debug: Log incoming requests
-app.use((req, res, next) => {
-    console.log(`Incoming request: ${req.method} ${req.url}`);
-    console.log(`Incoming role: ${req.Role}`);
-    console.log('Cookies:', req.cookies); // Log cookies for debugging
-    next();
-});
 
 //functions:
 function calculateRefillAnalytics(medication, currentDate) {
@@ -61,8 +54,9 @@ function calculateRefillAnalytics(medication, currentDate) {
 }
 
 const authenticateUser = (req, res, next) => {
-    const token = req.cookies.authToken; // Extract the authToken cookie
-    console.log('Token from cookie:', token); // Debug: Log the token
+    console.log('authenticateUser running for:', req.method, req.url);
+    const token = req.cookies.authToken;
+    console.log('Token from cookie:', token);
 
     if (!token) {
         console.log('No token found, redirecting to home.');
@@ -73,16 +67,16 @@ const authenticateUser = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, SECRET_KEY); // Verify the token
+        const decoded = jwt.verify(token, SECRET_KEY);
         req.userId = decoded.userId;
         req.email = decoded.email;
         req.name = decoded.name;
-        req.role = decoded.role; // Add role to req
-        console.log('Decoded token:', decoded); // Debug: Log the decoded token including role
+        req.role = decoded.role;
+        console.log('Decoded token:', decoded);
         next();
     } catch (error) {
         console.error('Token verification failed:', error.message);
-        res.clearCookie('authToken'); // Clear invalid token
+        res.clearCookie('authToken');
         return res.render('pages/index', {
             isLoggedIn: false,
             message: 'Session expired. Please sign in again.',
@@ -90,26 +84,23 @@ const authenticateUser = (req, res, next) => {
     }
 };
 
+// Debug: Log incoming requests
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+    console.log(`Incoming role: ${req.role}`); // Runs BEFORE authenticateUser
+    console.log('Cookies:', req.cookies);
+    next();
+});
+
 
 //GET Routes
-app.get('/', (req, res) => {
-    console.log('Rendering home page. Is logged in:', !!req.cookies.authToken); // Debug: Log login status
-
-    let userName = null;
-    if (req.cookies.authToken) {
-        try {
-            const decoded = jwt.verify(req.cookies.authToken, SECRET_KEY);
-            userName = decoded.name; // Extract the user's name from the token
-        } catch (error) {
-            console.error('Token verification failed:', error.message);
-            res.clearCookie('authToken'); // Clear invalid token
-        }
-    }
-
+app.get('/', authenticateUser, (req, res) => {
+    console.log('Rendering home page. Is logged in:', !!req.cookies.authToken);
+    console.log('User role:', req.role);
     res.render('pages/index', {
-        isLoggedIn: !!req.cookies.authToken, // Boolean indicating if the user is logged in
-        userName: userName,
-        role: req.role,
+        isLoggedIn: !!req.cookies.authToken,
+        userName: req.name,
+        role: req.role
     });
 });
 
@@ -226,22 +217,158 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
     });
 });
 
+// Add Organization page
+app.get('/add-organization', authenticateUser, (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering add-organization page for user:', req.userId, 'with role:', req.role);
+
+    // Check if the user has the 'admin' role
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view Organizations.',
+        });
+    }
+
+    res.render('pages/dashboard/add-organization', {
+        isLoggedIn,
+        userName: req.name,
+        role: req.role,
+        userId: req.userId
+    });
+});
+
+app.post('/add-organization', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const { name, description } = req.body;
+    console.log('Add organization request received for user:', userId);
+
+    // Check if the user has the 'admin' role
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view Organizations.',
+        });
+    }
+
+    try {
+        const response = await axios.post('http://middleware:3001/organization/create', {
+            userId,
+            name,
+            description
+        });
+
+        res.redirect('/all-organizations');
+    } catch (error) {
+        console.error('Error adding organization:', error.message);
+        res.render('pages/dashboard/add-organization', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            userId: req.userId,
+            error: 'Failed to add organization'
+        });
+    }
+});
+
+// Fetch all organizations for the user
+app.get('/all-organizations', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering all-organizations page for user:', userId, 'with role:', req.role);
+
+    // Check if the user has the 'owner' role
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view Organizations.',
+        });
+    }
+
+    try {
+        const response = await axios.get('http://middleware:3001/organization/get', {
+            params: { userId }
+        });
+        const organizations = response.data;
+
+        res.render('pages/dashboard/all-organizations', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            organizations
+        });
+    } catch (error) {
+        console.error('Error fetching organizations:', error.message);
+        res.render('pages/dashboard/all-organizations', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            organizations: [],
+            error: 'Failed to load organizations'
+        });
+    }
+});
+
+// Update Organization
+app.put('/organization/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+    console.log('Update organization request received for ID:', id);
+
+    try {
+        await axios.put(`http://middleware:3001/organization/${id}`, {
+            userId: req.userId,
+            name,
+            description
+        });
+        res.status(200).send('Organization updated successfully');
+    } catch (error) {
+        console.error('Error updating organization:', error.message);
+        res.status(error.response?.status || 500).send('Failed to update organization');
+    }
+});
+
+// Delete Organization
+app.delete('/organization/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    console.log('Delete organization request received for ID:', id);
+
+    try {
+        await axios.delete(`http://middleware:3001/organization/${id}`, {
+            data: { userId: req.userId }
+        });
+        res.status(200).send('Organization deleted successfully');
+    } catch (error) {
+        console.error('Error deleting organization:', error.message);
+        res.status(error.response?.status || 500).send('Failed to delete organization');
+    }
+});
+
 app.get('/add-patient', authenticateUser, (req, res) => {
     console.log('Rendering add-patient page for user:', req.userId); // Debug: Log user ID
 
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-        // Check if the user has the 'admin' role
-        if (req.role !== 'admin') {
-            console.log('Access denied: User is not an admin');
-            return res.status(403).render('pages/error', {
-                isLoggedIn,
-                userName: req.name,
-                role: req.role,
-                message: 'Access denied. You must be an admin to view patients.',
-            });
-        }
+    // Check if the user has the 'admin' role
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view patients.',
+        });
+    }
 
     res.render('pages/dashboard/add-patient', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
@@ -304,16 +431,16 @@ app.delete('/caretakers/:id', authenticateUser, async (req, res) => {
 
 // POST Functions
 app.post('/add-patient', authenticateUser, (req, res) => {
-        // Check if the user has the 'admin' role
-        if (req.role !== 'admin') {
-            console.log('Access denied: User is not an admin');
-            return res.status(403).render('pages/error', {
-                isLoggedIn,
-                userName: req.name,
-                role: req.role,
-                message: 'Access denied. You must be an admin to add patients.',
-            });
-        }
+    // Check if the user has the 'admin' role
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to add patients.',
+        });
+    }
     const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
     console.log('New Patient Added:', req.body); // Debug: Log new patient data
     res.redirect('/dashboard');
