@@ -84,6 +84,75 @@
     </div>
 </div>
 
+<script>
+    function showAlert(title, message) {
+        document.getElementById("alertModalLabel").innerText = title;
+        document.getElementById("alertModalBody").innerText = message;
+        var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
+        myModal.show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const registerForm = document.getElementById("signupForm");
+
+        registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (fullName === "" || email === "" || phone === "" || password === "" || confirmPassword === "") {
+                showAlert("Error", "All fields are required!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert("Error", "Passwords do not match!");
+                return;
+            }
+
+            showAlert("Success", "Form submitted successfully!");
+        });
+    });
+</script>
+<script>
+    function showAlert(title, message) {
+        document.getElementById("alertModalLabel").innerText = title;
+        document.getElementById("alertModalBody").innerText = message;
+        var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
+        myModal.show();
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const registerForm = document.getElementById("signupForm");
+
+        registerForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (fullName === "" || email === "" || phone === "" || password === "" || confirmPassword === "") {
+                showAlert("Error", "All fields are required!");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert("Error", "Passwords do not match!");
+                return;
+            }
+
+            showAlert("Success", "Form submitted successfully!");
+        });
+    });
+</script>
+
 <style>
     .sign-in-page {
         display: flex;
