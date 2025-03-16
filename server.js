@@ -152,7 +152,7 @@ app.get('/add-medicines', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/medicines/add-medicines', {
+    res.render('pages/dashboard/add-medicines', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role,
@@ -173,7 +173,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         });
         const medications = response.data.map(med => calculateRefillAnalytics(med, currentDate));
 
-        res.render('pages/alerts/refill-alerts', {
+        res.render('pages/dashboard/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -181,7 +181,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medications:', error.message);
-        res.render('pages/alerts/refill-alerts', {
+        res.render('pages/dashboard/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -212,7 +212,7 @@ app.get('/add-admin', authenticateUser, async (req, res) => {
         const organizations = response.data;
         console.log('Fetched organizations for add-admin:', organizations);
 
-        res.render('pages/owner/add-admin', {
+        res.render('pages/dashboard/add-admin', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -221,7 +221,7 @@ app.get('/add-admin', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching organizations for add-admin:', error.message);
-        res.render('pages/owner/add-admin', {
+        res.render('pages/dashboard/add-admin', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -265,7 +265,7 @@ app.post('/add-admin', authenticateUser, async (req, res) => {
         const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
         const organizations = orgResponse.data;
 
-        res.render('pages/owner/add-admin', {
+        res.render('pages/dashboard/add-admin', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -278,7 +278,7 @@ app.post('/add-admin', authenticateUser, async (req, res) => {
         const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
         const organizations = orgResponse.data;
 
-        res.render('pages/owner/add-admin', {
+        res.render('pages/dashboard/add-admin', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -315,7 +315,7 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
         })) : [];
         console.log('Fetched admins:', admins);
 
-        res.render('pages/owner/all-admins', {
+        res.render('pages/dashboard/all-admins', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -323,7 +323,7 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching admins:', error.message);
-        res.render('pages/owner/all-admins', {
+        res.render('pages/dashboard/all-admins', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -413,7 +413,7 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/admin/patient-profile', {
+    res.render('pages/dashboard/patient-profile', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role // Pass the user's name to the template
@@ -436,7 +436,7 @@ app.get('/add-organization', authenticateUser, (req, res) => {
         });
     }
 
-    res.render('pages/owner/add-organization', {
+    res.render('pages/dashboard/add-organization', {
         isLoggedIn,
         userName: req.name,
         role: req.role,
@@ -470,7 +470,7 @@ app.post('/add-organization', authenticateUser, async (req, res) => {
         res.redirect('/all-organizations');
     } catch (error) {
         console.error('Error adding organization:', error.message);
-        res.render('pages/owner/add-organization', {
+        res.render('pages/dashboard/add-organization', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -512,7 +512,7 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
         }) : [];
         console.log('Processed organizations:', organizations);
 
-        res.render('pages/owner/all-organizations', {
+        res.render('pages/dashboard/all-organizations', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -520,7 +520,7 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching organizations:', error.message);
-        res.render('pages/owner/all-organizations', {
+        res.render('pages/dashboard/all-organizations', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -582,7 +582,7 @@ app.get('/add-patient', authenticateUser, (req, res) => {
         });
     }
 
-    res.render('pages/admin/add-patient', {
+    res.render('pages/dashboard/add-patient', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role // Pass the user's name to the template
@@ -712,7 +712,7 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             status: error.response?.status,
             data: error.response?.data
         });
-        res.render('pages/medicines/add-medicines', {
+        res.render('pages/dashboard/add-medicines', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -734,7 +734,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/medicines/medication-profile', {
+        res.render('pages/dashboard/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -742,7 +742,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medications:', error.message);
-        res.render('pages/medicines/medication-profile', {
+        res.render('pages/dashboard/medication-profile', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -765,7 +765,7 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/medicines/medicine-details', {
+        res.render('pages/dashboard/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -773,7 +773,7 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medicine details:', error.message);
-        res.render('pages/medicines/medicine-details', {
+        res.render('pages/dashboard/medicine-details', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -803,7 +803,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         const response = await axios.get('http://middleware:3001/logs');
         const logs = response.data;
 
-        res.render('pages/admin/logs', {
+        res.render('pages/dashboard/logs', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -811,7 +811,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching logs:', error.message);
-        res.render('pages/admin/logs', {
+        res.render('pages/dashboard/logs', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -878,7 +878,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/medicines/medication-history', {
+        res.render('pages/dashboard/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -886,7 +886,7 @@ app.get('/medication-history', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medication history:', error.message);
-        res.render('pages/medicines/medication-history', {
+        res.render('pages/dashboard/medication-history', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1076,7 +1076,7 @@ app.get('/add-reminder', authenticateUser, (req, res) => {
 
     console.log('Rendering add-reminder page for user:', req.userId);
 
-    res.render('pages/reminder/add-reminder', {
+    res.render('pages/dashboard/add-reminder', {
         isLoggedIn: isLoggedIn,
         userName: req.name
     });
@@ -1102,7 +1102,7 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
         }
     } catch (error) {
         console.error('Error adding reminder:', error.message);
-        res.render('pages/reminder/add-reminder', {
+        res.render('pages/dashboard/add-reminder', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -1122,7 +1122,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         const response = await axios.get(`http://middleware:3001/reminders/${userId}`);
         const reminders = response.data.reminders || [];
 
-        res.render('pages/reminder/timely-reminders', {
+        res.render('pages/dashboard/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1131,7 +1131,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching reminders:', error.message);
-        res.render('pages/reminder/timely-reminders', {
+        res.render('pages/dashboard/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
