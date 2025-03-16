@@ -8,7 +8,16 @@
         <li class="menu-item">
             <a href="/" class="menu-link">Dashboard</a>
         </li>
-        <% if (role === 'admin') { %>     
+        <% if (role === 'owner'  ) { %>
+        <li class="menu-item has-submenu">
+            <a href="#" class="menu-link">Organizations</a>
+            <ul class="submenu">
+                <li><a href="/all-organizations">All Organizations</a></li>
+                <li><a href="/add-organization">Add Organization</a></li>
+            </ul>
+        </li>
+        <% } %>
+        <% if (role === 'admin' || role === 'owner'  ) { %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Patient</a>
             <ul class="submenu">
@@ -50,8 +59,8 @@
             <a href="#" class="menu-link">Settings</a>
             <ul class="submenu">
                 <li><a href="/settings">Edit Information</a></li>
-                <% if (role === 'admin') { %>
-                    <li><a href="/logs">Logs</a></li>
+                <% if (role === 'admin' || role === 'owner' ) { %>
+                <li><a href="/logs">Logs</a></li>
                 <% } %>
             </ul>
         </li>
