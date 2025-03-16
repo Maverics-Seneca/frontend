@@ -62,6 +62,7 @@ const authenticateUser = (req, res, next) => {
         console.log('No token found, redirecting to home.');
         return res.render('pages/index', {
             isLoggedIn: false,
+            role: 'user',
             message: 'Kindly sign in before accessing this page.',
         });
     }
@@ -104,9 +105,28 @@ app.get('/', authenticateUser, (req, res) => {
     });
 });
 
+app.get('/sign-up-admin', async (req, res) => {
+    try {
+        const response = await axios.get('http://middleware:3001/organization/get-all');
+        const organizations = response.data;
+        console.log('Fetched organizations for signup:', organizations);
+
+        res.render('pages/auth/sign-up-admin', {
+            isLoggedIn: false,
+            organizations
+        });
+    } catch (error) {
+        console.error('Error fetching organizations for signup:', error.message);
+        res.render('pages/auth/sign-up-admin', {
+            isLoggedIn: false,
+            organizations: [],
+            error: 'Failed to load organizations'
+        });
+    }
+});
+
 app.get('/sign-in', (req, res) => res.render('pages/auth/sign-in'));
 app.get('/sign-up', (req, res) => res.render('pages/auth/sign-up'));
-app.get('/sign-up-admin', (req, res) => res.render('pages/auth/sign-up-admin'));
 app.get('/recover-password', (req, res) => res.render('pages/auth/recover-password'));
 app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen'));
 app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail'));
@@ -283,14 +303,13 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     console.log('Rendering all-organizations page for user:', userId, 'with role:', req.role);
 
-    // Check if the user has the 'owner' role
     if (req.role !== 'owner') {
         console.log('Access denied: User is not an Owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to view Organizations.',
+            message: 'Access denied. You must be an owner to view Organizations.',
         });
     }
 
@@ -298,7 +317,17 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
         const response = await axios.get('http://middleware:3001/organization/get', {
             params: { userId }
         });
-        const organizations = response.data;
+        console.log('Raw response.data:', response.data); // Debug raw data
+
+        const organizations = Array.isArray(response.data) ? response.data.map(org => {
+            const createdAtSeconds = org.createdAt && org.createdAt.seconds ? org.createdAt.seconds : null;
+            console.log('Processing org:', org, 'createdAtSeconds:', createdAtSeconds); // Debug each org
+            return {
+                ...org,
+                createdAt: createdAtSeconds ? new Date(createdAtSeconds * 1000).toISOString() : null
+            };
+        }) : [];
+        console.log('Processed organizations:', organizations);
 
         res.render('pages/dashboard/all-organizations', {
             isLoggedIn,
@@ -742,20 +771,23 @@ app.post('/register', async (req, res) => {
 
 // Register route (for admin)
 app.post('/register-admin', async (req, res) => {
-    console.log('Register request received:', req.body);
+    const { name, email, phone, password, organizationId } = req.body;
+    console.log('Admin signup request received:', req.body);
 
     try {
-        const response = await axios.post('http://middleware:3001/auth/register-admin', req.body, {
-            withCredentials: true,
+        const response = await axios.post('http://middleware:3001/auth/register-admin', {
+            name,
+            email,
+            phone,
+            password,
+            organizationId,
+            role: 'admin' // Hardcode role as 'admin' for this route
         });
 
-        console.log('Middleware response:', response.data);
-        res.json(response.data);
+        res.json({ message: 'Registration successful' });
     } catch (error) {
-        console.error('Registration error:', error.message);
-        res.status(error.response?.status || 500).json({
-            error: error.response?.data?.message || 'Registration failed',
-        });
+        console.error('Error registering admin:', error.message);
+        res.status(error.response?.status || 500).json({ error: 'Registration failed' });
     }
 });
 
