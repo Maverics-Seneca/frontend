@@ -1076,7 +1076,7 @@ app.get('/add-reminder', authenticateUser, (req, res) => {
 
     console.log('Rendering add-reminder page for user:', req.userId);
 
-    res.render('pages/dashboard/add-reminder', {
+    res.render('pages/reminder/add-reminder', {
         isLoggedIn: isLoggedIn,
         userName: req.name
     });
@@ -1102,7 +1102,7 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
         }
     } catch (error) {
         console.error('Error adding reminder:', error.message);
-        res.render('pages/dashboard/add-reminder', {
+        res.render('pages/reminder/add-reminder', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
@@ -1122,7 +1122,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         const response = await axios.get(`http://middleware:3001/reminders/${userId}`);
         const reminders = response.data.reminders || [];
 
-        res.render('pages/dashboard/timely-reminders', {
+        res.render('pages/reminder/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1131,7 +1131,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching reminders:', error.message);
-        res.render('pages/dashboard/timely-reminders', {
+        res.render('pages/reminder/timely-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
