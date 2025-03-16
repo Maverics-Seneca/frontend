@@ -173,7 +173,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         });
         const medications = response.data.map(med => calculateRefillAnalytics(med, currentDate));
 
-        res.render('pages/dashboard/refill-alerts', {
+        res.render('pages/alerts/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -181,7 +181,7 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medications:', error.message);
-        res.render('pages/dashboard/refill-alerts', {
+        res.render('pages/alerts/refill-alerts', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -413,7 +413,7 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/dashboard/patient-profile', {
+    res.render('pages/admin/patient-profile', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role // Pass the user's name to the template
@@ -582,7 +582,7 @@ app.get('/add-patient', authenticateUser, (req, res) => {
         });
     }
 
-    res.render('pages/dashboard/add-patient', {
+    res.render('pages/admin/add-patient', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role // Pass the user's name to the template
@@ -803,7 +803,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         const response = await axios.get('http://middleware:3001/logs');
         const logs = response.data;
 
-        res.render('pages/dashboard/logs', {
+        res.render('pages/admin/logs', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -811,7 +811,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching logs:', error.message);
-        res.render('pages/dashboard/logs', {
+        res.render('pages/admin/logs', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
