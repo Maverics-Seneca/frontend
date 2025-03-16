@@ -191,6 +191,189 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
     }
 });
 
+// Render Add Admin page
+app.get('/add-admin', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering add-admin page for user:', userId, 'with role:', req.role);
+
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an owner to add administrators.',
+        });
+    }
+
+    try {
+        const response = await axios.get('http://middleware:3001/organization/get-all');
+        const organizations = response.data;
+        console.log('Fetched organizations for add-admin:', organizations);
+
+        res.render('pages/dashboard/add-admin', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            organizations,
+            userId
+        });
+    } catch (error) {
+        console.error('Error fetching organizations for add-admin:', error.message);
+        res.render('pages/dashboard/add-admin', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            organizations: [],
+            error: 'Failed to load organizations'
+        });
+    }
+});
+
+// Handle Add Admin form submission
+app.post('/add-admin', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const { name, email, phone, organizationId } = req.body;
+    console.log('Add admin request received:', req.body);
+
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an owner to add administrators.',
+        });
+    }
+
+    // Generate temporary password: name + last 4 digits of phone
+    const tempPassword = `${name.replace(/\s/g, '').toLowerCase()}${phone.slice(-4)}`;
+    console.log('Generated temporary password:', tempPassword);
+
+    try {
+        const response = await axios.post('http://middleware:3001/auth/register-admin', {
+            name,
+            email,
+            phone,
+            password: tempPassword,
+            organizationId,
+            role: 'admin'
+        });
+
+        // Fetch organizations again to re-render the page
+        const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
+        const organizations = orgResponse.data;
+
+        res.render('pages/dashboard/add-admin', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            organizations,
+            userId,
+            success: `Admin added successfully! Temporary password: ${tempPassword}`
+        });
+    } catch (error) {
+        console.error('Error adding admin:', error.message);
+        const orgResponse = await axios.get('http://middleware:3001/organization/get-all');
+        const organizations = orgResponse.data;
+
+        res.render('pages/dashboard/add-admin', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            organizations,
+            userId,
+            error: 'Failed to add admin: ' + (error.response?.data?.message || error.message)
+        });
+    }
+});
+
+app.get('/all-admins', authenticateUser, async (req, res) => {
+    const userId = req.userId;
+    const isLoggedIn = !!req.cookies.authToken;
+    console.log('Rendering all-admins page for user:', userId, 'with role:', req.role);
+
+    // Restrict to owners only (or adjust as needed)
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an Owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an owner to view all administrators.',
+        });
+    }
+
+    try {
+        const response = await axios.get('http://middleware:3001/auth/get-all-admins');
+        const admins = Array.isArray(response.data) ? response.data.map(admin => ({
+            ...admin,
+            createdAt: admin.createdAt && admin.createdAt.seconds
+                ? new Date(admin.createdAt.seconds * 1000).toISOString()
+                : null
+        })) : [];
+        console.log('Fetched admins:', admins);
+
+        res.render('pages/dashboard/all-admins', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            admins
+        });
+    } catch (error) {
+        console.error('Error fetching admins:', error.message);
+        res.render('pages/dashboard/all-admins', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            admins: [],
+            error: 'Failed to load administrators'
+        });
+    }
+});
+
+
+app.post('/admins/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    const { name, email, phone, organizationId } = req.body;
+    console.log('Update admin request received:', { id, name, email, phone, organizationId });
+
+    if (req.role !== 'owner') {
+        return res.status(403).json({ message: 'Access denied. You must be an owner to update administrators.' });
+    }
+
+    try {
+        const response = await axios.post(`http://middleware:3001/auth/update-admin/${id}`, {
+            name,
+            email,
+            phone,
+            organizationId
+        });
+        res.json({ message: 'Admin updated successfully' });
+    } catch (error) {
+        console.error('Error updating admin:', error.message);
+        res.status(error.response?.status || 500).json({ message: 'Failed to update admin', error: error.response?.data?.message || error.message });
+    }
+});
+
+app.delete('/admins/:id', authenticateUser, async (req, res) => {
+    const { id } = req.params;
+    console.log('Delete admin request received for id:', id);
+
+    if (req.role !== 'owner') {
+        return res.status(403).json({ message: 'Access denied. You must be an owner to delete administrators.' });
+    }
+
+    try {
+        const response = await axios.delete(`http://middleware:3001/auth/delete-admin/${id}`);
+        res.json({ message: 'Admin deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting admin:', error.message);
+        res.status(error.response?.status || 500).json({ message: 'Failed to delete admin', error: error.response?.data?.message || error.message });
+    }
+});
+
 app.get('/caretaker-profile', authenticateUser, async (req, res) => {
     const patientId = req.userId; // Extract patientId from authenticated user
     const isLoggedIn = !!req.cookies.authToken; // Check if user is logged in
