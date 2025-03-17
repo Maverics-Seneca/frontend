@@ -5,63 +5,144 @@
     <title>Patient Dashboard - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
-    <!-- Add Bootstrap & FontAwesome CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .main-content {
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background: #f4f6f9;
+        }
 
-<style>
-    /* Paste your CSS provided for .main-content, .dashboard-container, .dashboard-grid, and .dashboard-card here */
-</style>
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
 
-<div class="dashboard-grid">
-    <div class="dashboard-grid">
-        <div class="dashboard-card" onclick="window.location.href='/refill-alerts'">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>Refill Alerts</h3>
-            <p>Medications needing refill soon</p>
-            <div class="count"><%= refillAlerts ? refillAlerts.length : 0 %></div>
-        </div>
-    
-        <div class="dashboard-card" onclick="window.location.href='/timely-reminders'">
-            <i class="fas fa-bell"></i>
-            <h3>Timely Reminders</h3>
-            <p>Upcoming medication reminders</p>
-            <div class="count"><%= reminders ? reminders.length : 0 %></div>
-        </div>
-        <!-- Add similar templating for other cards -->
-    </div>
-    
-    <div class="analytics-section">
-        <h2>Analytics</h2>
-        <div class="analytics-grid">
-            <div class="chart-container">
-                <h3>Medication Inventory Levels</h3>
-                <canvas id="inventoryChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Reminder Completion Trend</h3>
-                <canvas id="completionChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Medication Types Distribution</h3>
-                <canvas id="typesChart"></canvas>
-            </div>
-        </div>
-    </div>
-    
+        .dashboard-container h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
 
-    <div class="dashboard-card" onclick="window.location.href='/timely-reminders'">
-        <i class="fas fa-bell"></i>
-        <h3>Timely Reminders</h3>
-        <p>Upcoming medication reminders</p>
-        <div class="count"><%= reminders ? reminders.length : 0 %></div>
-    </div>
-    <!-- Add similar templating for other cards -->
-</div>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
 
+        .dashboard-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
 
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
 
+        .dashboard-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .dashboard-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .dashboard-card .count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-top: 10px;
+        }
+
+        .analytics-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .chart-container {
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 5px;
+        }
+
+        .chart-container h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        .chart-container p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 10px;
+            }
+
+            .dashboard-container {
+                padding: 15px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -71,53 +152,207 @@
     <div class="main-content">
         <div class="dashboard-container">
             <h1>Patient Dashboard</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <div class="dashboard-grid">
+                <div class="dashboard-card" onclick="window.location.href='/refill-alerts'">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Refill Alerts</h3>
+                    <p>Medications needing refill soon</p>
+                    <div class="count" id="refillCount"><%= refillAlerts ? refillAlerts.length : 0 %></div>
+                </div>
+
+                <div class="dashboard-card" onclick="window.location.href='/medication-profile'">
+                    <i class="fas fa-pills"></i>
+                    <h3>Current Medication</h3>
+                    <p>Active prescriptions</p>
+                    <div class="count" id="medicationCount"><%= currentMedications ? currentMedications.length : 0 %>
+                    </div>
+                </div>
+
+                <div class="dashboard-card" onclick="window.location.href='/timely-reminders'">
+                    <i class="fas fa-bell"></i>
+                    <h3>Reminders</h3>
+                    <p>Upcoming medication & tasks</p>
+                    <div class="count" id="reminderCount"><%= reminders ? reminders.length : 0 %></div>
+                </div>
+
+                <div class="dashboard-card" onclick="window.location.href='/medication-history'">
+                    <i class="fas fa-history"></i>
+                    <h3>Medicine History</h3>
+                    <p>Past medication records</p>
+                    <div class="count" id="historyCount"><%= medicineHistory ? medicineHistory.length : 0 %></div>
+                </div>
+
+                <div class="dashboard-card" onclick="window.location.href='/caretaker-profile'">
+                    <i class="fas fa-user-friends"></i>
+                    <h3>Caretakers</h3>
+                    <p>Your support network</p>
+                    <div class="count" id="caretakerCount"><%= caretakers ? caretakers.length : 0 %></div>
+                </div>
+
+                <div class="dashboard-card" onclick="window.location.href='/medicine-details'">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>Medication Details</h3>
+                    <p>Info about your medicines</p>
+                    <div class="count" id="detailsCount"><%= medicationDetails ? medicationDetails.length : 0 %></div>
+                </div>
+            </div>
+
+            <div class="analytics-section">
+                <h2>Analytics Overview</h2>
+                <div class="analytics-grid">
+                    <div class="chart-container">
+                        <h3>Medication Inventory Levels</h3>
+                        <p>Shows current stock levels of your active medications.</p>
+                        <canvas id="inventoryChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Reminder Completion Trend</h3>
+                        <p>Tracks your reminder completion rate over the past week.</p>
+                        <canvas id="completionChart"></canvas>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3>Medication Types Distribution</h3>
+                        <p>Breakdown of your medications by type (e.g., Pill, Injection).</p>
+                        <canvas id="typesChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="/js/charts/chart.min.js"></script>
+    <script>
+        console.log('Script block starting...');
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('DOM fully loaded, initializing charts...');
+
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js is not loaded! Check the script src path: /js/charts/chart.min.js');
+                document.querySelectorAll('.chart-container p').forEach(p => {
+                    p.innerHTML += '<br><strong>Error:</strong> Chart.js failed to load.';
+                });
+                return;
+            } else {
+                console.log('Chart.js loaded successfully');
+            }
+
+            const inventoryCtx = document.getElementById('inventoryChart');
+            const completionCtx = document.getElementById('completionChart');
+            const typesCtx = document.getElementById('typesChart');
+
+            if (!inventoryCtx || !completionCtx || !typesCtx) {
+                console.error('One or more chart canvases not found!');
+                return;
+            } else {
+                console.log('All chart canvases found');
+            }
+
+            try {
+                // Log raw currentMedications to debug
+                const rawMedications = <% - JSON.stringify(currentMedications || 'undefined') %>;
+                console.log('Raw currentMedications:', rawMedications);
+
+                // Bar Chart: Medication Inventory Levels
+                const inventoryLabels = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.map(med => med.name || 'Unnamed') : ['No Data']) %>;
+                const inventoryValues = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.map(med => med.inventory || 0) : [0]) %>;
+                const inventoryData = {
+                    labels: inventoryLabels,
+                    datasets: [{
+                        label: 'Inventory (Units)',
+                        data: inventoryValues,
+                        backgroundColor: '#3498db',
+                        borderColor: '#2980b9',
+                        borderWidth: 1
+                    }]
+                };
+                console.log('Inventory Data:', inventoryData);
+                new Chart(inventoryCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: inventoryData,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Units' } },
+                            x: { title: { display: true, text: 'Medication' } }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+
+                // Line Graph: Reminder Completion Trend (Hardcoded Data)
+                const completionData = {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Completion Rate (%)',
+                        data: [80, 85, 90, 75, 95, 70, 85],
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        borderColor: '#2ecc71',
+                        borderWidth: 2,
+                        fill: true
+                    }]
+                };
+                console.log('Completion Data:', completionData);
+                new Chart(completionCtx.getContext('2d'), {
+                    type: 'line',
+                    data: completionData,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, max: 100, title: { display: true, text: 'Completion (%)' } },
+                            x: { title: { display: true, text: 'Day' } }
+                        },
+                        plugins: { legend: { display: true } }
+                    }
+                });
+
+                // Pie Chart: Medication Types Distribution
+                const typeCounts = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.reduce((acc, med) => {
+                    const type = med.type || 'Unknown';
+                    acc[type] = (acc[type] || 0) + 1;
+                    return acc;
+                }, {}) : { 'Unknown': 1 }) %>;
+                const typesData = {
+                    labels: Object.keys(typeCounts),
+                    datasets: [{
+                        data: Object.values(typeCounts),
+                        backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#9b59b6'],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                };
+                console.log('Types Data:', typesData);
+                new Chart(typesCtx.getContext('2d'), {
+                    type: 'pie',
+                    data: typesData,
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } }
+                        }
+                    }
+                });
+
+                console.log('Charts initialized successfully');
+            } catch (error) {
+                console.error('Error initializing charts:', error);
+                document.querySelectorAll('.chart-container p').forEach(p => {
+                    p.innerHTML += `<br><strong>Error:</strong> ${error.message}`;
+                });
+            }
+        });
+    </script>
+    
+    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/charts/chart.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
-    const completionCtx = document.getElementById('completionChart').getContext('2d');
-    const typesCtx = document.getElementById('typesChart').getContext('2d');
-
-    // Medication Inventory Bar Chart
-    new Chart(inventoryCtx, {
-        type: 'bar',
-        data: {
-            labels: <%- JSON.stringify(currentMedications ? currentMedications.map(m => m.name) : []) %>,
-            datasets: [{
-                label: 'Inventory Levels',
-                data: <%- JSON.stringify(currentMedications ? currentMedications.map(m => m.inventory) : []) %>,
-                backgroundColor: '#3498db',
-            }]
-        },
-        options: { responsive: true }
-    });
-
-    // Reminder Completion Trend (Hardcoded)
-    new Chart(completionCtx, {
-        type: 'line',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{ label: 'Reminders', data: [80, 85, 90, 75, 95, 70, 88] }]
-        },
-    });
-
-    // Medication Types Pie Chart
-    new Chart(typesCtx, {
-        type: 'pie',
-        data: {
-            labels: ['Pill', 'Injection', 'Liquid', 'Other'],
-            datasets: [{
-                data: [10, 5, 2, 3],
-                backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#9b59b6']
-            }]
-        },
-    });
-</script>
-
 
 </html>
