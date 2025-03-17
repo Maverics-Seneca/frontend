@@ -72,7 +72,7 @@
         <% } %>
 
         <!-- Patient Role -->
-        <% if (role === 'patient') { %>
+        <% if (role === 'user') { %>
         <li class="menu-item">
             <a href="/patient-dashboard" class="menu-link">Patient Dashboard</a>
         </li>
@@ -105,7 +105,7 @@
         <% } %>
 
         <!-- Common Items for Authenticated Users -->
-        <% if (role === 'owner' || role === 'admin' || role === 'patient') { %>
+        <% if (role === 'owner' || role === 'admin' || role === 'user') { %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Settings</a>
             <ul class="submenu">
