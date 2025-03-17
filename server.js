@@ -712,33 +712,40 @@ app.post('/add-patient', authenticateUser, (req, res) => {
     res.redirect('/dashboard');
 });
 
-app.post('/login',
-    async (req, res) => {
+app.post('/login', async (req, res) => {
+    try {
+        const response = await axios.post('http://middleware:3001/auth/login', req.body, {
+            withCredentials: true,
+        });
 
-        try {
-            const response = await axios.post('http://middleware:3001/auth/login', req.body, {
-                withCredentials: true,
-            });
+        console.log('Middleware response:', response.data); // Debug: Log middleware response
 
-            console.log('Middleware response:', response.data); // Debug: Log middleware response
+        // Set the authToken cookie
+        res.cookie('authToken', response.data.token, {
+            httpOnly: true,
+            secure: false, // Ensure this is true in production (HTTPS only)
+            sameSite: 'Lax',
+            path: '/',
+        });
 
-            // Set the authToken cookie
-            res.cookie('authToken', response.data.token, {
-                httpOnly: true,
-                secure: false, // Ensure this is true in production (HTTPS only)
-                sameSite: 'Lax', // Required for cross-origin cookies
-                path: '/', // Cookie accessible across all paths
-            });
+        console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
 
-            console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
+        // Check role and redirect accordingly
+        const userRole = response.data.role;
+        if (userRole === 'user') {
+            console.log('Redirecting user to /patient-dashboard');
+            res.redirect('/patient-dashboard');
+        } else {
+            console.log('Redirecting to default /');
             res.redirect('/');
-        } catch (error) {
-            console.error('Login error:', error.message); // Debug: Log login error
-            res.status(error.response?.status || 500).json({
-                error: error.response?.data?.message || 'Login failed',
-            });
         }
-    });
+    } catch (error) {
+        console.error('Login error:', error.message); // Debug: Log login error
+        res.status(error.response?.status || 500).json({
+            error: error.response?.data?.error || 'Login failed',
+        });
+    }
+});
 
 app.post('/add-medicines', authenticateUser, async (req, res) => {
     const { name, dosage, frequency, prescribingDoctor, endDate, inventory } = req.body;
