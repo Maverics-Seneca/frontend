@@ -7,7 +7,8 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
-const SECRET_KEY = process.env.JWT_SECRET;
+// const SECRET_KEY = process.env.JWT_SECRET;
+const SECRET_KEY = 'my_jwt_secret';
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,7 +63,7 @@ const authenticateUser = (req, res, next) => {
         console.log('No token found, redirecting to home.');
         return res.render('pages/index', {
             isLoggedIn: false,
-            role: 'user',
+            role: null,
             message: 'Kindly sign in before accessing this page.',
         });
     }
@@ -73,6 +74,7 @@ const authenticateUser = (req, res, next) => {
         req.email = decoded.email;
         req.name = decoded.name;
         req.role = decoded.role;
+        req.organizationId = decoded.organizationId;
         console.log('Decoded token:', decoded);
         next();
     } catch (error) {
@@ -80,6 +82,7 @@ const authenticateUser = (req, res, next) => {
         res.clearCookie('authToken');
         return res.render('pages/index', {
             isLoggedIn: false,
+            role: null,
             message: 'Session expired. Please sign in again.',
         });
     }
@@ -144,6 +147,72 @@ app.get('/dashboard', authenticateUser, (req, res) => {
         userName: req.name,
         role: req.role,
     });
+});
+
+// All Patients Route
+app.get('/all-patients', authenticateUser, async (req, res) => {
+    if (req.role !== 'admin') {
+        return res.status(403).render('pages/index', {
+            isLoggedIn: true,
+            role: req.role,
+            message: 'Access denied. Admins only.',
+        });
+    }
+
+    try {
+        console.log('Fetching patients for organizationId:', req.organizationId);
+        const response = await axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`);
+        const patients = response.data;
+
+        res.render('pages/admin/all-patients', {
+            isLoggedIn: true,
+            userName: req.name,
+            role: req.role,
+            patients,
+        });
+    } catch (error) {
+        console.error('Error fetching patients:', error.message);
+        res.render('pages/admin/all-patients', {
+            isLoggedIn: true,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to load patients.',
+        });
+    }
+});
+
+// Update Patient Route
+app.post('/patients/:id', authenticateUser, async (req, res) => {
+    if (req.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+
+    try {
+        const { name, email, phone } = req.body;
+        const patientId = req.params.id;
+        await axios.post(`http://middleware:3001/patients/${patientId}`, {
+            name,
+            email,
+            phone,
+            organizationId: req.organizationId,
+        });
+        res.status(200).send('Patient updated');
+    } catch (error) {
+        console.error('Error updating patient:', error.message);
+        res.status(500).send('Failed to update patient');
+    }
+});
+
+// Delete Patient Route
+app.delete('/patients/:id', authenticateUser, async (req, res) => {
+    if (req.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+
+    try {
+        const patientId = req.params.id;
+        await axios.delete(`http://middleware:3001/patients/${patientId}`);
+        res.status(200).send('Patient deleted');
+    } catch (error) {
+        console.error('Error deleting patient:', error.message);
+        res.status(500).send('Failed to delete patient');
+    }
 });
 
 app.get('/add-medicines', authenticateUser, (req, res) => {
@@ -718,29 +787,30 @@ app.post('/login', async (req, res) => {
             withCredentials: true,
         });
 
-        console.log('Middleware response:', response.data); // Debug: Log middleware response
+        console.log('Middleware response:', response.data);
 
-        // Set the authToken cookie
         res.cookie('authToken', response.data.token, {
             httpOnly: true,
-            secure: false, // Ensure this is true in production (HTTPS only)
+            secure: false,
             sameSite: 'Lax',
             path: '/',
         });
 
-        console.log('Cookie set successfully:', response.data.token); // Debug: Log cookie set
+        console.log('Cookie set successfully:', response.data.token);
 
-        // Check role and redirect accordingly
         const userRole = response.data.role;
         if (userRole === 'user') {
             console.log('Redirecting user to /patient-dashboard');
             res.redirect('/patient-dashboard');
+        } else if (userRole === 'admin') {
+            console.log('Redirecting admin to /all-patients');
+            res.redirect('/all-patients');
         } else {
             console.log('Redirecting to default /');
             res.redirect('/');
         }
     } catch (error) {
-        console.error('Login error:', error.message); // Debug: Log login error
+        console.error('Login error:', error.message);
         res.status(error.response?.status || 500).json({
             error: error.response?.data?.error || 'Login failed',
         });
@@ -1114,7 +1184,7 @@ app.post('/settings/:id', authenticateUser, async (req, res) => {
 
         // Generate a new token with updated user info
         const newToken = jwt.sign(
-            { userId: userId, email: updatedUser.email, name: updatedUser.name },
+            { userId: userId, email: updatedUser.email, name: updatedUser.name, organizationId: updatedUser.organizationId },
             SECRET_KEY,
             { expiresIn: '1h' }
         );
