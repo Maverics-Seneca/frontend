@@ -75,4 +75,49 @@
     </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/charts/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const inventoryCtx = document.getElementById('inventoryChart').getContext('2d');
+    const completionCtx = document.getElementById('completionChart').getContext('2d');
+    const typesCtx = document.getElementById('typesChart').getContext('2d');
+
+    // Medication Inventory Bar Chart
+    new Chart(inventoryCtx, {
+        type: 'bar',
+        data: {
+            labels: <%- JSON.stringify(currentMedications ? currentMedications.map(m => m.name) : []) %>,
+            datasets: [{
+                label: 'Inventory Levels',
+                data: <%- JSON.stringify(currentMedications ? currentMedications.map(m => m.inventory) : []) %>,
+                backgroundColor: '#3498db',
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Reminder Completion Trend (Hardcoded)
+    new Chart(completionCtx, {
+        type: 'line',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{ label: 'Reminders', data: [80, 85, 90, 75, 95, 70, 88] }]
+        },
+    });
+
+    // Medication Types Pie Chart
+    new Chart(typesCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Pill', 'Injection', 'Liquid', 'Other'],
+            datasets: [{
+                data: [10, 5, 2, 3],
+                backgroundColor: ['#3498db', '#e74c3c', '#f1c40f', '#9b59b6']
+            }]
+        },
+    });
+</script>
+
+
 </html>
