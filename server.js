@@ -786,21 +786,25 @@ app.get('/medicine-details', authenticateUser, async (req, res) => {
 // Logs pageI want logs to shows only if the role is admin page route
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
-    console.log('Rendering logs page for user:', req.userId, 'with role:', req.role);
+    const userId = req.userId;
+    const role = req.role;
+    console.log('Rendering logs page for user:', userId, 'with role:', role);
 
-    // Check if the user has the 'admin' role
-    if (req.role !== 'admin') {
-        console.log('Access denied: User is not an admin');
+    // Restrict access to admin and owner roles only
+    if (role !== 'admin' && role !== 'owner') {
+        console.log('Access denied: User is not an admin or owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to view logs.',
+            message: 'Access denied. You must be an admin or owner to view logs.',
         });
     }
 
     try {
-        const response = await axios.get('http://middleware:3001/logs');
+        const response = await axios.get('http://middleware:3001/logs', {
+            params: { userId, role }
+        });
         const logs = response.data;
 
         res.render('pages/admin/logs', {
