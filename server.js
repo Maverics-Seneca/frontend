@@ -8,8 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
-// const SECRET_KEY = process.env.JWT_SECRET;
-const SECRET_KEY = 'my_jwt_secret';
+const SECRET_KEY = process.env.JWT_SECRET;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
