@@ -5,10 +5,21 @@
         <span class="brand-name">MediTrack</span>
     </div>
     <ul class="sidebar-menu">
+        <!-- No Role (Guest) -->
+        <% if (!role ) { %>
         <li class="menu-item">
             <a href="/" class="menu-link">Dashboard</a>
         </li>
-        <% if (role === 'owner'  ) { %>
+        <li class="menu-item">
+            <a href="/sign-in" class="menu-link">Sign-in</a>
+        </li>
+        <% } %>
+
+        <!-- Owner Role -->
+        <% if (role === 'owner') { %>
+        <li class="menu-item">
+            <a href="/owner-dashboard" class="menu-link">Owner Dashboard</a>
+        </li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Organizations</a>
             <ul class="submenu">
@@ -23,22 +34,53 @@
                 <li><a href="/add-admin">Add Admin</a></li>
             </ul>
         </li>
-        <% } %>
-        <% if (role === 'admin' || role === 'owner'  ) { %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Patient</a>
             <ul class="submenu">
-                <li><a href="/patient-profile">Patient Profile</a></li>
+                <li><a href="/all-patients">All Patients</a></li>
                 <li><a href="/add-patient">Add Patient</a></li>
             </ul>
         </li>
+        <li class="menu-item has-submenu">
+            <a href="#" class="menu-link">Reminders</a>
+            <ul class="submenu">
+                <li><a href="/timely-reminders">All Reminders</a></li>
+                <li><a href="/add-reminder">Add Reminder</a></li>
+            </ul>
+        </li>
         <% } %>
+
+        <!-- Admin Role -->
+        <% if (role === 'admin') { %>
+        <li class="menu-item">
+            <a href="/admin-dashboard" class="menu-link">Admin Dashboard</a>
+        </li>
+        <li class="menu-item has-submenu">
+            <a href="#" class="menu-link">Patient</a>
+            <ul class="submenu">
+                <li><a href="/all-patients">All Patients</a></li>
+                <li><a href="/add-patient">Add Patient</a></li>
+            </ul>
+        </li>
+        <li class="menu-item has-submenu">
+            <a href="#" class="menu-link">Reminders</a>
+            <ul class="submenu">
+                <li><a href="/timely-reminders">All Reminders</a></li>
+                <li><a href="/add-reminder">Add Reminder</a></li>
+            </ul>
+        </li>
+        <% } %>
+
+        <!-- Patient Role -->
+        <% if (role === 'patient') { %>
+        <li class="menu-item">
+            <a href="/patient-dashboard" class="menu-link">Patient Dashboard</a>
+        </li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Medicines</a>
             <ul class="submenu">
                 <li><a href="/medication-profile">All Medications</a></li>
                 <li><a href="/medication-history">Medication History</a></li>
-                <li><a href="/add-medicines">Add Medicines</a></li>
                 <li><a href="/medicine-details">Medicines Info</a></li>
             </ul>
         </li>
@@ -52,25 +94,28 @@
             <a href="#" class="menu-link">Reminders</a>
             <ul class="submenu">
                 <li><a href="/timely-reminders">All Reminders</a></li>
-                <li><a href="/add-reminder">Add Reminder</a></li>
             </ul>
         </li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Caretaker</a>
             <ul class="submenu">
-                <li><a href="/caretaker-profile">Caretaker Profile</a></li>
-                <li><a href="/add-caretaker">Add Caretaker</a></li>
+                <li><a href="/caretaker-profile">All Caretakers</a></li>
             </ul>
         </li>
+        <% } %>
+
+        <!-- Common Items for Authenticated Users -->
+        <% if (role === 'owner' || role === 'admin' || role === 'patient') { %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Settings</a>
             <ul class="submenu">
                 <li><a href="/settings">Edit Information</a></li>
-                <% if (role === 'admin' || role === 'owner' ) { %>
+                <% if (role === 'admin' || role === 'owner') { %>
                 <li><a href="/logs">Logs</a></li>
                 <% } %>
             </ul>
         </li>
+        <% } %>
     </ul>
 </aside>
 
