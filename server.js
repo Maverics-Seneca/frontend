@@ -535,7 +535,13 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            error: 'Failed to load dashboard data'
+            error: 'Failed to load dashboard data',
+            refillAlerts: [],           // Default to empty array
+            currentMedications: [],     // Default to empty array
+            reminders: [],             // Default to empty array
+            medicineHistory: [],       // Default to empty array
+            caretakers: [],           // Default to empty array
+            medicationDetails: []     // Default to empty array
         });
     }
 });
