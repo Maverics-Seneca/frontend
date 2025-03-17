@@ -5,12 +5,27 @@
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
 </head>
-
 <body>
     <div class="form-container">
-        <h1>All Patients</h1>
+        <div class="header-container">
+            <h1>All Patients</h1>
+            <button class="add-patient-btn" onclick="window.location.href='/add-patient'">Add Patient</button>
+        </div>
+        <table class="patients-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align: center;">No patients found.</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-    <%- include('../../partials/_scripts') %>
 </body>
-
 </html>
