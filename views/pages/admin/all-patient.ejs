@@ -12,6 +12,27 @@
         /* Add provided CSS styling here from your original code */
         /* (copy the entire style block you provided earlier) */
     </style>
+    <tbody id="patientsBody">
+        <% if (patients && patients.length > 0) { %>
+            <% patients.forEach(patient => { %>
+            <tr data-id="<%= patient.id %>">
+                <td><input type="text" id="name-<%= patient.id %>" value="<%= patient.name %>" disabled required /></td>
+                <td><input type="email" id="email-<%= patient.id %>" value="<%= patient.email %>" disabled required /></td>
+                <td><input type="tel" id="phone-<%= patient.id %>" value="<%= patient.phone %>" disabled required /></td>
+                <td>
+                    <button class="edit-btn" data-id="<%= patient.id %>">Edit</button>
+                    <button class="save-btn" data-id="<%= patient.id %>" style="display:none;">Save</button>
+                    <button class="delete-btn" data-id="<%= patient.id %>">Delete</button>
+                </td>
+            </tr>
+            <% }) %>
+            <% } else { %>
+            <tr>
+                <td colspan="4" style="text-align: center;">No patients found.</td>
+            </tr>
+            <% } %>
+    </tbody>
+    
 <body>
     <div class="form-container">
         <div class="header-container">
