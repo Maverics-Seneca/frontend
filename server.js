@@ -2,6 +2,7 @@ const express = require('express');
 const axios = require('axios');
 const path = require('path');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 
@@ -158,17 +159,14 @@ app.get('/all-patients', authenticateUser, async (req, res) => {
             message: 'Access denied. Admins only.',
         });
     }
-
     try {
         console.log('Fetching patients for organizationId:', req.organizationId);
         const response = await axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`);
-        const patients = response.data;
-
         res.render('pages/admin/all-patients', {
             isLoggedIn: true,
             userName: req.name,
             role: req.role,
-            patients,
+            patients: response.data,
         });
     } catch (error) {
         console.error('Error fetching patients:', error.message);
@@ -688,28 +686,71 @@ app.delete('/organization/:id', authenticateUser, async (req, res) => {
     }
 });
 
+// GET /add-patient
 app.get('/add-patient', authenticateUser, (req, res) => {
-    console.log('Rendering add-patient page for user:', req.userId); // Debug: Log user ID
+    console.log('Rendering add-patient page for user:', req.userId);
 
-    // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
-
-    // Check if the user has the 'admin' role
     if (req.role !== 'admin') {
-        console.log('Access denied: User is not an admin');
+        console.log('Access denied: User is not an admin for add-patient');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to view patients.',
+            message: 'Access denied. You must be an admin to add patients.',
         });
     }
 
     res.render('pages/admin/add-patient', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
+        isLoggedIn,
         userName: req.name,
-        role: req.role // Pass the user's name to the template
+        role: req.role
     });
+});
+
+// POST /add-patient
+app.post('/add-patient', authenticateUser, async (req, res) => {
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin for add-patient');
+        return res.status(403).render('pages/error', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to add patients.',
+        });
+    }
+
+    const { patientName, email, phone, dob } = req.body;
+    console.log('Adding new patient:', req.body);
+
+    // Generate temporary password: firstname (lowercase) + last 4 digits of phone
+    const firstName = patientName.split(' ')[0].toLowerCase();
+    const lastFourPhone = phone.slice(-4);
+    const tempPassword = `${firstName}${lastFourPhone}`;
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+    try {
+        const response = await axios.post('http://middleware:3001/users', {
+            email,
+            name: patientName,
+            phone,
+            dob,
+            password: hashedPassword,
+            role: 'user',
+            organizationId: req.organizationId
+        });
+
+        console.log('Patient added successfully:', response.data);
+        res.redirect('/all-patients');
+    } catch (error) {
+        console.error('Error adding patient:', error.message);
+        res.render('pages/admin/add-patient', {
+            isLoggedIn: true,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to add patient. Please try again.',
+        });
+    }
 });
 
 app.get('/add-caretaker', authenticateUser, (req, res) => {
@@ -764,9 +805,11 @@ app.delete('/caretakers/:id', authenticateUser, async (req, res) => {
     }
 });
 
-// POST Functions
-app.post('/add-patient', authenticateUser, (req, res) => {
-    // Check if the user has the 'admin' role
+// GET /add-patient
+app.get('/add-patient', authenticateUser, (req, res) => {
+    console.log('Rendering add-patient page for user:', req.userId);
+
+    const isLoggedIn = !!req.cookies.authToken;
     if (req.role !== 'admin') {
         console.log('Access denied: User is not an admin');
         return res.status(403).render('pages/error', {
@@ -776,9 +819,62 @@ app.post('/add-patient', authenticateUser, (req, res) => {
             message: 'Access denied. You must be an admin to add patients.',
         });
     }
-    const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone } = req.body;
-    console.log('New Patient Added:', req.body); // Debug: Log new patient data
-    res.redirect('/dashboard');
+
+    res.render('pages/admin/add-patient', {
+        isLoggedIn,
+        userName: req.name,
+        role: req.role
+    });
+});
+
+// POST /add-patient
+app.post('/add-patient', authenticateUser, async (req, res) => {
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin');
+        return res.status(403).render('pages/error', {
+            isLoggedIn: !!req.cookies.authToken,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to add patients.',
+        });
+    }
+
+    const { patientName, dob, gender, medicalHistory, guardianName, guardianRelation, guardianPhone, email, phone } = req.body;
+    console.log('New Patient Data:', req.body);
+
+    // Generate temporary password: firstname (lowercase) + last 4 digits of phone
+    const firstName = patientName.split(' ')[0].toLowerCase();
+    const lastFourPhone = phone.slice(-4);
+    const tempPassword = `${firstName}${lastFourPhone}`;
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+    try {
+        const response = await axios.post('http://middleware:3001/users', {
+            email,
+            name: patientName,
+            phone,
+            password: hashedPassword,
+            role: 'user',
+            organizationId: req.organizationId, // Use admin's organizationId
+            dob,
+            gender,
+            medicalHistory,
+            guardianName,
+            guardianRelation,
+            guardianPhone
+        });
+
+        console.log('Patient added successfully:', response.data);
+        res.redirect('/all-patients'); // Redirect to all-patients after success
+    } catch (error) {
+        console.error('Error adding patient:', error.message);
+        res.render('pages/admin/add-patient', {
+            isLoggedIn: true,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to add patient. Please try again.',
+        });
+    }
 });
 
 app.post('/login', async (req, res) => {

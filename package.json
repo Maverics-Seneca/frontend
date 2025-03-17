@@ -20,6 +20,7 @@
   "homepage": "https://github.com/Maverics-Seneca/frontend#readme",
   "dependencies": {
     "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
     "chart.js": "^4.4.8",
     "cookie-parser": "^1.4.7",
     "ejs": "^3.1.10",
