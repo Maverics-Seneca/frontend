@@ -413,11 +413,65 @@ app.get('/patient-profile', authenticateUser, (req, res) => {
     // Check if the user is logged in
     const isLoggedIn = !!req.cookies.authToken;
 
-    res.render('pages/admin/patient-profile', {
+    res.render('pages/patient/patient-profile', {
         isLoggedIn: isLoggedIn, // Pass the login status to the template
         userName: req.name,
         role: req.role // Pass the user's name to the template
     });
+});
+
+app.get('/patient-dashboard', authenticateUser, async (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    const userId = req.userId;
+    console.log('Rendering patient dashboard for user:', userId, 'with role:', req.role);
+
+    try {
+        const [refillResponse, medsResponse, remindersResponse, historyResponse, caretakerResponse, detailsResponse] = await Promise.all([
+            axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
+            axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
+            axios.get(`http://middleware:3001/reminders/${userId}`),
+            axios.get(`http://middleware:3001/medicine/history?patientId=${userId}`),
+            axios.get(`http://middleware:3001/caretaker/get?patientId=${userId}`),
+            axios.get(`http://middleware:3001/medicine/details?patientId=${userId}`)
+        ]);
+
+        const currentDate = new Date('2025-03-16'); // Use new Date() for production
+        const allMedications = medsResponse.data;
+        const refillAlerts = allMedications.filter(med => {
+            const endDate = new Date(med.endDate);
+            const daysLeft = (endDate - currentDate) / (1000 * 60 * 60 * 24);
+            return med.inventory <= 5 || daysLeft <= 7;
+        });
+
+        const currentMedications = allMedications.filter(med => new Date(med.endDate) >= currentDate);
+        const reminders = remindersResponse.data.reminders || [];
+        const medicineHistory = historyResponse.data;
+        const caretakers = caretakerResponse.data;
+        const medicationDetails = detailsResponse.data;
+
+        // Log to verify data
+        console.log('Current Medications:', currentMedications);
+
+        res.render('pages/patient/patient-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            refillAlerts,
+            currentMedications,
+            reminders,
+            medicineHistory,
+            caretakers,
+            medicationDetails
+        });
+    } catch (error) {
+        console.error('Error fetching patient dashboard data:', error.message);
+        res.render('pages/patient/patient-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to load dashboard data'
+        });
+    }
 });
 
 // Add Organization page
