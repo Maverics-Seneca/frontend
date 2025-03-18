@@ -2,24 +2,228 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms of Service - MediTrack</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        /* Main Content Styling */
+        .main-content {
+            padding: 15px;
+            max-width: 1000px;
+            margin: 10px auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            width: 100%;
+            position: relative;
+        }
+
+        .main-content h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .main-content .last-updated {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Terms Sections */
+        .terms-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .terms-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .terms-section h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .terms-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: #2ecc71;
+            border-radius: 2px;
+        }
+
+        .terms-section p {
+            font-size: 1.15em;
+            color: #34495e;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .terms-section ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 10px;
+        }
+
+        .terms-section ul li {
+            font-size: 1.1em;
+            color: #34495e;
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .terms-section ul li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #2ecc71;
+            font-size: 1.2em;
+        }
+
+        /* Terms Footer */
+        .terms-footer {
+            text-align: center;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .terms-footer input[type="checkbox"] {
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .terms-footer label {
+            font-size: 1.1em;
+            color: #34495e;
+            vertical-align: middle;
+        }
+
+        .terms-footer button {
+            display: block;
+            margin: 10px auto 0;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .terms-footer button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .terms-footer button:enabled:hover {
+            background: #2ecc71;
+        }
+
+        /* Custom Scrollbar Styling */
+        .main-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #2ecc71;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin: 10px;
+                max-height: 70vh;
+            }
+
+            .main-content h1 {
+                font-size: 2.2em;
+            }
+
+            .terms-section h2 {
+                font-size: 1.3em;
+            }
+
+            .terms-section p,
+            .terms-section ul li {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+                max-height: 60vh;
+            }
+
+            .main-content h1 {
+                font-size: 1.8em;
+            }
+
+            .terms-section {
+                padding: 10px;
+            }
+
+            .terms-section h2 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>MediTrack Terms of Service</h1>
-        <p><strong>Last Updated:</strong> February 2025</p>
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
 
-        <div class="terms-content">
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>MediTrack Terms of Service</h1>
+        <p class="last-updated"><strong>Last Updated:</strong> February 2025</p>
+
+        <div class="terms-section">
             <h2>1. Introduction</h2>
             <p>Welcome to MediTrack, a medication management platform that helps users track medications, set reminders,
                 and allow caregivers to monitor adherence. By using our service, you agree to these Terms of Service.
             </p>
+        </div>
 
+        <div class="terms-section">
             <h2>2. User Responsibilities</h2>
             <p>By using MediTrack, you agree to:</p>
             <ul>
@@ -27,15 +231,21 @@
                 <li>Follow your healthcare provider’s guidance.</li>
                 <li>Not misuse the platform for unauthorized or illegal purposes.</li>
             </ul>
+        </div>
 
+        <div class="terms-section">
             <h2>3. Privacy & Data Security</h2>
             <p>MediTrack stores and processes personal medication data securely. We comply with privacy laws and never
                 share data without consent.</p>
+        </div>
 
+        <div class="terms-section">
             <h2>4. Service Limitations</h2>
             <p>MediTrack is a tool for medication tracking and does not provide medical advice. Always consult a
                 healthcare provider before making medication changes.</p>
+        </div>
 
+        <div class="terms-section">
             <h2>5. Changes to Terms</h2>
             <p>We may update these terms periodically. Continued use of MediTrack after changes means acceptance of the
                 new terms.</p>
@@ -47,6 +257,34 @@
             <button id="continueBtn" disabled>Continue</button>
         </div>
     </div>
+
+    <%- include('../../partials/_scripts') %>
+
+    <!-- Force scroll to top and handle checkbox/button logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.scrollTop = 0; // Force scroll to top
+            }
+            window.scrollTo(0, 0); // Ensure page itself starts at top
+
+            // Checkbox and button logic
+            const agreeCheckbox = document.getElementById('agreeCheckbox');
+            const continueBtn = document.getElementById('continueBtn');
+
+            agreeCheckbox.addEventListener('change', () => {
+                continueBtn.disabled = !agreeCheckbox.checked;
+            });
+
+            continueBtn.addEventListener('click', () => {
+                if (!continueBtn.disabled) {
+                    // Add your navigation logic here, e.g., redirect to dashboard
+                    window.location.href = '/'; // Example redirect
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

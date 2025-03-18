@@ -128,6 +128,66 @@ app.get('/', authenticateUser, (req, res) => {
     });
 });
 
+// Privacy Policy Route
+app.get('/privacy-policy', (req, res) => {
+    const token = req.cookies.authToken;
+    let isLoggedIn = false;
+    let userName = null;
+    let role = null;
+
+    // Check if token exists and attempt to verify it
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            isLoggedIn = true;
+            userName = decoded.name;
+            role = decoded.role;
+            console.log('User authenticated for privacy-policy:', { userName, role }); // Log authenticated user
+        } catch (error) {
+            console.error('Token verification failed for privacy-policy:', error.message); // Log token error
+            // If token is invalid, treat as not logged in but still render the page
+        }
+    } else {
+        console.log('No token found for privacy-policy, rendering as guest'); // Log guest access
+    }
+
+    res.render('pages/extra/privacy-policy', {
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        role: role
+    });
+});
+
+// Terms of Service Route
+app.get('/terms-of-service', (req, res) => {
+    const token = req.cookies.authToken;
+    let isLoggedIn = false;
+    let userName = null;
+    let role = null;
+
+    // Check if token exists and attempt to verify it
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            isLoggedIn = true;
+            userName = decoded.name;
+            role = decoded.role;
+            console.log('User authenticated for terms-of-service:', { userName, role }); // Log authenticated user
+        } catch (error) {
+            console.error('Token verification failed for terms-of-service:', error.message); // Log token error
+            // If token is invalid, treat as not logged in but still render the page
+        }
+    } else {
+        console.log('No token found for terms-of-service, rendering as guest'); // Log guest access
+    }
+
+    res.render('pages/extra/terms-of-service', {
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        role: role
+    });
+});
+
 // Admin signup page
 app.get('/sign-up-admin', async (req, res) => {
     try {
@@ -155,8 +215,6 @@ app.get('/sign-up', (req, res) => res.render('pages/auth/sign-up')); // Render s
 app.get('/recover-password', (req, res) => res.render('pages/auth/recover-password')); // Render password recovery
 app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen')); // Render lock screen
 app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail')); // Render confirm mail
-app.get('/privacy-policy', (req, res) => res.render('pages/extra/privacy-policy')); // Render privacy policy
-app.get('/terms-of-service', (req, res) => res.render('pages/extra/terms-of-service')); // Render terms of service
 
 // -----------------------------------------
 // Admin Routes
