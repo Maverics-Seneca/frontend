@@ -30,3 +30,15 @@
     <p class="error-message"><%= error %></p>
     <% } %>
     
+    <table class="organizations-table" id="organizationsTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Name</th>
+                <th onclick="sortTable(1)">Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="organizationsBody">
+        </tbody>
+    </table>
+    
