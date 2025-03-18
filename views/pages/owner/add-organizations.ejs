@@ -42,3 +42,26 @@
         </tbody>
     </table>
     
+
+    <% if (organizations && organizations.length > 0) { %>
+        <% organizations.forEach(org => { %>
+            <tr data-id="<%= org.organizationId %>">
+                <td>
+                    <input type="text" id="name-<%= org.organizationId %>" value="<%= org.name %>" disabled required />
+                </td>
+                <td>
+                    <textarea id="description-<%= org.organizationId %>" disabled><%= org.description %></textarea>
+                </td>
+                <td>
+                    <button class="edit-btn" data-id="<%= org.organizationId %>">Edit</button>
+                    <button class="save-btn" data-id="<%= org.organizationId %>">Save</button>
+                    <button class="delete-btn" data-id="<%= org.organizationId %>">Delete</button>
+                </td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr>
+            <td colspan="4" style="text-align: center;">No organizations found.</td>
+        </tr>
+    <% } %>
+    
