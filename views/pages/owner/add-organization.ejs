@@ -10,7 +10,7 @@
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             width: 100%;
             margin: 0 auto;
@@ -24,7 +24,16 @@
         }
 
         .form-container .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            color: #444;
         }
 
         .form-container input,
@@ -32,28 +41,32 @@
             padding: 10px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-size: 1em;
             width: 100%;
             max-width: 300px;
-            font-size: 1em;
         }
 
-        button[type="submit"] {
+        .form-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-container button[type="submit"] {
             background: #3498db;
             color: white;
             padding: 10px;
-            border-radius: 5px;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
             width: 100%;
             max-width: 300px;
+            font-size: 1.2em;
             transition: background 0.3s ease;
-            margin-top: 15px;
+            margin: 0 auto;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        button[type="submit"]:hover {
+        .form-container button[type="submit"]:hover {
             background: #2980b9;
         }
 
@@ -69,15 +82,16 @@
     <%- include('../../partials/_sidebar') %>
     <%- include('../../partials/_auth') %>
 
-    <div class="main-content">
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
         <div class="form-container">
             <h1>Add Organization</h1>
             <% if (typeof error !== 'undefined' && error) { %>
-                <p class="error-message"><%= error %></p>
+            <p class="error-message"><%= error %></p>
             <% } %>
-            <form id="addOrgForm" method="POST">
+            <form action="/add-organization" method="POST" id="add-organization-form">
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name">Organization Name</label>
                     <input type="text" name="name" id="name" required />
                 </div>
                 <div class="form-group">
@@ -90,11 +104,11 @@
     </div>
 
     <script>
-        document.querySelector('form').addEventListener('submit', function(e){
+        document.getElementById('add-organization-form').addEventListener('submit', (e) => {
             const name = document.getElementById('name').value.trim();
-            if(!name){
+            if (!name) {
                 e.preventDefault();
-                alert('Name cannot be empty!');
+                alert('Organization Name is required.');
             }
         });
     </script>
