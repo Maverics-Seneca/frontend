@@ -106,3 +106,32 @@
     </script>
     
     
+    <script>
+        function renderTable() {
+            const tbody = document.getElementById('organizationsBody');
+            tbody.innerHTML = '';
+    
+            if (organizationsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No organizations found.</td></tr>';
+                return;
+            }
+    
+            organizationsData.forEach(org => {
+                const row = document.createElement('tr');
+                row.dataset.id = org.organizationId;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${org.organizationId}" value="${org.name}" disabled required /></td>
+                    <td><textarea id="description-${org.organizationId}" disabled>${org.description}</textarea></td>
+                    <td>
+                        <button class="edit-btn" data-id="${org.organizationId}">Edit</button>
+                        <button class="save-btn" data-id="${org.organizationId}">Save</button>
+                        <button class="delete-btn" data-id="${org.organizationId}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+    
+            attachEventListeners();
+        }
+    </script>
+    
