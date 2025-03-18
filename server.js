@@ -136,19 +136,6 @@ app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail'));
 app.get('/privacy-policy', (req, res) => res.render('pages/extra/privacy-policy'));
 app.get('/terms-of-service', (req, res) => res.render('pages/extra/terms-of-service'));
 
-app.get('/dashboard', authenticateUser, (req, res) => {
-    console.log('Rendering dashboard page for user:', req.userId); // Debug: Log user ID
-
-    // Check if the user is logged in
-    const isLoggedIn = !!req.cookies.authToken;
-
-    res.render('pages/dashboard/dashboard', {
-        isLoggedIn: isLoggedIn, // Pass the login status to the template
-        userName: req.name,
-        role: req.role,
-    });
-});
-
 // All Patients Route
 app.get('/all-patients', authenticateUser, async (req, res) => {
     if (req.role !== 'admin') {
@@ -399,7 +386,6 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
     }
 });
 
-
 app.post('/admins/:id', authenticateUser, async (req, res) => {
     const { id } = req.params;
     const { name, email, phone, organizationId } = req.body;
@@ -542,6 +528,116 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
             medicineHistory: [],       // Default to empty array
             caretakers: [],           // Default to empty array
             medicationDetails: []     // Default to empty array
+        });
+    }
+});
+
+// Render Admin Dashboard page
+app.get('/admin-dashboard', authenticateUser, async (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    const userId = req.userId;
+    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role);
+
+    if (req.role !== 'admin') {
+        console.log('Access denied: User is not an admin');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an admin to view this page.',
+        });
+    }
+
+    try {
+        const [patientsResponse, remindersResponse, logsResponse] = await Promise.all([
+            axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/reminders/all?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/logs?organizationId=${req.organizationId}&limit=5`)
+        ]);
+
+        const patients = patientsResponse.data;
+        const reminders = remindersResponse.data;
+        const recentLogs = logsResponse.data;
+
+        res.render('pages/admin/admin-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            patients,
+            reminders,
+            recentLogs
+        });
+    } catch (error) {
+        console.error('Error fetching admin dashboard data:', error.message);
+        res.render('pages/admin/admin-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to load dashboard data',
+            patients: [],
+            reminders: [],
+            recentLogs: []
+        });
+    }
+});
+
+// Render Owner Dashboard page
+app.get('/owner-dashboard', authenticateUser, async (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    const userId = req.userId;
+    console.log('Rendering owner dashboard for user:', userId, 'with role:', req.role);
+
+    if (req.role !== 'owner') {
+        console.log('Access denied: User is not an owner');
+        return res.status(403).render('pages/error', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            message: 'Access denied. You must be an owner to view this page.',
+        });
+    }
+
+    try {
+        const [adminsResponse, patientsResponse, caretakersResponse, medicationsResponse, logsResponse, organizationsResponse] = await Promise.all([
+            axios.get(`http://middleware:3001/auth/get-all-admins?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/caretakers/all?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/medications/all?organizationId=${req.organizationId}`),
+            axios.get(`http://middleware:3001/logs?organizationId=${req.organizationId}&limit=5`),
+            axios.get(`http://middleware:3001/organization/get?userId=${userId}`)
+        ]);
+
+        const admins = adminsResponse.data;
+        const patients = patientsResponse.data;
+        const caretakers = caretakersResponse.data;
+        const medications = medicationsResponse.data;
+        const recentLogs = logsResponse.data;
+        const organizations = Array.isArray(organizationsResponse.data) ? organizationsResponse.data : [];
+
+        res.render('pages/owner/owner-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            admins,
+            patients,
+            caretakers,
+            medications,
+            recentLogs,
+            organizations
+        });
+    } catch (error) {
+        console.error('Error fetching owner dashboard data:', error.message);
+        res.render('pages/owner/owner-dashboard', {
+            isLoggedIn,
+            userName: req.name,
+            role: req.role,
+            error: 'Failed to load dashboard data',
+            admins: [],
+            patients: [],
+            caretakers: [],
+            medications: [],
+            recentLogs: [],
+            organizations: []
         });
     }
 });
@@ -904,8 +1000,11 @@ app.post('/login', async (req, res) => {
             console.log('Redirecting user to /patient-dashboard');
             res.redirect('/patient-dashboard');
         } else if (userRole === 'admin') {
-            console.log('Redirecting admin to /all-patients');
-            res.redirect('/all-patients');
+            console.log('Redirecting admin to /admin-dashboards');
+            res.redirect('/admin-dashboard');
+        } else if (userRole === 'owner') {
+            console.log('Redirecting admin to /owner-dashboards');
+            res.redirect('/owner-dashboard');
         } else {
             console.log('Redirecting to default /');
             res.redirect('/');
@@ -921,8 +1020,9 @@ app.post('/login', async (req, res) => {
 app.post('/add-medicines', authenticateUser, async (req, res) => {
     const { name, dosage, frequency, prescribingDoctor, endDate, inventory } = req.body;
     const patientId = req.userId; // Extract patientId from authenticated user
+    const organizationId = req.organizationId || null; // Use organizationId from token, or null if not present
 
-    console.log('Adding new medicine:', { patientId, name, dosage, frequency, prescribingDoctor, endDate, inventory }); // Debug log
+    console.log('Adding new medicine:', { patientId, name, dosage, frequency, prescribingDoctor, endDate, inventory, organizationId }); // Debug log
 
     try {
         const response = await axios.post('http://middleware:3001/medicine/add', {
@@ -932,7 +1032,8 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             frequency,
             prescribingDoctor,
             endDate,
-            inventory: Number(inventory) // Convert to number
+            inventory: Number(inventory), // Convert to number
+            organizationId // Include organizationId
         }, {
             headers: { 'Content-Type': 'application/json' }
         });
