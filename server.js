@@ -624,21 +624,60 @@ app.get('/owner-dashboard', authenticateUser, async (req, res) => {
     }
 
     try {
-        const [adminsResponse, patientsResponse, caretakersResponse, medicationsResponse, logsResponse, organizationsResponse] = await Promise.all([
-            axios.get(`http://middleware:3001/auth/get-all-admins?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/caretakers/all?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/medications/all?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/logs?organizationId=${req.organizationId}&limit=5`),
-            axios.get(`http://middleware:3001/organization/get?userId=${userId}`)
+        // Step 1: Fetch all organizations owned by the user
+        const orgsResponse = await axios.get(`http://middleware:3001/organization/get?userId=${userId}`);
+        const organizations = Array.isArray(orgsResponse.data) ? orgsResponse.data : [];
+        console.log('Fetched organizations:', organizations);
+
+        if (organizations.length === 0) {
+            return res.render('pages/owner/owner-dashboard', {
+                isLoggedIn,
+                userName: req.name,
+                role: req.role,
+                admins: [],
+                patients: [],
+                caretakers: [],
+                medications: [],
+                recentLogs: [],
+                organizations,
+                error: 'No organizations found for this owner'
+            });
+        }
+
+        // Step 2: Get all organizationIds
+        const organizationIds = organizations.map(org => org.id); // Assuming 'id' is the organizationId field
+        console.log('Organization IDs:', organizationIds);
+
+        // Step 3: Fetch data for all organizations in parallel
+        const [adminsResponses, patientsResponses, caretakersResponses, medicationsResponses, logsResponses] = await Promise.all([
+            Promise.all(organizationIds.map(orgId =>
+                axios.get(`http://middleware:3001/auth/get-all-admins?organizationId=${orgId}`).catch(() => ({ data: [] }))
+            )),
+            Promise.all(organizationIds.map(orgId =>
+                axios.get(`http://middleware:3001/patients?organizationId=${orgId}`).catch(() => ({ data: [] }))
+            )),
+            Promise.all(organizationIds.map(orgId =>
+                axios.get(`http://middleware:3001/caretakers/all?organizationId=${orgId}`).catch(() => ({ data: [] }))
+            )),
+            Promise.all(organizationIds.map(orgId =>
+                axios.get(`http://middleware:3001/medications/all?organizationId=${orgId}`).catch(() => ({ data: [] }))
+            )),
+            Promise.all(organizationIds.map(orgId =>
+                axios.get(`http://middleware:3001/logs?organizationId=${orgId}&limit=5`).catch(() => ({ data: [] }))
+            ))
         ]);
 
-        const admins = adminsResponse.data;
-        const patients = patientsResponse.data;
-        const caretakers = caretakersResponse.data;
-        const medications = medicationsResponse.data;
-        const recentLogs = logsResponse.data;
-        const organizations = Array.isArray(organizationsResponse.data) ? organizationsResponse.data : [];
+        // Step 4: Aggregate the data
+        const admins = adminsResponses.flatMap(response => response.data);
+        const patients = patientsResponses.flatMap(response => response.data);
+        const caretakers = caretakersResponses.flatMap(response => response.data);
+        const medications = medicationsResponses.flatMap(response => response.data);
+        const recentLogs = logsResponses
+            .flatMap(response => response.data)
+            .sort((a, b) => (b.timestamp?._seconds || 0) - (a.timestamp?._seconds || 0)) // Sort by timestamp descending
+            .slice(0, 5); // Limit to 5 latest logs
+
+        console.log('Aggregated data:', { admins, patients, caretakers, medications, recentLogs, organizations });
 
         res.render('pages/owner/owner-dashboard', {
             isLoggedIn,
