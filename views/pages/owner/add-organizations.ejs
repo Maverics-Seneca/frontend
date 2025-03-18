@@ -64,4 +64,45 @@
             <td colspan="4" style="text-align: center;">No organizations found.</td>
         </tr>
     <% } %>
+
+    <script>
+        let organizationsData = <% - JSON.stringify(organizations || []) %>;
+        let sortColumn = -1;
+        let sortDirection = 1;
+    
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+    
+            organizationsData.sort((a, b) => {
+                let aValue = a.name || '';
+                let bValue = b.name || '';
+    
+                if (columnIndex === 1) { // Description column
+                    aValue = a.description || '';
+                    bValue = b.description || '';
+                }
+    
+                return (aValue < bValue ? -1 : 1) * sortDirection;
+            });
+    
+            renderTable();
+            updateSortIndicators(columnIndex);
+        }
+    
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#organizationsTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+    </script>
+    
     
