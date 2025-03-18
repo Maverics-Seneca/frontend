@@ -30,3 +30,10 @@
     <p class="success-message"><%= success %></p>
     <% } %>
     
+    <form action="/add-admin" method="POST" id="add-admin-form">
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" name="name" id="name" required />
+        </div>
+    </form>
+    
