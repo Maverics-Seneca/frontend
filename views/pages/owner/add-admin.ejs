@@ -60,3 +60,33 @@
     
 
     <button type="submit">Add Admin</button>
+
+
+    <script>
+        document.getElementById('add-admin-form').addEventListener('submit', (e) => {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const organizationId = document.getElementById('organizationId').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^\d{10,15}$/;
+    
+            if (!name) {
+                e.preventDefault();
+                alert('Full Name is required.');
+            }
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address.');
+            }
+            if (!phoneRegex.test(phone)) {
+                e.preventDefault();
+                alert('Please enter a valid phone number (10-15 digits).');
+            }
+            if (!organizationId) {
+                e.preventDefault();
+                alert('Please select an organization.');
+            }
+        });
+    </script>
+
