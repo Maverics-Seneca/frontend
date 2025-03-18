@@ -151,3 +151,38 @@
         }
     </script>
     
+    <script>
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const name = row.querySelector(`#name-${id}`).value.trim();
+                const description = row.querySelector(`#description-${id}`).value.trim();
+    
+                if (!name) {
+                    alert('Name is required.');
+                    return;
+                }
+    
+                try {
+                    const response = await fetch(`/organization/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, description })
+                    });
+    
+                    if (response.ok) {
+                        row.querySelectorAll('input, textarea').forEach(input => input.disabled = true);
+                        row.querySelector('.edit-btn').style.display = 'inline-block';
+                        e.target.style.display = 'none';
+                        alert('Organization updated successfully!');
+                    } else {
+                        alert('Failed to update organization.');
+                    }
+                } catch (error) {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    </script>
+    
