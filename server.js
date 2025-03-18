@@ -347,7 +347,6 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     console.log('Rendering all-admins page for user:', userId, 'with role:', req.role);
 
-    // Restrict to owners only (or adjust as needed)
     if (req.role !== 'owner') {
         console.log('Access denied: User is not an Owner');
         return res.status(403).render('pages/error', {
@@ -359,14 +358,41 @@ app.get('/all-admins', authenticateUser, async (req, res) => {
     }
 
     try {
-        const response = await axios.get('http://middleware:3001/auth/get-all-admins');
-        const admins = Array.isArray(response.data) ? response.data.map(admin => ({
-            ...admin,
-            createdAt: admin.createdAt && admin.createdAt.seconds
-                ? new Date(admin.createdAt.seconds * 1000).toISOString()
-                : null
-        })) : [];
-        console.log('Fetched admins:', admins);
+        // Step 1: Fetch all organizations owned by the user
+        const orgsResponse = await axios.get('http://middleware:3001/organization/get', {
+            params: { userId }
+        });
+        const organizations = Array.isArray(orgsResponse.data) ? orgsResponse.data : [];
+        console.log('Fetched organizations for user:', organizations);
+
+        if (organizations.length === 0) {
+            return res.render('pages/owner/all-admins', {
+                isLoggedIn,
+                userName: req.name,
+                role: req.role,
+                admins: [],
+                error: 'No organizations found for this owner'
+            });
+        }
+
+        // Step 2: Fetch admins for all organizationIds
+        const organizationIds = organizations.map(org => org.id); // Assuming 'id' is the organizationId field
+        const adminsPromises = organizationIds.map(orgId =>
+            axios.get('http://middleware:3001/auth/get-all-admins', {
+                params: { organizationId: orgId }
+            })
+        );
+        const adminsResponses = await Promise.all(adminsPromises);
+        const admins = adminsResponses
+            .flatMap(response => Array.isArray(response.data) ? response.data : [])
+            .map(admin => ({
+                ...admin,
+                userId: admin.id || admin.userId, // Ensure consistency
+                createdAt: admin.createdAt && admin.createdAt._seconds
+                    ? new Date(admin.createdAt._seconds * 1000).toISOString()
+                    : admin.createdAt || null
+            }));
+        console.log('Fetched admins across all organizations:', admins);
 
         res.render('pages/owner/all-admins', {
             isLoggedIn,
