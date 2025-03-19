@@ -67,3 +67,31 @@
         </tr>
     <% } %>
     
+
+    <script>
+        let adminsData = <% - JSON.stringify(admins || []) %>;
+        let sortColumn = -1;
+        let sortDirection = 1;
+    
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+    
+            adminsData.sort((a, b) => {
+                let aValue = a[columnIndex] || '';
+                let bValue = b[columnIndex] || '';
+    
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+    
+            renderTable();
+            updateSortIndicators(columnIndex);
+        }
+    </script>
+    
