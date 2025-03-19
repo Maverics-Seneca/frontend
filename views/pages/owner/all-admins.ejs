@@ -111,3 +111,35 @@
         }
     </script>
     
+    <script>
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const row = e.target.closest('tr');
+                const name = row.querySelector(`#name-${id}`).value.trim();
+                const email = row.querySelector(`#email-${id}`).value.trim();
+    
+                if (!name || !email) {
+                    alert('All fields are required.');
+                    return;
+                }
+    
+                try {
+                    const response = await fetch(`/admins/${id}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email })
+                    });
+    
+                    if (response.ok) {
+                        alert('Admin updated successfully!');
+                    } else {
+                        alert('Failed to update admin.');
+                    }
+                } catch (error) {
+                    alert('An error occurred.');
+                }
+            });
+        });
+    </script>
+    
