@@ -7,7 +7,6 @@
     <%- include('../../partials/_styles') %>
 
     <style>
-        /* Container for the form */
         .form-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
@@ -18,7 +17,6 @@
             margin: 0 auto;
         }
 
-        /* h1 inside .form-container */
         .form-container h1 {
             font-size: 2rem;
             margin-bottom: 25px;
@@ -26,7 +24,6 @@
             color: #333;
         }
 
-        /* Header container for h1 and button */
         .header-container {
             padding: 30px;
             display: flex;
@@ -37,45 +34,25 @@
 
         .table-container {
             width: 100%;
-            max-height: 70vh; /* Keeps the table within viewport */
-            overflow-y: auto; /* Enables vertical scrolling */
+            max-height: 70vh;
+            overflow-y: auto;
             border: 1px solid #ddd;
             position: relative;
         }
-        
-        /* Ensure the table layout fits within the container */
+
         .medication-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: auto;
         }
-        
-        /* Fix the header row */
+
         .medication-table thead {
             position: sticky;
             top: 0;
-            background: #f5f5f5; /* Ensures readability when scrolling */
+            background: #f5f5f5;
             z-index: 1000;
         }
-        
-        /* Column Widths */
-        .col-name {
-            width: 15%;
-        }
-        
-        .col-description {
-            width: 35%;
-        }
-        
-        .col-side-effects {
-            width: 25%;
-        }
-        
-        .col-url {
-            width: 25%;
-        }
-        
-        /* Ensure cells don't overflow */
+
         .medication-table th,
         .medication-table td {
             padding: 12px;
@@ -85,13 +62,37 @@
             word-wrap: break-word;
             white-space: normal;
         }
-        
-        /* Side effects list */
+
+        .medication-table th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .medication-table th::after {
+            content: ' ↕';
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        .medication-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .medication-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        .medication-table th:hover {
+            background: #e9ecef;
+        }
+
         .side-effects-list {
             padding-left: 15px;
         }
-        
-        /* Truncate long URLs */
+
         .truncate-url {
             display: block;
             white-space: nowrap;
@@ -99,53 +100,30 @@
             text-overflow: ellipsis;
             max-width: 200px;
         }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .medication-table {
-                font-size: 0.9em;
-            }
-        
-            .medication-table th,
-            .medication-table td {
-                padding: 8px;
-            }
-        
-            .col-name {
-                width: 20%;
-            }
-        
-            .col-description {
-                width: 40%;
-            }
-        
-            .col-side-effects {
-                width: 25%;
-            }
-        
-            .col-url {
-                width: 15%;
-            }
-        
-            .truncate-url {
-                max-width: 100px;
-            }
-        }s                
 
-        /* Error message */
         .error-message {
             color: #e74c3c;
             text-align: center;
             margin-bottom: 20px;
         }
+
+        @media (max-width: 768px) {
+            .medication-table {
+                font-size: 0.9em;
+            }
+
+            .medication-table th,
+            .medication-table td {
+                padding: 8px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
-    <%- include('../../partials/_auth') %> <!-- Include Auth partial -->
+    <%- include('../../partials/_sidebar') %>
+    <%- include('../../partials/_auth') %>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="form-container">
             <div class="header-container">
@@ -158,41 +136,66 @@
                 <table class="medication-table">
                     <thead>
                         <tr>
-                            <th class="col-name">Name</th>
-                            <th class="col-description">Description</th>
-                            <th class="col-side-effects">Side Effects</th>
-                            <th class="col-url">More Details</th>
+                            <th onclick="sortTable(0)">Name</th>
+                            <th onclick="sortTable(1)">Description</th>
+                            <th onclick="sortTable(2)">Side Effects</th>
+                            <th onclick="sortTable(3)">More Details</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <% if (medications && medications.length > 0) { %>
-                        <% medications.forEach(medication => { %>
-                        <tr>
-                            <td><%= medication.name %></td>
-                            <td class="text-content"><%= medication.description %></td>
-                            <td>
-                                <ul class="side-effects-list">
-                                    <% medication.side_effects.forEach(effect => { %>
-                                        <li><%= effect %></li>
-                                    <% }) %>
-                                </ul>
-                            </td>
-                            <td>
-                                <a href="<%= medication.url %>" target="_blank" class="truncate-url"><%= medication.url %></a>
-                            </td>
-                        </tr>
-                        <% }) %>
-                        <% } else { %>
-                        <tr>
-                            <td colspan="4" style="text-align: center;">No medications found.</td>
-                        </tr>
-                        <% } %>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
-            </div>            
+            </div>
         </div>
     </div>
-    <%- include('../../partials/_scripts') %> <!-- Include JavaScript partial -->
-</body>
 
+    <script>
+        let medicationsData = <%- JSON.stringify(medications || []) %>;
+
+        let sortColumn = -1;
+        let sortDirection = 1;
+
+        function sortTable(columnIndex) {
+            sortDirection = (sortColumn === columnIndex) ? -sortDirection : 1;
+            sortColumn = columnIndex;
+
+            medicationsData.sort((a, b) => {
+                let fields = [a.name, a.description, a.side_effects.length, a.url];
+                let fieldsB = [b.name, b.description, b.side_effects.length, b.url];
+                let aValue = fields[columnIndex];
+                let bValue = fieldsB[columnIndex];
+                
+                if (typeof aValue === 'string') {
+                    aValue = aValue.toLowerCase();
+                    bValue = bValue.toLowerCase();
+                }
+                return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * sortDirection;
+            });
+
+            renderTable();
+            updateSortIndicators();
+        }
+
+        function renderTable() {
+            const tbody = document.querySelector('.medication-table tbody');
+            tbody.innerHTML = medicationsData.map(med => `
+                <tr>
+                    <td>${med.name}</td>
+                    <td>${med.description}</td>
+                    <td><ul class="side-effects-list">${med.side_effects.map(effect => `<li>${effect}</li>`).join('')}</ul></td>
+                    <td><a href="${med.url}" target="_blank" class="truncate-url">${med.url}</a></td>
+                </tr>
+            `).join('') || '<tr><td colspan="4">No medications found.</td></tr>';
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('.medication-table th').forEach((th, i) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (i === sortColumn) th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+            });
+        }
+
+        renderTable();
+    </script>
+    <%- include('../../partials/_scripts') %>
+</body>
 </html>
