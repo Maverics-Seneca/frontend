@@ -908,33 +908,57 @@ app.delete('/organization/:id', authenticateUser, async (req, res) => {
 app.get('/patient-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
-    console.log('Rendering patient dashboard for user:', userId, 'with role:', req.role); // Log render attempt
+    console.log('Rendering patient dashboard for user:', userId, 'with role:', req.role);
+
+    const currentDate = new Date(); // Use current date dynamically
+    let refillAlerts = [], currentMedications = [], reminders = [], medicineHistory = [], caretakers = [], medicationDetails = [];
 
     try {
-        const [refillResponse, medsResponse, remindersResponse, historyResponse, caretakerResponse, detailsResponse] = await Promise.all([
-            axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
-            axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
-            axios.get(`http://middleware:3001/reminders/${userId}`),
-            axios.get(`http://middleware:3001/medicine/history?patientId=${userId}`),
-            axios.get(`http://middleware:3001/caretaker/get?patientId=${userId}`),
-            axios.get(`http://middleware:3001/medicine/details?patientId=${userId}`)
-        ]);
+        const requests = {
+            refill: axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
+            meds: axios.get(`http://middleware:3001/medicine/get?patientId=${userId}`),
+            reminders: axios.get(`http://middleware:3001/reminders/${userId}`),
+            history: axios.get(`http://middleware:3001/medicine/history?patientId=${userId}`),
+            caretakers: axios.get(`http://middleware:3001/caretaker/get?patientId=${userId}`),
+            details: axios.get(`http://middleware:3001/medicine/details?patientId=${userId}`)
+        };
 
-        const currentDate = new Date('2025-03-16');
-        const allMedications = medsResponse.data;
-        const refillAlerts = allMedications.filter(med => {
+        const results = await Promise.allSettled(Object.values(requests));
+        
+        const responses = {
+            refill: results[0],
+            meds: results[1],
+            reminders: results[2],
+            history: results[3],
+            caretakers: results[4],
+            details: results[5]
+        };
+
+        // Log each response
+        for (const [key, result] of Object.entries(responses)) {
+            if (result.status === 'fulfilled') {
+                console.log(`${key} response:`, result.value.data);
+            } else {
+                console.error(`${key} failed:`, result.reason.message, result.reason.response?.status);
+            }
+        }
+
+        // Assign data even if some requests fail
+        refillAlerts = responses.refill.status === 'fulfilled' ? responses.refill.value.data.filter(med => {
             const endDate = new Date(med.endDate);
             const daysLeft = (endDate - currentDate) / (1000 * 60 * 60 * 24);
             return med.inventory <= 5 || daysLeft <= 7;
-        });
+        }) : [];
+        
+        const allMedications = responses.meds.status === 'fulfilled' ? responses.meds.value.data : [];
+        currentMedications = allMedications.filter(med => new Date(med.endDate) >= currentDate);
+        reminders = responses.reminders.status === 'fulfilled' ? responses.reminders.value.data.reminders || [] : [];
+        medicineHistory = responses.history.status === 'fulfilled' ? responses.history.value.data : [];
+        caretakers = responses.caretakers.status === 'fulfilled' ? responses.caretakers.value.data : [];
+        medicationDetails = responses.details.status === 'fulfilled' ? responses.details.value.data : [];
 
-        const currentMedications = allMedications.filter(med => new Date(med.endDate) >= currentDate);
-        const reminders = remindersResponse.data.reminders || [];
-        const medicineHistory = historyResponse.data;
-        const caretakers = caretakerResponse.data;
-        const medicationDetails = detailsResponse.data;
-
-        console.log('Current Medications:', currentMedications); // Log medications
+        console.log('Current Date:', currentDate.toISOString()); // Log the current date for debugging
+        console.log('Current Medications:', currentMedications);
 
         res.render('pages/patient/patient-dashboard', {
             isLoggedIn,
@@ -948,18 +972,18 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
             medicationDetails
         });
     } catch (error) {
-        console.error('Error fetching patient dashboard data:', error.message); // Log error
+        console.error('Unexpected error in patient dashboard:', error.message);
         res.render('pages/patient/patient-dashboard', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
             error: 'Failed to load dashboard data',
-            refillAlerts: [],
-            currentMedications: [],
-            reminders: [],
-            medicineHistory: [],
-            caretakers: [],
-            medicationDetails: []
+            refillAlerts,
+            currentMedications,
+            reminders,
+            medicineHistory,
+            caretakers,
+            medicationDetails
         });
     }
 });
