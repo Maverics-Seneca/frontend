@@ -5,74 +5,246 @@
     <title>All Administrators - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
+    <style>
+        /* Container for the table */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header container for h1 and button */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* h1 inside .header-container */
+        .header-container h1 {
+            font-size: 2rem;
+            color: #333;
+            margin: 0;
+        }
+
+        /* Table styling */
+        .admins-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+
+        .admins-table th,
+        .admins-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admins-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #444;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .admins-table th:hover {
+            background: #e9ecef;
+        }
+
+        /* Default sort indicator */
+        .admins-table th::after {
+            content: ' ↕';
+            /* Neutral sort icon */
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        /* Sorted column indicators */
+        .admins-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .admins-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        /* No sort indicator for Action column */
+        .admins-table th:last-child::after {
+            content: '';
+        }
+
+        .admins-table td {
+            background: #fafafa;
+        }
+
+        /* Inputs in table */
+        .admins-table input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Disabled state */
+        .admins-table input:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+        }
+
+        /* Buttons */
+        .admins-table .edit-btn,
+        .admins-table .save-btn,
+        .admins-table .delete-btn,
+        .add-admin-btn {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .add-admin-btn:hover {
+            background: #2980b9;
+        }
+
+        .admins-table .save-btn {
+            background: #2ecc71;
+            display: none;
+        }
+
+        .admins-table .delete-btn {
+            background: #e74c3c;
+        }
+
+        .admins-table .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .admins-table .save-btn:hover {
+            background: #27ae60;
+        }
+
+        .admins-table .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .admins-table {
+                font-size: 0.9em;
+            }
+
+            .admins-table th,
+            .admins-table td {
+                padding: 8px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 
 <body>
     <%- include('../../partials/_sidebar') %>
     <%- include('../../partials/_auth') %>
 
+    <!-- Main Content -->
     <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>All Administrators</h1>
+                <button class="add-admin-btn" onclick="window.location.href='/add-admin'">Add Admin</button>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <table class="admins-table" id="adminsTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Name</th>
+                        <th onclick="sortTable(1)">Email</th>
+                        <th onclick="sortTable(2)">Phone</th>
+                        <th onclick="sortTable(3)">Organization ID</th>
+                        <th onclick="sortTable(4)">Created At</th>
+                        <th>Action</th> <!-- No sorting for Action -->
+                    </tr>
+                </thead>
+                <tbody id="adminsBody">
+                    <% if (admins && admins.length > 0) { %>
+                    <% admins.forEach(admin => { %>
+                    <tr data-id="<%= admin.userId %>">
+                        <td>
+                            <input type="text" id="name-<%= admin.userId %>" value="<%= admin.name %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="email" id="email-<%= admin.userId %>" value="<%= admin.email %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="tel" id="phone-<%= admin.userId %>" value="<%= admin.phone %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="text" id="organizationId-<%= admin.userId %>"
+                                value="<%= admin.organizationId %>" disabled required />
+                        </td>
+                        <td>
+                            <input type="datetime-local" id="createdAt-<%= admin.userId %>"
+                                value="<%= admin.createdAt ? admin.createdAt.slice(0,16) : '' %>" disabled />
+                        </td>
+                        <td>
+                            <button class="edit-btn" data-id="<%= admin.userId %>">Edit</button>
+                            <button class="save-btn" data-id="<%= admin.userId %>">Save</button>
+                            <button class="delete-btn" data-id="<%= admin.userId %>">Delete</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No administrators found.</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <%- include('../../partials/_scripts') %>
-</body>
-
-</html>
-
-<div class="form-container">
-    <div class="header-container">
-        <h1>All Administrators</h1>
-        <button class="add-admin-btn" onclick="window.location.href='/add-admin'">Add Admin</button>
-    </div>
-</div>
-
-<% if (typeof error !== 'undefined' && error) { %>
-    <p class="error-message"><%= error %></p>
-    <% } %>
-    
-    <table class="admins-table" id="adminsTable">
-        <thead>
-            <tr>
-                <th onclick="sortTable(0)">Name</th>
-                <th onclick="sortTable(1)">Email</th>
-                <th onclick="sortTable(2)">Phone</th>
-                <th onclick="sortTable(3)">Organization ID</th>
-                <th onclick="sortTable(4)">Created At</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="adminsBody">
-        </tbody>
-    </table>
-    
-
-    <% if (admins && admins.length > 0) { %>
-        <% admins.forEach(admin => { %>
-            <tr data-id="<%= admin.userId %>">
-                <td><input type="text" id="name-<%= admin.userId %>" value="<%= admin.name %>" disabled required /></td>
-                <td><input type="email" id="email-<%= admin.userId %>" value="<%= admin.email %>" disabled required /></td>
-                <td><input type="tel" id="phone-<%= admin.userId %>" value="<%= admin.phone %>" disabled required /></td>
-                <td><input type="text" id="organizationId-<%= admin.userId %>" value="<%= admin.organizationId %>" disabled required /></td>
-                <td><input type="datetime-local" id="createdAt-<%= admin.userId %>" value="<%= admin.createdAt ? admin.createdAt.slice(0,16) : '' %>" disabled /></td>
-                <td>
-                    <button class="edit-btn" data-id="<%= admin.userId %>">Edit</button>
-                    <button class="save-btn" data-id="<%= admin.userId %>" style="display: none;">Save</button>
-                    <button class="delete-btn" data-id="<%= admin.userId %>">Delete</button>
-                </td>
-            </tr>
-        <% }) %>
-    <% } else { %>
-        <tr>
-            <td colspan="6" style="text-align: center;">No administrators found.</td>
-        </tr>
-    <% } %>
-    
 
     <script>
+        // Pass initial admins data from EJS to JavaScript
         let adminsData = <% - JSON.stringify(admins || []) %>;
+
+        // Track current sort column and direction
         let sortColumn = -1;
-        let sortDirection = 1;
-    
+        let sortDirection = 1; // 1 for ascending, -1 for descending
+
         function sortTable(columnIndex) {
             if (sortColumn === columnIndex) {
                 sortDirection *= -1;
@@ -80,25 +252,89 @@
                 sortDirection = 1;
             }
             sortColumn = columnIndex;
-    
+
             adminsData.sort((a, b) => {
-                let aValue = a[columnIndex] || '';
-                let bValue = b[columnIndex] || '';
-    
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Name
+                        aValue = a.name || '';
+                        bValue = b.name || '';
+                        break;
+                    case 1: // Email
+                        aValue = a.email || '';
+                        bValue = b.email || '';
+                        break;
+                    case 2: // Phone
+                        aValue = a.phone || '';
+                        bValue = b.phone || '';
+                        break;
+                    case 3: // Organization ID
+                        aValue = a.organizationId || '';
+                        bValue = b.organizationId || '';
+                        break;
+                    case 4: // Created At
+                        aValue = a.createdAt || '';
+                        bValue = b.createdAt || '';
+                        break;
+                    default:
+                        return 0;
+                }
                 if (aValue < bValue) return -1 * sortDirection;
                 if (aValue > bValue) return 1 * sortDirection;
                 return 0;
             });
-    
+
             renderTable();
             updateSortIndicators(columnIndex);
         }
-    </script>
-    
-    <script>
+
+        function renderTable() {
+            const tbody = document.getElementById('adminsBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (adminsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No administrators found.</td></tr>';
+                return;
+            }
+
+            adminsData.forEach(admin => {
+                const row = document.createElement('tr');
+                row.dataset.id = admin.userId;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${admin.userId}" value="${admin.name}" disabled required /></td>
+                    <td><input type="email" id="email-${admin.userId}" value="${admin.email}" disabled required /></td>
+                    <td><input type="tel" id="phone-${admin.userId}" value="${admin.phone}" disabled required /></td>
+                    <td><input type="text" id="organizationId-${admin.userId}" value="${admin.organizationId}" disabled required /></td>
+                    <td><input type="datetime-local" id="createdAt-${admin.userId}" value="${admin.createdAt ? admin.createdAt.slice(0, 16) : ''}" disabled /></td>
+                    <td>
+                        <button class="edit-btn" data-id="${admin.userId}">Edit</button>
+                        <button class="save-btn" data-id="${admin.userId}" style="display: none;">Save</button>
+                        <button class="delete-btn" data-id="${admin.userId}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            attachEventListeners();
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#adminsTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
         function attachEventListeners() {
+            console.log('Attaching event listeners...'); // Debug
+
+            // Edit button logic
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
+                    console.log('Edit button clicked for ID:', e.target.dataset.id); // Debug
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
                     const inputs = row.querySelectorAll('input');
@@ -108,66 +344,94 @@
                     saveBtn.style.display = 'inline-block';
                 });
             });
-        }
-    </script>
-    
-    <script>
-        document.querySelectorAll('.save-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = e.target.dataset.id;
-                const row = e.target.closest('tr');
-                const name = row.querySelector(`#name-${id}`).value.trim();
-                const email = row.querySelector(`#email-${id}`).value.trim();
-    
-                if (!name || !email) {
-                    alert('All fields are required.');
-                    return;
-                }
-    
-                try {
-                    const response = await fetch(`/admins/${id}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email })
-                    });
-    
-                    if (response.ok) {
-                        alert('Admin updated successfully!');
-                    } else {
-                        alert('Failed to update admin.');
+
+            // Save button logic
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    console.log('Save button clicked for ID:', e.target.dataset.id); // Debug
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const name = row.querySelector(`#name-${id}`).value.trim();
+                    const email = row.querySelector(`#email-${id}`).value.trim();
+                    const phone = row.querySelector(`#phone-${id}`).value.trim();
+                    const organizationId = row.querySelector(`#organizationId-${id}`).value.trim();
+
+                    if (!name || !email || !phone || !organizationId) {
+                        alert('All fields are required.');
+                        return;
                     }
-                } catch (error) {
-                    alert('An error occurred.');
-                }
-            });
-        });
-    </script>
-    
-    <script>
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = e.target.dataset.id;
-                const row = e.target.closest('tr');
-    
-                if (confirm('Are you sure you want to delete this admin?')) {
+                    if (!/^\d{10,}$/.test(phone)) {
+                        alert('Please enter a valid phone number (at least 10 digits).');
+                        return;
+                    }
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        alert('Please enter a valid email address.');
+                        return;
+                    }
+
                     try {
                         const response = await fetch(`/admins/${id}`, {
-                            method: 'DELETE',
+                            method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, email, phone, organizationId }),
                         });
-    
+
                         if (response.ok) {
-                            adminsData = adminsData.filter(a => a.userId !== id);
-                            row.remove();
-                            alert('Admin deleted successfully!');
+                            const inputs = row.querySelectorAll('input');
+                            const editBtn = row.querySelector('.edit-btn');
+                            inputs.forEach(input => input.disabled = true);
+                            e.target.style.display = 'none';
+                            editBtn.style.display = 'inline-block';
+                            const adminIndex = adminsData.findIndex(a => a.userId === id);
+                            adminsData[adminIndex] = { ...adminsData[adminIndex], name, email, phone, organizationId };
+                            alert('Admin updated successfully!');
                         } else {
-                            alert('Failed to delete admin.');
+                            const errorText = await response.text();
+                            alert('Failed to update admin: ' + errorText);
                         }
                     } catch (error) {
-                        alert('An error occurred.');
+                        console.error('Error updating admin:', error);
+                        alert('An error occurred. Please try again.');
                     }
-                }
+                });
             });
-        });
+
+            // Delete button logic
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    console.log('Delete button clicked for ID:', e.target.dataset.id); // Debug
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+
+                    if (confirm('Are you sure you want to delete this admin?')) {
+                        try {
+                            const response = await fetch(`/admins/${id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                            });
+
+                            if (response.ok) {
+                                adminsData = adminsData.filter(a => a.userId !== id);
+                                row.remove();
+                                if (adminsData.length === 0) renderTable();
+                                alert('Admin deleted successfully!');
+                            } else {
+                                const errorText = await response.text();
+                                alert('Failed to delete admin: ' + errorText);
+                            }
+                        } catch (error) {
+                            console.error('Error deleting admin:', error);
+                            alert('An error occurred. Please try again.');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Initial call to attach event listeners
+        attachEventListeners();
     </script>
-     
+    <%- include('../../partials/_scripts') %>
+</body>
+
+</html>
