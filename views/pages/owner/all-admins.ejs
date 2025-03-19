@@ -45,3 +45,25 @@
         </tbody>
     </table>
     
+
+    <% if (admins && admins.length > 0) { %>
+        <% admins.forEach(admin => { %>
+            <tr data-id="<%= admin.userId %>">
+                <td><input type="text" id="name-<%= admin.userId %>" value="<%= admin.name %>" disabled required /></td>
+                <td><input type="email" id="email-<%= admin.userId %>" value="<%= admin.email %>" disabled required /></td>
+                <td><input type="tel" id="phone-<%= admin.userId %>" value="<%= admin.phone %>" disabled required /></td>
+                <td><input type="text" id="organizationId-<%= admin.userId %>" value="<%= admin.organizationId %>" disabled required /></td>
+                <td><input type="datetime-local" id="createdAt-<%= admin.userId %>" value="<%= admin.createdAt ? admin.createdAt.slice(0,16) : '' %>" disabled /></td>
+                <td>
+                    <button class="edit-btn" data-id="<%= admin.userId %>">Edit</button>
+                    <button class="save-btn" data-id="<%= admin.userId %>" style="display: none;">Save</button>
+                    <button class="delete-btn" data-id="<%= admin.userId %>">Delete</button>
+                </td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr>
+            <td colspan="6" style="text-align: center;">No administrators found.</td>
+        </tr>
+    <% } %>
+    
