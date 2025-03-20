@@ -18,6 +18,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
+    <style>
+        /* previous styles */
     
+        .dashboard-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+    
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+    
+        .dashboard-card i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+    </style>
+    
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <i class="fas fa-users"></i>
+            <h3>Total Patients</h3>
+            <p>Number of registered patients</p>
+        </div>
+    
+        <div class="dashboard-card">
+            <i class="fas fa-bell"></i>
+            <h3>Total Reminders</h3>
+            <p>All active reminders</p>
+        </div>
+    
+        <div class="dashboard-card">
+            <i class="fas fa-file-alt"></i>
+            <h3>Recent Logs</h3>
+            <p>Latest system activity</p>
+        </div>
+    </div>
+    
+
 </body>
 </html>
