@@ -45,3 +45,10 @@
     <p>Number of registered patients</p>
     <div class="count" id="patientCount"><%= patients ? patients.length : 0 %></div>
 </div>
+
+<div class="dashboard-card" onclick="window.location.href='/caretaker-profile'">
+    <i class="fas fa-user-friends"></i>
+    <h3>Total Caretakers</h3>
+    <p>All assigned caretakers</p>
+    <div class="count" id="caretakerCount"><%= caretakers ? caretakers.length : 0 %></div>
+</div>
