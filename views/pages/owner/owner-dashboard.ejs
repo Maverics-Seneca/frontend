@@ -52,3 +52,10 @@
     <p>All assigned caretakers</p>
     <div class="count" id="caretakerCount"><%= caretakers ? caretakers.length : 0 %></div>
 </div>
+
+<div class="dashboard-card" onclick="window.location.href='/medication-profile'">
+    <i class="fas fa-pills"></i>
+    <h3>Medication Records</h3>
+    <p>Current medication records</p>
+    <div class="count" id="medicationCount"><%= medications ? medications.length : 0 %></div>
+</div>
