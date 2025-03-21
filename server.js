@@ -211,6 +211,7 @@ app.get('/sign-up-admin', async (req, res) => {
 
 // Static auth and policy routes
 app.get('/sign-in', (req, res) => res.render('pages/auth/sign-in')); // Render sign-in page
+app.get('/sign-in-caretaker', (req, res) => res.render('pages/auth/sign-in-caretaker'));
 app.get('/sign-up', (req, res) => res.render('pages/auth/sign-up')); // Render sign-up page
 app.get('/recover-password', (req, res) => res.render('pages/auth/recover-password')); // Render password recovery
 app.get('/lock-screen', (req, res) => res.render('pages/auth/lock-screen')); // Render lock screen
