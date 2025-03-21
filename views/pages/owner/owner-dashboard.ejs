@@ -59,3 +59,10 @@
     <p>Current medication records</p>
     <div class="count" id="medicationCount"><%= medications ? medications.length : 0 %></div>
 </div>
+
+<div class="dashboard-card" onclick="window.location.href='/all-organizations'">
+    <i class="fas fa-building"></i>
+    <h3>Total Organizations</h3>
+    <p>Number of organizations</p>
+    <div class="count" id="orgCount"><%= organizations ? organizations.length : 0 %></div>
+</div>
