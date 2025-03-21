@@ -169,6 +169,33 @@
             text-align: center;
             margin-bottom: 20px;
         }
+
+        .token-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .token-wrapper input {
+            padding-right: 35px; /* Leave space for icon */
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .copy-icon {
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+            user-select: none;
+            font-size: 1.1rem;
+            color: #666;
+            transition: color 0.2s ease;
+        }
+        
+        .copy-icon:hover {
+            color: #000;
+        }
+
     </style>
 </head>
 <body>
@@ -192,6 +219,7 @@
                         <th onclick="sortTable(1)">Relation</th>
                         <th onclick="sortTable(2)">Contact Number</th>
                         <th onclick="sortTable(3)">Email</th>
+                        <th>Token</th>
                         <th>Action</th> <!-- No sorting for Action -->
                     </tr>
                 </thead>
@@ -216,6 +244,14 @@
                                 <td>
                                     <input type="email" id="email-<%= caretaker.id %>" value="<%= caretaker.email %>" disabled required />
                                 </td>
+                                <td class="token-cell">
+                                    <div class="token-wrapper">
+                                        <input type="password" id="token-<%= caretaker.id %>" value="<%= caretaker.password %>" disabled />
+                                        <span class="copy-icon" data-id="<%= caretaker.id %>">
+                                            📋
+                                        </span>
+                                    </div>
+                                </td>                                
                                 <td>
                                     <button class="edit-btn" data-id="<%= caretaker.id %>">Edit</button>
                                     <button class="save-btn" data-id="<%= caretaker.id %>">Save</button>
@@ -428,6 +464,26 @@
                 });
             });
         }
+
+        // Clipboard icon inside input copy
+        document.addEventListener('click', (event) => {
+            if (event.target.matches('.copy-icon')) {
+                const id = event.target.getAttribute('data-id');
+                const tokenInput = document.getElementById(`token-${id}`);
+
+                if (tokenInput) {
+                    navigator.clipboard.writeText(tokenInput.value).then(() => {
+                        event.target.textContent = '✅';
+                        setTimeout(() => {
+                            event.target.textContent = '📋';
+                        }, 1500);
+                    }).catch(err => {
+                        console.error('Copy failed:', err);
+                        alert('Failed to copy token.');
+                    });
+                }
+            }
+        });
 
         // Initial call to attach event listeners
         attachEventListeners();
