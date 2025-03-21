@@ -38,3 +38,10 @@
     <p>Number of administrators</p>
     <div class="count" id="adminCount"><%= admins ? admins.length : 0 %></div>
 </div>
+
+<div class="dashboard-card" onclick="window.location.href='/all-patients'">
+    <i class="fas fa-users"></i>
+    <h3>Total Patients</h3>
+    <p>Number of registered patients</p>
+    <div class="count" id="patientCount"><%= patients ? patients.length : 0 %></div>
+</div>
