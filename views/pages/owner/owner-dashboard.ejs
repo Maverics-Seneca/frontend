@@ -31,3 +31,10 @@
 
 <div class="dashboard-grid">
 </div>
+
+<div class="dashboard-card" onclick="window.location.href='/all-admins'">
+    <i class="fas fa-user-shield"></i>
+    <h3>Total Admins</h3>
+    <p>Number of administrators</p>
+    <div class="count" id="adminCount"><%= admins ? admins.length : 0 %></div>
+</div>
