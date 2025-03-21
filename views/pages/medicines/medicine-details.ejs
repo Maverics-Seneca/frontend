@@ -154,6 +154,12 @@
         let sortColumn = -1;
         let sortDirection = 1;
 
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filteredData = medicationsData.filter(med => med.name.toLowerCase().includes(query));
+            renderFilteredTable(filteredData);
+        });
+
         function sortTable(columnIndex) {
             sortDirection = (sortColumn === columnIndex) ? -sortDirection : 1;
             sortColumn = columnIndex;
@@ -163,7 +169,6 @@
                 let fieldsB = [b.name, b.description, b.side_effects.length, b.url];
                 let aValue = fields[columnIndex];
                 let bValue = fieldsB[columnIndex];
-                
                 if (typeof aValue === 'string') {
                     aValue = aValue.toLowerCase();
                     bValue = bValue.toLowerCase();
@@ -171,13 +176,13 @@
                 return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * sortDirection;
             });
 
-            renderTable();
+            renderFilteredTable(medicationsData);
             updateSortIndicators();
         }
 
-        function renderTable() {
+        function renderFilteredTable(data) {
             const tbody = document.querySelector('.medication-table tbody');
-            tbody.innerHTML = medicationsData.map(med => `
+            tbody.innerHTML = data.map(med => `
                 <tr>
                     <td>${med.name}</td>
                     <td>${med.description}</td>
@@ -194,7 +199,7 @@
             });
         }
 
-        renderTable();
+        renderFilteredTable(medicationsData);
     </script>
     <%- include('../../partials/_scripts') %>
 </body>
