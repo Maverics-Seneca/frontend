@@ -135,6 +135,10 @@
                 left: 0;
             }
         }
+        .text-muted:hover {
+            color: #0aab93 !important;
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -178,6 +182,9 @@
                     <span>Don't have an account?
                         <a href="/sign-up">Sign Up</a>
                     </span>
+                </div>
+                <div class="text-center mt-2">
+                    <a href="/sign-in-caretaker" class="text-muted">Sign in as Caretaker</a>
                 </div>
                 <div id="error-message" style="color: red;">
                     <% if (typeof error !== "undefined" && error) { %>
