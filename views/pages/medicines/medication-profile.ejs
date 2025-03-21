@@ -180,6 +180,9 @@
             <% if (typeof error !== 'undefined' && error) { %>
                 <p class="error-message"><%= error %></p>
             <% } %>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by name..." style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
             <table class="medication-table" id="medicationTable">
                 <thead>
                     <tr>
@@ -239,9 +242,22 @@
         // Pass initial medications data from EJS to JavaScript
         let medicationsData = <%- JSON.stringify(medications || []) %>;
 
+        let currentDisplayData = [...medicationsData]; // Tracks filtered or full data
+
         // Track current sort column and direction
         let sortColumn = -1;
         let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+        
+            currentDisplayData = medicationsData.filter(med =>
+                med.name.toLowerCase().includes(query)
+            );
+        
+            renderFilteredData(currentDisplayData);
+        });
+        
 
         function sortTable(columnIndex) {
             // Toggle sort direction if clicking the same column, otherwise reset to ascending
@@ -253,7 +269,7 @@
             sortColumn = columnIndex;
 
             // Sort the medications data
-            medicationsData.sort((a, b) => {
+            currentDisplayData.sort((a, b) => {
                 let aValue, bValue;
                 switch (columnIndex) {
                     case 0: // Name
@@ -289,7 +305,7 @@
             });
 
             // Update the table body
-            renderTable();
+            renderFilteredData(currentDisplayData);
 
             // Update sort indicators
             updateSortIndicators(columnIndex);
@@ -441,6 +457,47 @@
                 });
             });
         }
+
+        function renderFilteredData(filteredData) {
+            const tbody = document.getElementById('medicationBody');
+            tbody.innerHTML = '';
+        
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No medications found.</td></tr>';
+                return;
+            }
+        
+            filteredData.forEach(medication => {
+                const row = document.createElement('tr');
+                row.dataset.id = medication.id;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${medication.id}" value="${medication.name}" disabled required /></td>
+                    <td><input type="number" id="dosage-${medication.id}" value="${medication.dosage}" disabled required /></td>
+                    <td>
+                        <select id="frequency-${medication.id}" disabled>
+                            <option value="Once a day" ${medication.frequency === 'Once a day' ? 'selected' : ''}>Once a day</option>
+                            <option value="Twice a day" ${medication.frequency === 'Twice a day' ? 'selected' : ''}>Twice a day</option>
+                            <option value="Thrice a day" ${medication.frequency === 'Thrice a day' ? 'selected' : ''}>Thrice a day</option>
+                        </select>
+                    </td>
+                    <td><input type="text" id="prescribingDoctor-${medication.id}" value="${medication.prescribingDoctor}" disabled required /></td>
+                    <td><input type="date" id="endDate-${medication.id}" value="${medication.endDate}" disabled required /></td>
+                    <td><input type="number" id="inventory-${medication.id}" value="${medication.inventory}" disabled required min="0" /></td>
+                    <td>
+                        <button class="edit-btn" data-id="${medication.id}">Edit</button>
+                        <button class="save-btn" data-id="${medication.id}">Save</button>
+                        <button class="delete-btn" data-id="${medication.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        
+            // Ensure event listeners are reattached after filtering
+            attachEventListeners();
+        }
+        
+        // Initially render full table content
+        renderFilteredData(medicationsData);
 
         // Initial call to attach event listeners
         attachEventListeners();
