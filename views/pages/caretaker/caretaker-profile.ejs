@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>Caretaker Profile - MediTrack</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
     <style>
@@ -177,23 +178,27 @@
         }
         
         .token-wrapper input {
-            padding-right: 35px; /* Leave space for icon */
+            padding-right: 40px;
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #f9f9f9;
         }
         
         .copy-icon {
             position: absolute;
             right: 10px;
             cursor: pointer;
-            user-select: none;
-            font-size: 1.1rem;
-            color: #666;
+            color: #888;
+            font-size: 20px;
             transition: color 0.2s ease;
         }
         
         .copy-icon:hover {
-            color: #000;
+            color: #333;
         }
 
     </style>
@@ -247,11 +252,9 @@
                                 <td class="token-cell">
                                     <div class="token-wrapper">
                                         <input type="password" id="token-<%= caretaker.id %>" value="<%= caretaker.password %>" disabled />
-                                        <span class="copy-icon" data-id="<%= caretaker.id %>">
-                                            📋
-                                        </span>
+                                        <span class="material-icons copy-icon" data-id="<%= caretaker.id %>">content_copy</span>
                                     </div>
-                                </td>                                
+                                </td>                                                                
                                 <td>
                                     <button class="edit-btn" data-id="<%= caretaker.id %>">Edit</button>
                                     <button class="save-btn" data-id="<%= caretaker.id %>">Save</button>
@@ -465,17 +468,17 @@
             });
         }
 
-        // Clipboard icon inside input copy
         document.addEventListener('click', (event) => {
-            if (event.target.matches('.copy-icon')) {
+            if (event.target.classList.contains('copy-icon')) {
                 const id = event.target.getAttribute('data-id');
-                const tokenInput = document.getElementById(`token-${id}`);
-
-                if (tokenInput) {
-                    navigator.clipboard.writeText(tokenInput.value).then(() => {
-                        event.target.textContent = '✅';
+                const input = document.getElementById(`token-${id}`);
+        
+                if (input) {
+                    navigator.clipboard.writeText(input.value).then(() => {
+                        const originalIcon = event.target.textContent;
+                        event.target.textContent = 'check';
                         setTimeout(() => {
-                            event.target.textContent = '📋';
+                            event.target.textContent = originalIcon;
                         }, 1500);
                     }).catch(err => {
                         console.error('Copy failed:', err);
@@ -483,7 +486,7 @@
                     });
                 }
             }
-        });
+        });        
 
         // Initial call to attach event listeners
         attachEventListeners();
