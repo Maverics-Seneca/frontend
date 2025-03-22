@@ -907,7 +907,7 @@ app.delete('/organization/:id', authenticateUser, async (req, res) => {
 
 // Caretaker Dashboard
 app.get('/caretaker-dashboard', async (req, res) => {
-    const isLoggedIn = !!req.cookies.authToken;
+    const isLoggedIn = !!req.cookies.patientId;
     const patientId = req.cookies.patientId; // Get from cookie
     console.log('Rendering patient dashboard for user:', patientId, 'with role:', req.role);
 
@@ -918,7 +918,7 @@ app.get('/caretaker-dashboard', async (req, res) => {
         const requests = {
             refill: axios.get(`http://middleware:3001/medicine/get?patientId=${patientId}`),
             meds: axios.get(`http://middleware:3001/medicine/get?patientId=${patientId}`),
-            details: axios.get(`http://middleware:3001/medicine/details?patientId=${patientId}`)
+            //details: axios.get(`http://middleware:3001/medicine/details?patientId=${patientId}`)
         };
 
         const results = await Promise.allSettled(Object.values(requests));
@@ -926,7 +926,7 @@ app.get('/caretaker-dashboard', async (req, res) => {
         const responses = {
             refill: results[0],
             meds: results[1],
-            details: results[2]
+            //details: results[2]
         };
 
         // Log each response
@@ -946,12 +946,14 @@ app.get('/caretaker-dashboard', async (req, res) => {
         }) : [];
 
         const allMedications = responses.meds.status === 'fulfilled' ? responses.meds.value.data : [];
-        medicationDetails = responses.details.status === 'fulfilled' ? responses.details.value.data : [];
+        // medicationDetails = responses.details.status === 'fulfilled' ? responses.details.value.data : [];
+        currentMedications = allMedications.filter(med => new Date(med.endDate) >= currentDate);
 
         res.render('pages/caretaker/caretaker-dashboard', {
             isLoggedIn,
+            userName: "Caretaker",
             refillAlerts,
-            medicationDetails
+            currentMedications
         });
     } catch (error) {
         console.error('Error loading caretaker dashboard:', error.message);
@@ -1587,6 +1589,13 @@ app.post('/logout', (req, res) => {
 
     try {
         res.clearCookie('authToken', {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'Lax',
+            path: '/',
+        });
+
+        res.clearCookie('patientId', {
             httpOnly: true,
             secure: false,
             sameSite: 'Lax',

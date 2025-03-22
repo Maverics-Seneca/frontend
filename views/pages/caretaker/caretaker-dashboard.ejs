@@ -177,8 +177,8 @@
 
             <!-- Medication Details -->
             <div class="analytics-section">
-                <h2>Medication Details</h2>
-                <% if (medicationDetails && medicationDetails.length > 0) { %>
+                <h2>Current Medications</h2>
+                <% if (currentMedications && currentMedications.length > 0) { %>
                     <table class="table table-bordered">
                         <thead class="table-light">
                             <tr>
@@ -191,7 +191,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <% medicationDetails.forEach(med => { %>
+                            <% currentMedications.forEach(med => { %>
                                 <tr>
                                     <td><%= med.name %></td>
                                     <td><%= med.dosage %>mg</td>

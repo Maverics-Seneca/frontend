@@ -11,11 +11,13 @@
     const mainContent = document.querySelector('.main-content');
 
     // Sidebar toggle (existing functionality)
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('shift'); // Toggle shift class on main content
-    });
+    if (menuToggle && sidebar && mainContent) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('shift');
+        });
+    }
 
     // Submenu toggle
     document.querySelectorAll('.has-submenu .menu-link').forEach(link => {
