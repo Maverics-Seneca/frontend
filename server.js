@@ -922,7 +922,7 @@ app.get('/caretaker-dashboard', async (req, res) => {
         };
 
         const results = await Promise.allSettled(Object.values(requests));
-        
+
         const responses = {
             refill: results[0],
             meds: results[1],
@@ -982,7 +982,7 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
         };
 
         const results = await Promise.allSettled(Object.values(requests));
-        
+
         const responses = {
             refill: results[0],
             meds: results[1],
@@ -1007,7 +1007,7 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
             const daysLeft = (endDate - currentDate) / (1000 * 60 * 60 * 24);
             return med.inventory <= 5 || daysLeft <= 7;
         }) : [];
-        
+
         const allMedications = responses.meds.status === 'fulfilled' ? responses.meds.value.data : [];
         currentMedications = allMedications.filter(med => new Date(med.endDate) >= currentDate);
         reminders = responses.reminders.status === 'fulfilled' ? responses.reminders.value.data.reminders || [] : [];
