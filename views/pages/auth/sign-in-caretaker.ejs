@@ -163,7 +163,7 @@
                     <div class="form-group mt-3">
                         <label for="password">Token</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="password" placeholder="Password" />
+                            <input type="password" class="form-control" id="token" placeholder="Token" />
                             <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -222,15 +222,15 @@
 
             // Get values from form fields
             const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const password = document.getElementById("token").value;
 
             try {
                 // Send a POST request to /login with email and password
-                const response = await fetch("/login", {
+                const response = await fetch("/login-caretaker", {
                     method: "POST",
                     credentials: 'include',
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email, password }),
+                    body: JSON.stringify({ email, password })
                 });
 
                 // Redirect on success, or show error message
@@ -247,7 +247,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             const togglePassword = document.querySelector('#togglePassword');
-            const password = document.querySelector('#password');
+            const password = document.querySelector('#token');
             
             togglePassword.addEventListener('click', function() {
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';

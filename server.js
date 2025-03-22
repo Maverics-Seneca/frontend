@@ -905,6 +905,61 @@ app.delete('/organization/:id', authenticateUser, async (req, res) => {
 // Patient Routes
 // -----------------------------------------
 
+// Caretaker Dashboard
+app.get('/caretaker-dashboard', async (req, res) => {
+    const isLoggedIn = !!req.cookies.authToken;
+    const patientId = req.cookies.patientId; // Get from cookie
+    console.log('Rendering patient dashboard for user:', patientId, 'with role:', req.role);
+
+    const currentDate = new Date(); // Use current date dynamically
+    let refillAlerts = [], currentMedications = [], reminders = [], medicineHistory = [], caretakers = [], medicationDetails = [];
+
+    try {
+        const requests = {
+            refill: axios.get(`http://middleware:3001/medicine/get?patientId=${patientId}`),
+            meds: axios.get(`http://middleware:3001/medicine/get?patientId=${patientId}`),
+            details: axios.get(`http://middleware:3001/medicine/details?patientId=${patientId}`)
+        };
+
+        const results = await Promise.allSettled(Object.values(requests));
+        
+        const responses = {
+            refill: results[0],
+            meds: results[1],
+            details: results[2]
+        };
+
+        // Log each response
+        for (const [key, result] of Object.entries(responses)) {
+            if (result.status === 'fulfilled') {
+                console.log(`${key} response:`, result.value.data);
+            } else {
+                console.error(`${key} failed:`, result.reason.message, result.reason.response?.status);
+            }
+        }
+
+        // Assign data even if some requests fail
+        refillAlerts = responses.refill.status === 'fulfilled' ? responses.refill.value.data.filter(med => {
+            const endDate = new Date(med.endDate);
+            const daysLeft = (endDate - currentDate) / (1000 * 60 * 60 * 24);
+            return med.inventory <= 5 || daysLeft <= 7;
+        }) : [];
+
+        const allMedications = responses.meds.status === 'fulfilled' ? responses.meds.value.data : [];
+        medicationDetails = responses.details.status === 'fulfilled' ? responses.details.value.data : [];
+
+        res.render('pages/caretaker/caretaker-dashboard', {
+            isLoggedIn,
+            refillAlerts,
+            medicationDetails
+        });
+    } catch (error) {
+        console.error('Error loading caretaker dashboard:', error.message);
+        res.status(500).send('Failed to load caretaker dashboard');
+    }
+});
+
+
 // Patient dashboard
 app.get('/patient-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
@@ -1493,6 +1548,35 @@ app.post('/login', async (req, res) => {
         console.error('Login error:', error.message); // Log error
         res.status(error.response?.status || 500).json({
             error: error.response?.data?.error || 'Login failed',
+        });
+    }
+});
+
+// Caretaker login
+app.post('/login-caretaker', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        console.log('Caretaker login request received:', req.body);
+
+        const response = await axios.post('http://middleware:3001/auth/caretaker-login', { email, password });
+
+        const { patientId, caretakerName } = response.data;
+
+        // Set patientId in cookie (you can also add caretaker name if needed)
+        res.cookie('patientId', patientId, {
+            httpOnly: true,
+            secure: false, // Set to true if using HTTPS
+            sameSite: 'Lax',
+            path: '/',
+        });
+
+        console.log('Caretaker logged in, patientId set:', patientId);
+        res.redirect('/caretaker-dashboard'); // Your caretaker dashboard route
+    } catch (error) {
+        console.error('Caretaker login error:', error.message);
+        res.status(401).render('pages/auth/sign-in-caretaker', {
+            error: 'Invalid email or token'
         });
     }
 });
