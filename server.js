@@ -1403,7 +1403,8 @@ app.get('/add-reminder', authenticateUser, (req, res) => {
 
     res.render('pages/reminder/add-reminder', {
         isLoggedIn: isLoggedIn,
-        userName: req.name
+        userName: req.name,
+        role: req.role
     });
 });
 
