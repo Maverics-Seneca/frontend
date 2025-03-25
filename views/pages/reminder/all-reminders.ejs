@@ -190,6 +190,9 @@
             <% if (typeof error !== 'undefined' && error) { %>
                 <p class="error-message"><%= error %></p>
             <% } %>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by title..." style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
             <table class="reminders-table" id="remindersTable">
                 <thead>
                     <tr>
@@ -236,10 +239,20 @@
     <script>
         // Pass initial reminders data from EJS to JavaScript
         let remindersData = <%- JSON.stringify(reminders || []) %>;
+        let currentDisplayData = [...remindersData]; // Tracks filtered or full data
 
         // Track current sort column and direction
         let sortColumn = -1;
         let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            currentDisplayData = remindersData.filter(reminder =>
+                reminder.title.toLowerCase().includes(query)
+            );
+            renderFilteredData(currentDisplayData);
+        });
 
         function sortTable(columnIndex) {
             // Toggle sort direction if clicking the same column, otherwise reset to ascending
@@ -250,8 +263,8 @@
             }
             sortColumn = columnIndex;
 
-            // Sort the reminders data
-            remindersData.sort((a, b) => {
+            // Sort the current display data
+            currentDisplayData.sort((a, b) => {
                 let aValue, bValue;
                 switch (columnIndex) {
                     case 0: // Title
@@ -279,22 +292,22 @@
             });
 
             // Update the table body
-            renderTable();
+            renderFilteredData(currentDisplayData);
 
             // Update sort indicators
             updateSortIndicators(columnIndex);
         }
 
-        function renderTable() {
+        function renderFilteredData(filteredData) {
             const tbody = document.getElementById('remindersBody');
             tbody.innerHTML = ''; // Clear existing rows
 
-            if (remindersData.length === 0) {
+            if (filteredData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No reminders found.</td></tr>';
                 return;
             }
 
-            remindersData.forEach(reminder => {
+            filteredData.forEach(reminder => {
                 const row = document.createElement('tr');
                 row.dataset.id = reminder.reminderId;
                 row.innerHTML = `
@@ -371,6 +384,8 @@
                             // Update remindersData with new values
                             const reminderIndex = remindersData.findIndex(r => r.reminderId === id);
                             remindersData[reminderIndex] = { reminderId: id, title, description, datetime, completed };
+                            currentDisplayData = remindersData.filter(r => r.title.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
+                            renderFilteredData(currentDisplayData);
                             alert('Reminder updated successfully!');
                         } else {
                             const errorText = await response.text();
@@ -399,8 +414,8 @@
 
                             if (response.ok) {
                                 remindersData = remindersData.filter(r => r.reminderId !== id); // Remove from data
-                                row.remove(); // Remove the row from the table
-                                if (remindersData.length === 0) renderTable(); // Update if empty
+                                currentDisplayData = remindersData.filter(r => r.title.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
+                                renderFilteredData(currentDisplayData); // Update table
                                 alert('Reminder deleted successfully!');
                             } else {
                                 const errorText = await response.text();
@@ -414,6 +429,9 @@
                 });
             });
         }
+
+        // Initially render full table content
+        renderFilteredData(remindersData);
 
         // Initial call to attach event listeners
         attachEventListeners();

@@ -1098,7 +1098,7 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
             headers: { 'Content-Type': 'application/json' }
         });
         console.log('Medicine added successfully:', response.data); // Log success
-        res.redirect('/medication-profile');
+        res.redirect('/all-medications');
     } catch (error) {
         console.error('Error adding medicine:', {
             message: error.message,
@@ -1115,11 +1115,11 @@ app.post('/add-medicines', authenticateUser, async (req, res) => {
 });
 
 // Medication profile
-app.get('/medication-profile', authenticateUser, async (req, res) => {
+app.get('/all-medications', authenticateUser, async (req, res) => {
     const patientId = req.userId;
     const isLoggedIn = !!req.cookies.authToken;
 
-    console.log('Rendering medication-profile page for user:', patientId); // Log render attempt
+    console.log('Rendering all-medications page for user:', patientId); // Log render attempt
 
     try {
         const response = await axios.get('http://middleware:3001/medicine/get', {
@@ -1127,7 +1127,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
         const medications = response.data;
 
-        res.render('pages/medicines/medication-profile', {
+        res.render('pages/medicines/all-medications', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1135,7 +1135,7 @@ app.get('/medication-profile', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching medications:', error.message); // Log error
-        res.render('pages/medicines/medication-profile', {
+        res.render('pages/medicines/all-medications', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1289,11 +1289,11 @@ app.get('/refill-alerts', authenticateUser, async (req, res) => {
 // -----------------------------------------
 
 // Caretaker profile
-app.get('/caretaker-profile', authenticateUser, async (req, res) => {
+app.get('/all-caretakers', authenticateUser, async (req, res) => {
     const patientId = req.userId;
     const isLoggedIn = !!req.cookies.authToken;
 
-    console.log('Rendering caretaker-profile page for user:', patientId); // Log render attempt
+    console.log('Rendering all-caretakers page for user:', patientId); // Log render attempt
 
     try {
         const response = await axios.get('http://middleware:3001/caretaker/get', {
@@ -1301,7 +1301,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
         });
         const caretakers = response.data;
 
-        res.render('pages/caretaker/caretaker-profile', {
+        res.render('pages/caretaker/all-caretakers', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1309,7 +1309,7 @@ app.get('/caretaker-profile', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching caretakers for profile:', error.message); // Log error
-        res.render('pages/caretaker/caretaker-profile', {
+        res.render('pages/caretaker/all-caretakers', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1340,7 +1340,7 @@ app.post('/new-caretaker', authenticateUser, (req, res) => {
 
     axios.post('http://middleware:3001/caretaker/add', { patientId, name, relation, email, phone })
         .then(() => {
-            res.redirect('/caretaker-profile');
+            res.redirect('/all-caretakers');
         })
         .catch((error) => {
             console.error('Error adding caretaker:', error.message); // Log error
@@ -1425,7 +1425,7 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
         });
 
         if (response.status === 201) {
-            res.redirect('/timely-reminders');
+            res.redirect('/all-reminders');
         }
     } catch (error) {
         console.error('Error adding reminder:', error.message); // Log error
@@ -1439,17 +1439,17 @@ app.post('/add-reminder', authenticateUser, async (req, res) => {
 });
 
 // Timely reminders
-app.get('/timely-reminders', authenticateUser, async (req, res) => {
+app.get('/all-reminders', authenticateUser, async (req, res) => {
     const userId = req.userId;
     const isLoggedIn = !!req.cookies.authToken;
 
-    console.log('Rendering timely-reminders page for user:', userId); // Log render attempt
+    console.log('Rendering all-reminders page for user:', userId); // Log render attempt
 
     try {
         const response = await axios.get(`http://middleware:3001/reminders/${userId}`);
         const reminders = response.data.reminders || [];
 
-        res.render('pages/reminder/timely-reminders', {
+        res.render('pages/reminder/all-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
@@ -1458,7 +1458,7 @@ app.get('/timely-reminders', authenticateUser, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching reminders:', error.message); // Log error
-        res.render('pages/reminder/timely-reminders', {
+        res.render('pages/reminder/all-reminders', {
             isLoggedIn: isLoggedIn,
             userName: req.name,
             role: req.role,
