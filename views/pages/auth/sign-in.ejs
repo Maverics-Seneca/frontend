@@ -2,6 +2,7 @@
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
 <head>
     <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap 5 CSS -->
@@ -209,23 +210,6 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal for Dynamic Alerts -->
-    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="alertModalLabel">Notification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="alertModalBody">
-                    <!-- Message will be dynamically inserted here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- JavaScript Files -->
     <script src="/js/core/libs.min.js"></script>
@@ -241,13 +225,15 @@
 
             try {
                 // Send a POST request to /login with email and password
+                showLoader()
                 const response = await fetch("/login", {
                     method: "POST",
                     credentials: 'include',
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email, password }),
                 });
-
+                hideLoader()
+                
                 // Redirect on success, or show error message
                 if (response.redirected) {
                     window.location.href = response.url; // Redirect to dashboard
