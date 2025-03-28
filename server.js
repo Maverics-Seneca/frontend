@@ -221,15 +221,15 @@ app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail')); /
 // Admin Routes
 // -----------------------------------------
 
-// All patients route (admin only)
+// All patients route (admin and owner)
 app.get('/all-patients', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin') {
-        console.log('Access denied: Not an admin'); // Log access denial
+    if (req.role !== 'admin' && req.role !== 'owner') {
+        console.log('Access denied: Not an admin or owner'); // Log access denial
         return res.status(403).render('pages/index', {
             isLoggedIn: true,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. Admins only.',
+            message: 'Access denied. Admins and owners only.',
         });
     }
     try {
@@ -252,9 +252,9 @@ app.get('/all-patients', authenticateUser, async (req, res) => {
     }
 });
 
-// Update patient (admin only)
+// Update patient (admin and owner)
 app.post('/patients/:id', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+    if (req.role !== 'admin' && req.role !== 'owner') return res.status(403).json({ error: 'Access denied' });
 
     try {
         const { name, email, phone } = req.body;
@@ -272,9 +272,9 @@ app.post('/patients/:id', authenticateUser, async (req, res) => {
     }
 });
 
-// Delete patient (admin only)
+// Delete patient (admin and owner)
 app.delete('/patients/:id', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin') return res.status(403).json({ error: 'Access denied' });
+    if (req.role !== 'admin' && req.role !== 'owner') return res.status(403).json({ error: 'Access denied' });
 
     try {
         const patientId = req.params.id;
@@ -286,19 +286,19 @@ app.delete('/patients/:id', authenticateUser, async (req, res) => {
     }
 });
 
-// Admin dashboard (admin only)
+// Admin dashboard (admin and owner)
 app.get('/admin-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
     console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role); // Log render attempt
 
-    if (req.role !== 'admin') {
-        console.log('Access denied: User is not an admin'); // Log access denial
+    if (req.role !== 'admin' && req.role !== 'owner') {
+        console.log('Access denied: User is not an admin or owner'); // Log access denial
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to view this page.',
+            message: 'Access denied. You must be an admin or owner to view this page.',
         });
     }
 
@@ -335,18 +335,18 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
     }
 });
 
-// Add patient page (admin only)
+// Add patient page (admin and owner)
 app.get('/add-patient', authenticateUser, (req, res) => {
     console.log('Rendering add-patient page for user:', req.userId); // Log render attempt
 
     const isLoggedIn = !!req.cookies.authToken;
-    if (req.role !== 'admin') {
-        console.log('Access denied: User is not an admin'); // Log access denial
+    if (req.role !== 'admin' && req.role !== 'owner') {
+        console.log('Access denied: User is not an admin or owner'); // Log access denial
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to add patients.',
+            message: 'Access denied. You must be an admin or owner to add patients.',
         });
     }
 
@@ -357,15 +357,15 @@ app.get('/add-patient', authenticateUser, (req, res) => {
     });
 });
 
-// Add patient (admin only)
+// Add patient (admin and owner)
 app.post('/add-patient', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin') {
-        console.log('Access denied: User is not an admin'); // Log access denial
+    if (req.role !== 'admin' && req.role !== 'owner') {
+        console.log('Access denied: User is not an admin or owner'); // Log access denial
         return res.status(403).render('pages/error', {
             isLoggedIn: !!req.cookies.authToken,
             userName: req.name,
             role: req.role,
-            message: 'Access denied. You must be an admin to add patients.',
+            message: 'Access denied. You must be an admin or owner to add patients.',
         });
     }
 
@@ -407,7 +407,7 @@ app.post('/add-patient', authenticateUser, async (req, res) => {
     }
 });
 
-// Logs page (admin and owner only)
+// Logs page (admin and owner) - Already has correct permissions
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
