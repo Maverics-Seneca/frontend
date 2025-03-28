@@ -1,6 +1,7 @@
 <!-- views/partials/_header.ejs -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,24 +26,29 @@
             justify-content: space-between;
             font-family: 'Poppins', sans-serif;
         }
+
         .site-header .logo-main {
             display: flex;
             align-items: center;
         }
+
         .site-header .logo-main img {
             width: 35px;
             height: 35px;
             object-fit: contain;
             margin-right: 10px;
         }
+
         .site-header .brand-name {
             font-size: 1.6em;
             font-weight: 600;
         }
+
         .site-header nav {
             display: flex;
             gap: 20px;
         }
+
         .site-header nav a {
             color: white;
             text-decoration: none;
@@ -50,19 +56,23 @@
             font-weight: 500;
             transition: color 0.3s ease;
         }
+
         .site-header nav a:hover {
             color: #ecf0f1;
         }
+
         .site-header .user-greeting {
             display: flex;
             align-items: center;
             gap: 10px;
         }
+
         .site-header .user-greeting span {
-            color: #fff; /* White text to match header */
+            color: #fff;
             font-size: 1.2em;
             font-weight: 600;
         }
+
         .site-header .sign-out-btn {
             background: #e74c3c;
             color: white;
@@ -75,23 +85,30 @@
             transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
         }
+
         .site-header .sign-out-btn:hover {
             background: #c0392b;
             transform: scale(1.05);
         }
+
         @media (max-width: 768px) {
             .site-header nav {
-                display: none; /* Hide nav links on mobile, rely on sidebar */
+                display: none;
+                /* Hide nav links on mobile, rely on sidebar */
             }
+
             .site-header {
                 padding: 10px 15px;
             }
+
             .site-header .brand-name {
                 font-size: 1.4em;
             }
+
             .site-header .user-greeting span {
                 font-size: 1em;
             }
+
             .site-header .sign-out-btn {
                 padding: 6px 12px;
                 font-size: 0.9em;
@@ -99,6 +116,7 @@
         }
     </style>
 </head>
+
 <body>
     <header class="site-header">
         <div class="logo-main">
@@ -111,7 +129,15 @@
             <a href="/sign-in">Login</a>
             <a href="/sign-up">Sign Up</a>
             <% } else { %>
-            <a href="/dashboard">Dashboard</a>
+            <% if (role === 'owner') { %>
+            <a href="/owner-dashboard">Dashboard</a>
+            <% } else if (role === 'admin') { %>
+            <a href="/admin-dashboard">Dashboard</a>
+            <% } else if (role === 'user') { %>
+            <a href="/patient-dashboard">Dashboard</a>
+            <% } else { %>
+            <a href="/dashboard">Dashboard</a> <!-- Fallback for unexpected roles -->
+            <% } %>
             <% } %>
         </nav>
         <% if (isLoggedIn) { %>
