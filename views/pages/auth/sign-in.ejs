@@ -2,6 +2,7 @@
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
 
 <head>
+    <%- include('../../partials/_alerts') %>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap 5 CSS -->
@@ -195,37 +196,12 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal for Dynamic Alerts -->
-    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="alertModalLabel">Notification</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="alertModalBody">
-                    <!-- Message will be dynamically inserted here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- JavaScript Files -->
     <script src="/js/core/libs.min.js"></script>
     <script src="/js/xray.js?v=1.2.0" defer></script>
     <script src="/js/sidebar.js?v=1.2.0" defer></script>
     <script>
-        function showAlert(title, message) {
-            document.getElementById("alertModalLabel").innerText = title;
-            document.getElementById("alertModalBody").innerText = message;
-            var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
-            myModal.show();
-        }
-
         document.getElementById("signInForm").addEventListener("submit", async function (event) {
             event.preventDefault(); // Stop form from submitting the traditional way
 
@@ -247,10 +223,10 @@
                     window.location.href = response.url; // Redirect to dashboard
                 } else {
                     const errorText = await response.text();
-                    showAlert("Error", "Login failed, Please try again");
+                    showAlert("Login failed, Please try again!", "danger");
                 }
             } catch (error) {
-                showAlert("Error", "Login failed, Please try again");
+                showAlert("Login failed, Please try again!", "danger");
             }
         });
 
