@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -25,15 +26,18 @@
             align-items: center;
             min-height: 100vh;
             justify-content: center;
-            background: linear-gradient(135deg, #e6f0fa, #d4efdf); /* Homepage background */
+            background: linear-gradient(135deg, #e6f0fa, #d4efdf);
+            /* Homepage background */
             font-family: 'Poppins', sans-serif;
         }
 
         .sign-in-container {
             max-width: 1100px;
             width: 100%;
-            background: #ffffff; /* White for contrast */
-            border-radius: 20px; /* Matches homepage section radius */
+            background: #ffffff;
+            /* White for contrast */
+            border-radius: 20px;
+            /* Matches homepage section radius */
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -42,7 +46,8 @@
 
         .sign-in-left {
             flex: 1;
-            background: linear-gradient(135deg, #3498db, #2ecc71); /* Homepage hero/CTA gradient */
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            /* Homepage hero/CTA gradient */
             color: white;
             display: flex;
             flex-direction: column;
@@ -84,7 +89,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            background: #ecf0f1; /* Light gray from homepage */
+            background: #ecf0f1;
+            /* Light gray from homepage */
         }
 
         .form-group {
@@ -95,36 +101,43 @@
             width: 100%;
             padding: 12px;
             font-size: 1rem;
-            background-color: #2ecc71; /* Homepage green */
+            background-color: #2ecc71;
+            /* Homepage green */
             color: white;
             border: none;
-            border-radius: 25px; /* Matches homepage button style */
+            border-radius: 25px;
+            /* Matches homepage button style */
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .btn-primary-subtle:hover {
-            background-color: #27ae60; /* Homepage hover green */
+            background-color: #27ae60;
+            /* Homepage hover green */
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .text-muted {
-            color: #7f8c8d !important; /* Matches homepage card text */
+            color: #7f8c8d !important;
+            /* Matches homepage card text */
         }
 
         .text-muted:hover {
-            color: #3498db !important; /* Homepage blue */
+            color: #3498db !important;
+            /* Homepage blue */
             text-decoration: underline;
         }
 
         a {
-            color: #3498db; /* Homepage blue for links */
+            color: #3498db;
+            /* Homepage blue for links */
             text-decoration: none;
         }
 
         a:hover {
-            color: #2980b9; /* Darker blue for hover */
+            color: #2980b9;
+            /* Darker blue for hover */
             text-decoration: underline;
         }
 
@@ -190,6 +203,9 @@
                     </div>
                     <button type="submit" class="btn-primary-subtle mt-3">Sign In</button>
                 </form>
+                <div class="text-center mt-2">
+                    <a href="/sign-in" class="text-muted">Sign in as a normal user</a>
+                </div>
                 <div id="error-message" style="color: red;">
                     <% if (typeof error !== "undefined" && error) { %>
                     <p><%= error %></p>
@@ -257,18 +273,19 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const togglePassword = document.querySelector('#togglePassword');
             const password = document.querySelector('#token');
-            
-            togglePassword.addEventListener('click', function() {
+
+            togglePassword.addEventListener('click', function () {
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
-                
+
                 this.querySelector('i').classList.toggle('bi-eye');
                 this.querySelector('i').classList.toggle('bi-eye-slash');
             });
         });
     </script>
 </body>
+
 </html>
