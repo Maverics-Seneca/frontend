@@ -7,34 +7,45 @@
             padding: 20px;
             text-align: center;
             font-family: 'Poppins', sans-serif;
-            position: relative;
+            position: fixed;
+            /* Changed to fixed to stay at bottom */
             bottom: 0;
+            left: 0;
             width: 100%;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 900;
+            /* Higher than sidebar (default), lower than header (1000) */
         }
+
         .site-footer p {
             margin: 0;
             font-size: 1em;
         }
+
         .site-footer a {
             color: #ecf0f1;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
+
         .site-footer a:hover {
             color: #fff;
         }
+
         @media (max-width: 768px) {
             .site-footer {
                 padding: 15px;
             }
+
             .site-footer p {
                 font-size: 0.9em;
             }
         }
     </style>
-    <p>&copy; <%= new Date().getFullYear() %> MediTrack. All rights reserved. | <a href="/about">About Us</a> | <a href="/contact">Contact</a></p>
+    <p>© <%= new Date().getFullYear() %> MediTrack. All rights reserved. | <a href="/about">About Us</a> | <a
+            href="/contact">Contact</a></p>
 </footer>
 </body>
+
 </html>

@@ -17,7 +17,8 @@
         width: 260px;
         background: #d5f5e3;
         color: #2c3e50;
-        height: calc(100vh - 70px);
+        height: calc(100vh - 110px);
+        /* Adjusted for header (70px) + footer (40px) */
         padding: 20px;
         position: fixed;
         left: -260px;
@@ -28,6 +29,8 @@
         flex-direction: column;
         justify-content: flex-start;
         font-family: 'Poppins', sans-serif;
+        z-index: 800;
+        /* Lower than footer (900) and header (1000) */
     }
 
     .sidebar.active {
@@ -45,6 +48,7 @@
         cursor: pointer;
         border-radius: 25px;
         z-index: 1001;
+        /* Higher than header to stay clickable */
         font-family: 'Poppins', sans-serif;
         font-weight: 600;
         transition: background 0.3s ease;
@@ -133,7 +137,8 @@
     .main-content {
         flex: 1;
         width: 100%;
-        padding: 90px 20px 20px;
+        padding: 90px 20px 60px;
+        /* Increased bottom padding for fixed footer */
         transition: margin-left 0.3s ease-in-out;
         margin-left: 0;
     }
@@ -254,7 +259,7 @@
     }
 
     .about p {
-        font-size: 1.2em;
+        calc(100vh - 110px) font-size: 1.2em;
         max-width: 800px;
         margin: 0 auto;
         color: #555;

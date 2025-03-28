@@ -27,7 +27,6 @@
             min-height: 100vh;
             justify-content: center;
             background: linear-gradient(135deg, #e6f0fa, #d4efdf);
-            /* Homepage background */
             font-family: 'Poppins', sans-serif;
         }
 
@@ -35,9 +34,7 @@
             max-width: 1100px;
             width: 100%;
             background: #ffffff;
-            /* White for contrast */
             border-radius: 20px;
-            /* Matches homepage section radius */
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -47,7 +44,6 @@
         .sign-in-left {
             flex: 1;
             background: linear-gradient(135deg, #3498db, #2ecc71);
-            /* Homepage hero/CTA gradient */
             color: white;
             display: flex;
             flex-direction: column;
@@ -82,6 +78,26 @@
             left: -20px;
         }
 
+        .sign-in-left .back-to-home-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sign-in-left .back-to-home-btn:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .sign-in-right {
             flex: 1.2;
             padding: 50px;
@@ -90,7 +106,6 @@
             flex-direction: column;
             justify-content: center;
             background: #ecf0f1;
-            /* Light gray from homepage */
         }
 
         .form-group {
@@ -102,42 +117,35 @@
             padding: 12px;
             font-size: 1rem;
             background-color: #2ecc71;
-            /* Homepage green */
             color: white;
             border: none;
             border-radius: 25px;
-            /* Matches homepage button style */
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .btn-primary-subtle:hover {
             background-color: #27ae60;
-            /* Homepage hover green */
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .text-muted {
             color: #7f8c8d !important;
-            /* Matches homepage card text */
         }
 
         .text-muted:hover {
             color: #3498db !important;
-            /* Homepage blue */
             text-decoration: underline;
         }
 
         a {
             color: #3498db;
-            /* Homepage blue for links */
             text-decoration: none;
         }
 
         a:hover {
             color: #2980b9;
-            /* Darker blue for hover */
             text-decoration: underline;
         }
 
@@ -161,7 +169,8 @@
             }
 
             .sign-in-left h4,
-            .sign-in-left p {
+            .sign-in-left p,
+            .sign-in-left .back-to-home-btn {
                 left: 0;
             }
         }
@@ -176,6 +185,7 @@
                 <a href="/"><img src="/images/logo.png" alt="MediTrack Logo" /></a>
                 <h4>Welcome Back</h4>
                 <p>Sign in as caretaker to see patient info.</p>
+                <button onclick="window.location.href='/'" class="back-to-home-btn">Back to Home</button>
             </div>
 
             <!-- Right Side (Sign-In Form) -->

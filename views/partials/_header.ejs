@@ -30,6 +30,8 @@
         .site-header .logo-main {
             display: flex;
             align-items: center;
+            margin-left: 50px;
+            /* Added to shift logo right, avoiding menu toggle */
         }
 
         .site-header .logo-main img {
@@ -101,6 +103,11 @@
                 padding: 10px 15px;
             }
 
+            .site-header .logo-main {
+                margin-left: 40px;
+                /* Slightly less shift on mobile */
+            }
+
             .site-header .brand-name {
                 font-size: 1.4em;
             }
@@ -136,7 +143,7 @@
             <% } else if (role === 'user') { %>
             <a href="/patient-dashboard">Dashboard</a>
             <% } else { %>
-            <a href="/dashboard">Dashboard</a> <!-- Fallback for unexpected roles -->
+            <a href="/dashboard">Dashboard</a> <!-- Fallback -->
             <% } %>
             <% } %>
         </nav>
