@@ -227,6 +227,7 @@ app.get('/all-patients', authenticateUser, async (req, res) => {
         console.log('Access denied: Not an admin'); // Log access denial
         return res.status(403).render('pages/index', {
             isLoggedIn: true,
+            userName: req.name,
             role: req.role,
             message: 'Access denied. Admins only.',
         });
