@@ -4,6 +4,8 @@
     <title>Medication Profile - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
+    <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
     <style>
         /* Container for the form */
         .form-container {
@@ -375,6 +377,8 @@
 
             // Save button logic
             document.querySelectorAll('.save-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
@@ -387,24 +391,26 @@
 
                     // Validation
                     if (!name || !dosage || !frequency || !prescribingDoctor || !endDate || !inventory) {
-                        alert('All fields are required.');
+                        showAlert('All fields are required.', "danger");
                         return;
                     }
                     if (!/^\d+$/.test(dosage) || Number(dosage) <= 0) {
-                        alert('Please enter a valid positive dosage.');
+                        showAlert('Please enter a valid positive dosage.', "danger");
                         return;
                     }
                     if (!/^\d+$/.test(inventory) || Number(inventory) < 0) {
-                        alert('Please enter a valid non-negative inventory.');
+                        showAlert('Please enter a valid non-negative inventory.', "danger");
                         return;
                     }
 
                     try {
+                        showLoader()
                         const response = await fetch(`/medicines/${id}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ name, dosage: Number(dosage), frequency, prescribingDoctor, endDate, inventory: Number(inventory) }),
                         });
+                        hideLoader()
 
                         if (response.ok) {
                             const inputs = row.querySelectorAll('input, select');
@@ -415,43 +421,47 @@
                             // Update medicationsData with new values
                             const medIndex = medicationsData.findIndex(m => m.id === id);
                             medicationsData[medIndex] = { id, name, dosage: Number(dosage), frequency, prescribingDoctor, endDate, inventory: Number(inventory) };
-                            alert('Medicine updated successfully!');
+                            showAlert('Medicine updated successfully!', "success");
                         } else {
                             const errorText = await response.text();
-                            alert('Failed to update medicine: ' + errorText);
+                            showAlert('Failed to update medicine: ' + errorText, "danger");
                         }
                     } catch (error) {
                         console.error('Error updating medicine:', error);
-                        alert('An error occurred. Please try again.');
+                        showAlert('An error occurred. Please try again.', "danger");
                     }
                 });
             });
 
             // Delete button logic
             document.querySelectorAll('.delete-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
 
                     if (confirm('Are you sure you want to delete this medicine?')) {
                         try {
+                            showLoader()
                             const response = await fetch(`/medicines/${id}`, {
                                 method: 'DELETE',
                                 headers: { 'Content-Type': 'application/json' },
                             });
+                            hideLoader()
 
                             if (response.ok) {
                                 medicationsData = medicationsData.filter(m => m.id !== id); // Remove from data
                                 row.remove(); // Remove the row from the table
                                 if (medicationsData.length === 0) renderTable(); // Update if empty
-                                alert('Medicine deleted successfully!');
+                                showAlert('Medicine deleted successfully!', "success");
                             } else {
                                 const errorText = await response.text();
-                                alert('Failed to delete medicine: ' + errorText);
+                                showAlert('Failed to delete medicine: ' + errorText, "danger");
                             }
                         } catch (error) {
                             console.error('Error deleting medicine:', error);
-                            alert('An error occurred. Please try again.');
+                            showAlert('An error occurred. Please try again.', "danger");
                         }
                     }
                 });
