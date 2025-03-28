@@ -1,25 +1,15 @@
-<!-- Sidebar -->
-<aside class="sidebar collapsed"> <!-- Initially collapsed -->
+<aside class="sidebar collapsed">
     <div class="logo-main">
         <img src="/images/logo.png" alt="MediTrack Logo">
         <span class="brand-name">MediTrack</span>
     </div>
     <ul class="sidebar-menu">
-        <!-- No Role (Guest) -->
         <% if (!role) { %>
-        <li class="menu-item">
-            <a href="/" class="menu-link">Dashboard</a>
-        </li>
-        <li class="menu-item">
-            <a href="/sign-in" class="menu-link">Login</a>
-        </li>
+        <li class="menu-item"><a href="/" class="menu-link">Home</a></li>
+        <li class="menu-item"><a href="/sign-in" class="menu-link">Login</a></li>
         <% } %>
-
-        <!-- Owner Role -->
         <% if (role === 'owner') { %>
-        <li class="menu-item">
-            <a href="/owner-dashboard" class="menu-link">Owner Dashboard</a>
-        </li>
+        <li class="menu-item"><a href="/owner-dashboard" class="menu-link">Owner Dashboard</a></li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Organizations</a>
             <ul class="submenu">
@@ -49,12 +39,8 @@
             </ul>
         </li>
         <% } %>
-
-        <!-- Admin Role -->
         <% if (role === 'admin') { %>
-        <li class="menu-item">
-            <a href="/admin-dashboard" class="menu-link">Admin Dashboard</a>
-        </li>
+        <li class="menu-item"><a href="/admin-dashboard" class="menu-link">Admin Dashboard</a></li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Patient</a>
             <ul class="submenu">
@@ -70,12 +56,8 @@
             </ul>
         </li>
         <% } %>
-
-        <!-- Patient Role -->
         <% if (role === 'user') { %>
-        <li class="menu-item">
-            <a href="/patient-dashboard" class="menu-link">Patient Dashboard</a>
-        </li>
+        <li class="menu-item"><a href="/patient-dashboard" class="menu-link">Patient Dashboard</a></li>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Medicines</a>
             <ul class="submenu">
@@ -103,8 +85,6 @@
             </ul>
         </li>
         <% } %>
-
-        <!-- Common Items for Authenticated Users -->
         <% if (role === 'owner' || role === 'admin' || role === 'user') { %>
         <li class="menu-item has-submenu">
             <a href="#" class="menu-link">Settings</a>
@@ -118,6 +98,4 @@
         <% } %>
     </ul>
 </aside>
-
-<!-- Hamburger Menu Button -->
 <button class="menu-toggle">☰</button>
