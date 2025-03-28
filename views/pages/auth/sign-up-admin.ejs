@@ -65,6 +65,26 @@
             margin-bottom: 20px;
         }
 
+        .sign-in-left .back-to-home-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sign-in-left .back-to-home-btn:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
         .sign-in-right {
             flex: 1.2;
             padding: 50px;
@@ -144,6 +164,7 @@
                 <a href="/"><img src="/images/logo.png" alt="MediTrack Logo" /></a>
                 <h4>Manage Your Orders</h4>
                 <p>Track and manage all your clinic & patient details in one place.</p>
+                <button onclick="window.location.href='/'" class="back-to-home-btn">Back to Home</button>
             </div>
             <div class="sign-in-right">
                 <h1 class="mb-4">Admin Sign Up</h1>
@@ -200,9 +221,6 @@
                     <button type="submit" class="btn-primary-subtle" id="signUpButton">Sign Up</button>
                     <div class="text-center mt-3">
                         <span>Already have an account? <a href="/sign-in">Sign In</a></span>
-                        <div class="mt-2">
-                            <a href="/" class="btn btn-outline-secondary">Return to Home</a>
-                        </div>
                     </div>
                 </form>
             </div>
