@@ -1,7 +1,123 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/css/core/libs.min.css">
-<link rel="stylesheet" href="/css/xray.min.css">
-<link rel="stylesheet" href="/css/custom.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<title>MediTrack - Your Health Companion</title>
+<!-- views/partials/_header.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/core/libs.min.css">
+    <link rel="stylesheet" href="/css/xray.min.css">
+    <link rel="stylesheet" href="/css/custom.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>MediTrack - Your Health Companion</title>
+    <style>
+        .site-header {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Poppins', sans-serif;
+        }
+        .site-header .logo-main {
+            display: flex;
+            align-items: center;
+        }
+        .site-header .logo-main img {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            margin-right: 10px;
+        }
+        .site-header .brand-name {
+            font-size: 1.6em;
+            font-weight: 600;
+        }
+        .site-header nav {
+            display: flex;
+            gap: 20px;
+        }
+        .site-header nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .site-header nav a:hover {
+            color: #ecf0f1;
+        }
+        .site-header .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .site-header .user-greeting span {
+            color: #fff; /* White text to match header */
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        .site-header .sign-out-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        .site-header .sign-out-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        @media (max-width: 768px) {
+            .site-header nav {
+                display: none; /* Hide nav links on mobile, rely on sidebar */
+            }
+            .site-header {
+                padding: 10px 15px;
+            }
+            .site-header .brand-name {
+                font-size: 1.4em;
+            }
+            .site-header .user-greeting span {
+                font-size: 1em;
+            }
+            .site-header .sign-out-btn {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="logo-main">
+            <img src="/images/logo.png" alt="MediTrack Logo">
+            <span class="brand-name">MediTrack</span>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <% if (!isLoggedIn) { %>
+            <a href="/sign-in">Login</a>
+            <a href="/sign-up">Sign Up</a>
+            <% } else { %>
+            <a href="/dashboard">Dashboard</a>
+            <% } %>
+        </nav>
+        <% if (isLoggedIn) { %>
+        <div class="user-greeting">
+            <span>Hi, <%= userName %></span>
+            <button class="sign-out-btn" id="sign-out-btn">Sign Out</button>
+        </div>
+        <% } %>
+    </header>

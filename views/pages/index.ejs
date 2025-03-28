@@ -1,56 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <%- include('../partials/_header') %>
-    <%- include('../partials/_styles') %>
-</head>
-<body>
-    <%- include('../partials/_sidebar') %>
-    <%- include('../partials/_auth') %>
+<!-- views/index.ejs -->
+<%- include('../partials/_header') %>
+<%- include('../partials/_styles') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <div class="main-content">
-        <section class="hero">
-            <h1>Welcome to MediTrack</h1>
-            <p>Your trusted companion for managing medications and health.</p>
-            <a href="/sign-in" class="hero-btn">Get Started</a>
-        </section>
+<%- include('../partials/_sidebar') %>
 
-        <section class="features">
-            <h2>Key Features</h2>
-            <div class="card-container">
-                <div class="card">
-                    <img src="/images/medication.png" alt="Manage Medications">
-                    <h3>Manage Medications</h3>
-                    <p>Track and update your prescriptions with ease.</p>
-                </div>
-                <div class="card">
-                    <img src="/images/refill.png" alt="Refill Alerts">
-                    <h3>Refill Alerts</h3>
-                    <p>Get notified when it’s time to refill.</p>
-                </div>
-                <div class="card">
-                    <img src="/images/reminder.png" alt="Timely Reminders">
-                    <h3>Timely Reminders</h3>
-                    <p>Never miss a dose with custom alerts.</p>
-                </div>
+<div class="main-content">
+    <section class="hero">
+        <h1>Welcome to MediTrack</h1>
+        <p>Your trusted companion for managing medications and health.</p>
+        <a href="/sign-in" class="hero-btn">Get Started</a>
+    </section>
+
+    <section class="features">
+        <h2>Key Features</h2>
+        <div class="card-container">
+            <div class="card">
+                <img src="/images/medication.png" alt="Manage Medications">
+                <h3>Manage Medications</h3>
+                <p>Track and update your prescriptions with ease.</p>
             </div>
-        </section>
+            <div class="card">
+                <img src="/images/refill.png" alt="Refill Alerts">
+                <h3>Refill Alerts</h3>
+                <p>Get notified when it’s time to refill.</p>
+            </div>
+            <div class="card">
+                <img src="/images/reminder.png" alt="Timely Reminders">
+                <h3>Timely Reminders</h3>
+                <p>Never miss a dose with custom alerts.</p>
+            </div>
+        </div>
+    </section>
 
-        <section class="about">
-            <h2>About Us</h2>
-            <p>MediTrack is designed to simplify healthcare management, empowering you to live healthier and happier.</p>
-        </section>
+    <section class="about">
+        <h2>About Us</h2>
+        <p>MediTrack is designed to simplify healthcare management, empowering you to live healthier and happier.</p>
+    </section>
 
-        <section class="cta">
-            <h2>Ready to Begin?</h2>
-            <% if (!isLoggedIn) { %>
-            <a href="/sign-up" class="cta-btn">Sign Up Now</a>
-            <% } else { %>
-            <a href="/dashboard" class="cta-btn">Go to Dashboard</a>
-            <% } %>
-        </section>
-    </div>
+    <section class="cta">
+        <h2>Ready to Begin?</h2>
+        <% if (!isLoggedIn) { %>
+        <a href="/sign-up" class="cta-btn">Sign Up Now</a>
+        <% } else { %>
+        <a href="/dashboard" class="cta-btn">Go to Dashboard</a>
+        <% } %>
+    </section>
+</div>
 
-    <%- include('../partials/_scripts') %>
-</body>
-</html>
+<%- include('../partials/_scripts') %>
+<%- include('../partials/_footer') %>
