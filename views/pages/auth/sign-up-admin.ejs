@@ -27,15 +27,19 @@
             align-items: center;
             min-height: 100vh;
             justify-content: center;
-            background-color: #f4f7fc;
+            background: linear-gradient(135deg, #e6f0fa, #d4efdf);
+            /* Homepage background */
+            font-family: 'Poppins', sans-serif;
         }
 
         .sign-in-container {
             max-width: 1100px;
             width: 100%;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            /* White for contrast */
+            border-radius: 20px;
+            /* Matches homepage section radius */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
@@ -43,7 +47,8 @@
 
         .sign-in-left {
             flex: 1;
-            background: linear-gradient(135deg, #0aab93, #087f75);
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            /* Homepage hero/CTA gradient */
             color: white;
             display: flex;
             flex-direction: column;
@@ -67,6 +72,8 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: #ecf0f1;
+            /* Light gray from homepage */
         }
 
         .form-group {
@@ -77,20 +84,55 @@
             width: 100%;
             padding: 12px;
             font-size: 1rem;
-            background-color: #0aab93;
+            background-color: #2ecc71;
+            /* Homepage green */
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
+            /* Matches homepage button style */
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .btn-primary-subtle:hover {
-            background-color: #087f75;
+            background-color: #27ae60;
+            /* Homepage hover green */
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn-primary-subtle:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        a {
+            color: #3498db;
+            /* Homepage blue for links */
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #2980b9;
+            /* Darker blue for hover */
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .sign-in-container {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .sign-in-left,
+            .sign-in-right {
+                width: 100%;
+                min-width: 100%;
+                padding: 30px;
+            }
         }
     </style>
 </head>
@@ -198,6 +240,7 @@
             termsCheck.addEventListener("change", function () {
                 signUpButton.disabled = !this.checked;
             });
+
             const registerForm = document.getElementById("signupForm");
 
             registerForm.addEventListener("submit", async function (event) {
@@ -287,7 +330,6 @@
                 togglePasswordVisibility(confirmPassword, this);
             });
         });
-
     </script>
 </body>
 

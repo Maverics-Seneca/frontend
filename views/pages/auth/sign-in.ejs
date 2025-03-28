@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
 <head>
+    <%- include('../../partials/_alerts') %>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap 5 CSS -->
@@ -231,13 +232,6 @@
     <script src="/js/xray.js?v=1.2.0" defer></script>
     <script src="/js/sidebar.js?v=1.2.0" defer></script>
     <script>
-        function showAlert(title, message) {
-            document.getElementById("alertModalLabel").innerText = title;
-            document.getElementById("alertModalBody").innerText = message;
-            var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
-            myModal.show();
-        }
-
         document.getElementById("signInForm").addEventListener("submit", async function (event) {
             event.preventDefault(); // Stop form from submitting the traditional way
 
@@ -259,10 +253,10 @@
                     window.location.href = response.url; // Redirect to dashboard
                 } else {
                     const errorText = await response.text();
-                    showAlert("Error", "Login failed, Please try again");
+                    showAlert("Login failed, Please try again!", "danger");
                 }
             } catch (error) {
-                showAlert("Error", "Login failed, Please try again");
+                showAlert("Login failed, Please try again!", "danger");
             }
         });
 
