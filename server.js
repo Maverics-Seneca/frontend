@@ -188,6 +188,37 @@ app.get('/terms-of-service', (req, res) => {
     });
 });
 
+// Terms of Service Route
+app.get('/about', (req, res) => {
+    const token = req.cookies.authToken;
+    let isLoggedIn = false;
+    let userName = null;
+    let role = null;
+
+    // Check if token exists and attempt to verify it
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            isLoggedIn = true;
+            userName = decoded.name;
+            role = decoded.role;
+            console.log('User authenticated for about us page:', { userName, role }); // Log authenticated user
+        } catch (error) {
+            console.error('Token verification failed for about us page:', error.message); // Log token error
+            // If token is invalid, treat as not logged in but still render the page
+        }
+    } else {
+        console.log('No token found for about us, rendering as guest'); // Log guest access
+    }
+
+    res.render('pages/extra/about-us', {
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        role: role
+    });
+});
+
+
 // Admin signup page
 app.get('/sign-up-admin', async (req, res) => {
     try {
