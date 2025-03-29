@@ -6,7 +6,31 @@
 <!-- Alert Container (same as before) -->
 <div id="alert-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;"></div>
 
+<!-- Bootstrap Modal for Dynamic Box Alerts -->
+<div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="alertModalLabel">Notification</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="alertModalBody">
+              <!-- Message will be dynamically inserted here -->
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
 <script>
+  function showBoxAlert(title, message) {
+    document.getElementById("alertModalLabel").innerText = title;
+    document.getElementById("alertModalBody").innerText = message;
+    var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
+    myModal.show();
+}
   function showAlert(message, type = 'success') {
     const alertId = `alert-${Date.now()}`;
 
