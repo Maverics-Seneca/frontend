@@ -6,6 +6,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
+    <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
     <style>
         /* Container for the form */
         .form-container {
@@ -301,7 +303,7 @@
     </div>
 
     <script>
-        let caretakersData = <% - JSON.stringify(caretakers || []) %>;
+        let caretakersData = <%- JSON.stringify(typeof caretakers !== 'undefined' ? caretakers : []) %>;
         let currentDisplayData = [...caretakersData];
         let sortColumn = -1;
         let sortDirection = 1;
@@ -411,6 +413,8 @@
         function attachEventListeners() {
             // Edit button logic
             document.querySelectorAll('.edit-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
@@ -424,6 +428,8 @@
 
             // Save button logic
             document.querySelectorAll('.save-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
@@ -433,24 +439,26 @@
                     const email = row.querySelector(`#email-${id}`).value.trim();
 
                     if (!name || !relation || !phone || !email) {
-                        alert('All fields are required.');
+                        showAlert('All fields are required.', "danger");
                         return;
                     }
                     if (!/^\d{10,}$/.test(phone)) {
-                        alert('Please enter a valid phone number (at least 10 digits).');
+                        showAlert('Please enter a valid phone number (at least 10 digits).', "danger");
                         return;
                     }
                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        alert('Please enter a valid email address.');
+                        showAlert('Please enter a valid email address.', "danger");
                         return;
                     }
 
                     try {
+                        showLoader()
                         const response = await fetch(`/caretakers/${id}`, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ name, relation, phone, email }),
                         });
+                        hideLoader()
 
                         if (response.ok) {
                             const inputs = row.querySelectorAll('input, select');
@@ -462,20 +470,23 @@
                             caretakersData[caretakerIndex] = { id, name, relation, phone, email, password: caretakersData[caretakerIndex].password };
                             currentDisplayData = caretakersData.filter(c => c.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
                             renderFilteredData(currentDisplayData);
-                            alert('Caretaker updated successfully!');
+                            showAlert('Caretaker updated successfully!', "success");
                         } else {
                             const errorText = await response.text();
                             alert('Failed to update caretaker: ' + errorText);
                         }
                     } catch (error) {
+                        hideLoader()
                         console.error('Error updating caretaker:', error);
-                        alert('An error occurred. Please try again.');
+                        showAlert('An error occurred. Please try again.', "danger");
                     }
                 });
             });
 
             // Delete button logic
             document.querySelectorAll('.delete-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
@@ -491,14 +502,14 @@
                                 caretakersData = caretakersData.filter(c => c.id !== id);
                                 currentDisplayData = caretakersData.filter(c => c.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
                                 renderFilteredData(currentDisplayData);
-                                alert('Caretaker deleted successfully!');
+                                showAlert('Caretaker deleted successfully!', "success");
                             } else {
                                 const errorText = await response.text();
-                                alert('Failed to delete caretaker: ' + errorText);
+                                showAlert('Failed to delete caretaker: ' + errorText, "danger");
                             }
                         } catch (error) {
                             console.error('Error deleting caretaker:', error);
-                            alert('An error occurred. Please try again.');
+                            showAlert('An error occurred. Please try again.', "danger");
                         }
                     }
                 });
@@ -544,7 +555,7 @@
                     }, 1500);
                 }).catch(err => {
                     console.error('Copy failed:', err);
-                    alert('Failed to copy token.');
+                    showAlert('Failed to copy token.', "danger");
                 });
             } else {
                 console.error(`Token input with id "token-${id}" not found`);
