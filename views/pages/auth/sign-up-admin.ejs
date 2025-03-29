@@ -28,7 +28,6 @@
             min-height: 100vh;
             justify-content: center;
             background: linear-gradient(135deg, #e6f0fa, #d4efdf);
-            /* Homepage background */
             font-family: 'Poppins', sans-serif;
         }
 
@@ -36,9 +35,7 @@
             max-width: 1100px;
             width: 100%;
             background: #ffffff;
-            /* White for contrast */
             border-radius: 20px;
-            /* Matches homepage section radius */
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
@@ -48,7 +45,6 @@
         .sign-in-left {
             flex: 1;
             background: linear-gradient(135deg, #3498db, #2ecc71);
-            /* Homepage hero/CTA gradient */
             color: white;
             display: flex;
             flex-direction: column;
@@ -93,7 +89,6 @@
             flex-direction: column;
             justify-content: center;
             background: #ecf0f1;
-            /* Light gray from homepage */
         }
 
         .form-group {
@@ -105,18 +100,15 @@
             padding: 12px;
             font-size: 1rem;
             background-color: #2ecc71;
-            /* Homepage green */
             color: white;
             border: none;
             border-radius: 25px;
-            /* Matches homepage button style */
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .btn-primary-subtle:hover {
             background-color: #27ae60;
-            /* Homepage hover green */
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
@@ -130,14 +122,108 @@
 
         a {
             color: #3498db;
-            /* Homepage blue for links */
             text-decoration: none;
         }
 
         a:hover {
             color: #2980b9;
-            /* Darker blue for hover */
             text-decoration: underline;
+        }
+
+        /* Terms Modal Styling */
+        .terms-modal .modal-dialog {
+            max-width: 1000px;
+        }
+
+        .terms-modal .modal-content {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .terms-modal .modal-body {
+            padding: 15px;
+        }
+
+        .terms-modal h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .terms-modal .last-updated {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .terms-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .terms-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .terms-section h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .terms-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: #2ecc71;
+            border-radius: 2px;
+        }
+
+        .terms-section p {
+            font-size: 1.15em;
+            color: #34495e;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .terms-section ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 10px;
+        }
+
+        .terms-section ul li {
+            font-size: 1.1em;
+            color: #34495e;
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .terms-section ul li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #2ecc71;
+            font-size: 1.2em;
         }
 
         @media (max-width: 768px) {
@@ -152,6 +238,23 @@
                 width: 100%;
                 min-width: 100%;
                 padding: 30px;
+            }
+
+            .terms-modal .modal-dialog {
+                max-width: 90%;
+            }
+
+            .terms-modal h1 {
+                font-size: 2.2em;
+            }
+
+            .terms-section h2 {
+                font-size: 1.3em;
+            }
+
+            .terms-section p,
+            .terms-section ul li {
+                font-size: 1em;
             }
         }
     </style>
@@ -184,7 +287,7 @@
                         <label for="phone">Phone Number</label>
                         <input type="tel" class="form-control" id="phone" placeholder="Your Phone Number" required />
                     </div>
-                    <div class="form-group">
+                    <div class="form-group organization-dropdown">
                         <label for="organizationId">Organization</label>
                         <select class="form-control" id="organizationId" name="organizationId" required>
                             <option value="">Select an Organization</option>
@@ -215,7 +318,8 @@
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input" id="termsCheck" required />
                         <label class="form-check-label" for="termsCheck">
-                            I accept <a href="/terms-of-service">Terms and Conditions</a>
+                            I accept <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and
+                                Conditions</a>
                         </label>
                     </div>
                     <button type="submit" class="btn-primary-subtle" id="signUpButton">Sign Up</button>
@@ -227,7 +331,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal for Dynamic Alerts -->
+    <!-- Alert Modal -->
     <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -236,6 +340,66 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="alertModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div class="modal fade terms-modal" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">MediTrack Terms of Service</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h1>MediTrack Terms of Service</h1>
+                    <p class="last-updated"><strong>Last Updated:</strong> February 2025</p>
+
+                    <div class="terms-section">
+                        <h2>1. Introduction</h2>
+                        <p>Welcome to MediTrack, a medication management platform that helps users track medications,
+                            set reminders,
+                            and allow caregivers to monitor adherence. By using our service, you agree to these Terms of
+                            Service.
+                        </p>
+                    </div>
+
+                    <div class="terms-section">
+                        <h2>2. User Responsibilities</h2>
+                        <p>By using MediTrack, you agree to:</p>
+                        <ul>
+                            <li>Provide accurate medication details.</li>
+                            <li>Follow your healthcare provider’s guidance.</li>
+                            <li>Not misuse the platform for unauthorized or illegal purposes.</li>
+                        </ul>
+                    </div>
+
+                    <div class="terms-section">
+                        <h2>3. Privacy & Data Security</h2>
+                        <p>MediTrack stores and processes personal medication data securely. We comply with privacy laws
+                            and never
+                            share data without consent.</p>
+                    </div>
+
+                    <div class="terms-section">
+                        <h2>4. Service Limitations</h2>
+                        <p>MediTrack is a tool for medication tracking and does not provide medical advice. Always
+                            consult a
+                            healthcare provider before making medication changes.</p>
+                    </div>
+
+                    <div class="terms-section">
+                        <h2>5. Changes to Terms</h2>
+                        <p>We may update these terms periodically. Continued use of MediTrack after changes means
+                            acceptance of the
+                            new terms.</p>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
@@ -255,7 +419,6 @@
             const termsCheck = document.getElementById("termsCheck");
             const signUpButton = document.getElementById("signUpButton");
 
-            // Initially disable the button
             signUpButton.disabled = true;
 
             termsCheck.addEventListener("change", function () {
@@ -328,9 +491,7 @@
                     showAlert("Error", "Something went wrong. Please try again later.");
                 }
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', function () {
             const togglePassword = document.querySelector('#togglePassword');
             const password = document.querySelector('#password');
             const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
