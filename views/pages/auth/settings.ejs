@@ -253,6 +253,10 @@
                     showAlert("Error", 'New password must be at least 6 characters long.');
                     return;
                 }
+                if (password && password.length > 10) {
+                    showAlert("Error", 'New password must be max 10 characters long.');
+                    return;
+                }
                 if (password && !currentPassword) {
                     showAlert("Error", 'Please enter your current password to change your password.');
                     return;

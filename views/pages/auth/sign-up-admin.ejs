@@ -460,6 +460,10 @@
                     showAlert("Error", "Password must be at least 8 characters long.");
                     return;
                 }
+                if (password.length > 10) {
+                    showAlert("Error", "Password must be maximum 10 characters long.");
+                    return;
+                }
                 if (!termsChecked) {
                     showAlert("Error", "You must accept the Terms and Conditions.");
                     return;
