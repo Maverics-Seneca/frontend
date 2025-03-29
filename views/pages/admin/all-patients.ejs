@@ -6,7 +6,6 @@
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
     <style>
-        /* Container for the page */
         .form-container {
             background: rgba(255, 255, 255, 0.9);
             padding: 30px;
@@ -17,15 +16,6 @@
             margin: 0 auto;
         }
 
-        /* h1 inside .form-container */
-        .form-container h1 {
-            font-size: 2rem;
-            margin-bottom: 25px;
-            text-align: center;
-            color: #333;
-        }
-
-        /* Header container for h1 and button */
         .header-container {
             display: flex;
             justify-content: space-between;
@@ -33,7 +23,46 @@
             margin-bottom: 20px;
         }
 
-        /* Table styling */
+        .search-container {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .search-container input {
+            width: 100%;
+            max-width: 300px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 1em;
+            outline: none;
+        }
+
+        .search-container input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin: 0;
+            text-align: center;
+            color: #333;
+            flex: 1; /* Centers the title within its flex space */
+        }
+
+        .add-patient-container {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end; /* Keeps button on the right */
+        }
+
+        .table-container {
+            max-height: 500px; /* Fixed height for vertical scrolling */
+            overflow-y: auto; /* Enables vertical scrollbar */
+            margin-bottom: 20px;
+        }
+
         .patients-table {
             width: 100%;
             border-collapse: collapse;
@@ -53,22 +82,22 @@
             color: #444;
             cursor: pointer;
             user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         .patients-table th:hover {
             background: #e9ecef;
         }
 
-        /* Default sort indicator */
         .patients-table th::after {
             content: ' ↕';
-            /* Neutral sort icon */
             font-size: 0.9rem;
             color: #888;
             margin-left: 5px;
         }
 
-        /* Sorted column indicators */
         .patients-table th.sort-asc::after {
             content: ' ↑';
             color: #333;
@@ -79,7 +108,6 @@
             color: #333;
         }
 
-        /* No sort indicator for Action column */
         .patients-table th:last-child::after {
             content: '';
         }
@@ -88,7 +116,6 @@
             background: #fafafa;
         }
 
-        /* Inputs in table */
         .patients-table input {
             padding: 8px;
             border-radius: 5px;
@@ -98,14 +125,12 @@
             box-sizing: border-box;
         }
 
-        /* Disabled state */
         .patients-table input:disabled {
             background: #e9ecef;
             color: #666;
             border: none;
         }
 
-        /* Buttons */
         .patients-table .edit-btn,
         .patients-table .save-btn,
         .patients-table .delete-btn,
@@ -146,7 +171,37 @@
             background: #c0392b;
         }
 
-        /* Responsive adjustments */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            padding: 8px;
+            align-self: center;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         @media (max-width: 768px) {
             .patients-table {
                 font-size: 0.9em;
@@ -159,82 +214,87 @@
 
             .header-container {
                 flex-direction: column;
+                align-items: flex-start;
                 gap: 10px;
             }
-        }
 
-        /* Error message */
-        .error-message {
-            color: #e74c3c;
-            text-align: center;
-            margin-bottom: 20px;
+            .search-container input {
+                max-width: 100%;
+            }
+
+            .form-container h1 {
+                margin: 0 0 10px 0;
+            }
+
+            .add-patient-container {
+                justify-content: flex-start;
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
     <%- include('../../partials/_sidebar') %>
-    
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="form-container">
             <div class="header-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search patients..." onkeyup="searchPatients()">
+                </div>
                 <h1>All Patients</h1>
-                <button class="add-patient-btn" onclick="window.location.href='/add-patient'">Add Patient</button>
+                <div class="add-patient-container">
+                    <button class="add-patient-btn" onclick="window.location.href='/add-patient'">Add Patient</button>
+                </div>
             </div>
             <% if (typeof error !== 'undefined' && error) { %>
             <p class="error-message"><%= error %></p>
             <% } %>
-            <table class="patients-table" id="patientsTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)">Name</th>
-                        <th onclick="sortTable(1)">Email</th>
-                        <th onclick="sortTable(2)">Phone</th>
-                        <th>Action</th> <!-- No sorting for Action -->
-                    </tr>
-                </thead>
-                <tbody id="patientsBody">
-                    <% if (patients && patients.length > 0) { %>
-                    <% patients.forEach(patient => { %>
-                    <tr data-id="<%= patient.id %>">
-                        <td>
-                            <input type="text" id="name-<%= patient.id %>" value="<%= patient.name %>" disabled
-                                required />
-                        </td>
-                        <td>
-                            <input type="email" id="email-<%= patient.id %>" value="<%= patient.email %>" disabled
-                                required />
-                        </td>
-                        <td>
-                            <input type="tel" id="phone-<%= patient.id %>" value="<%= patient.phone %>" disabled
-                                required />
-                        </td>
-                        <td>
-                            <button class="edit-btn" data-id="<%= patient.id %>">Edit</button>
-                            <button class="save-btn" data-id="<%= patient.id %>">Save</button>
-                            <button class="delete-btn" data-id="<%= patient.id %>">Delete</button>
-                        </td>
-                    </tr>
-                    <% }) %>
-                    <% } else { %>
-                    <tr>
-                        <td colspan="4" style="text-align: center;">No patients found.</td>
-                    </tr>
-                    <% } %>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table class="patients-table" id="patientsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Name</th>
+                            <th onclick="sortTable(1)">Email</th>
+                            <th onclick="sortTable(2)">Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button onclick="changePage(-1)" id="prevBtn">Previous</button>
+                <span id="pageInfo"></span>
+                <button onclick="changePage(1)" id="nextBtn">Next</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Pass initial patients data from EJS to JavaScript
-        let patientsData = <% - JSON.stringify(patients || []) %>;
-
-        // Track current sort column and direction
+        let patientsData = <%- JSON.stringify(patients || []) %>;
+        let originalPatients = [...patientsData];
+        const ITEMS_PER_PAGE = 10;
+        let currentPage = 1;
         let sortColumn = -1;
-        let sortDirection = 1; // 1 for ascending, -1 for descending
+        let sortDirection = 1;
+
+        function searchPatients() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            patientsData = originalPatients.filter(patient => {
+                return (
+                    (patient.name && patient.name.toLowerCase().includes(searchTerm)) ||
+                    (patient.email && patient.email.toLowerCase().includes(searchTerm)) ||
+                    (patient.phone && patient.phone.toLowerCase().includes(searchTerm))
+                );
+            });
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
 
         function sortTable(columnIndex) {
             if (sortColumn === columnIndex) {
@@ -267,20 +327,26 @@
                 return 0;
             });
 
+            currentPage = 1;
             renderTable();
             updateSortIndicators(columnIndex);
+            updatePagination();
         }
 
         function renderTable() {
             const tbody = document.getElementById('patientsBody');
             tbody.innerHTML = '';
 
-            if (patientsData.length === 0) {
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const paginatedPatients = patientsData.slice(start, end);
+
+            if (paginatedPatients.length === 0 && currentPage === 1) {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No patients found.</td></tr>';
                 return;
             }
 
-            patientsData.forEach(patient => {
+            paginatedPatients.forEach(patient => {
                 const row = document.createElement('tr');
                 row.dataset.id = patient.id;
                 row.innerHTML = `
@@ -309,8 +375,27 @@
             });
         }
 
+        function changePage(delta) {
+            const totalPages = Math.ceil(patientsData.length / ITEMS_PER_PAGE);
+            currentPage += delta;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            renderTable();
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(patientsData.length / ITEMS_PER_PAGE);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+        }
+
         function attachEventListeners() {
-            // Edit button logic
             document.querySelectorAll('.edit-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
@@ -323,7 +408,6 @@
                 });
             });
 
-            // Save button logic
             document.querySelectorAll('.save-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
@@ -332,7 +416,6 @@
                     const email = row.querySelector(`#email-${id}`).value.trim();
                     const phone = row.querySelector(`#phone-${id}`).value.trim();
 
-                    // Validation
                     if (!name || !email || !phone) {
                         alert('All fields are required.');
                         return;
@@ -361,6 +444,7 @@
                             editBtn.style.display = 'inline-block';
                             const patientIndex = patientsData.findIndex(p => p.id === id);
                             patientsData[patientIndex] = { id, name, email, phone };
+                            originalPatients = originalPatients.map(p => p.id === id ? { id, name, email, phone } : p);
                             alert('Patient updated successfully!');
                         } else {
                             const errorText = await response.text();
@@ -373,7 +457,6 @@
                 });
             });
 
-            // Delete button logic
             document.querySelectorAll('.delete-btn').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
@@ -388,8 +471,9 @@
 
                             if (response.ok) {
                                 patientsData = patientsData.filter(p => p.id !== id);
-                                row.remove();
-                                if (patientsData.length === 0) renderTable();
+                                originalPatients = originalPatients.filter(p => p.id !== id);
+                                renderTable();
+                                updatePagination();
                                 alert('Patient deleted successfully!');
                             } else {
                                 const errorText = await response.text();
@@ -404,8 +488,9 @@
             });
         }
 
-        // Initial call to attach event listeners
-        attachEventListeners();
+        // Initial render
+        renderTable();
+        updatePagination();
     </script>
     <%- include('../../partials/_scripts') %>
     <%- include('../../partials/_footer') %>
