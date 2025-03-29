@@ -336,9 +336,13 @@ app.get('/confirm-mail', (req, res) => res.render('pages/auth/confirm-mail')); /
 // -----------------------------------------
 
 // All patients route (admin and owner)
+// All patients route (admin and owner)
 app.get('/all-patients', authenticateUser, async (req, res) => {
     if (req.role !== 'admin' && req.role !== 'owner') {
-        console.log('Access denied: Not an admin or owner'); // Log access denial
+        console.log('Access denied: Not an admin or owner');
+        if (req.headers.accept.includes('application/json')) {
+            return res.status(403).json({ error: 'Access denied. Admins and owners only.' });
+        }
         return res.status(403).render('pages/index', {
             isLoggedIn: true,
             userName: req.name,
@@ -346,56 +350,87 @@ app.get('/all-patients', authenticateUser, async (req, res) => {
             message: 'Access denied. Admins and owners only.',
         });
     }
+
     try {
-        console.log('Fetching patients for organizationId:', req.organizationId); // Log fetch attempt
+        console.log('Fetching patients for organizationId:', req.organizationId);
         const response = await axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`);
-        res.render('pages/admin/all-patients', {
-            isLoggedIn: true,
-            userName: req.name,
-            role: req.role,
-            patients: response.data,
-        });
+        const patients = response.data;
+
+        // Respond based on Accept header
+        if (req.headers.accept.includes('application/json')) {
+            res.json({ patients });
+        } else {
+            res.render('pages/admin/all-patients', {
+                isLoggedIn: true,
+                userName: req.name,
+                role: req.role,
+                patients,
+            });
+        }
     } catch (error) {
-        console.error('Error fetching patients:', error.message); // Log error
-        res.render('pages/admin/all-patients', {
-            isLoggedIn: true,
-            userName: req.name,
-            role: req.role,
-            error: 'Failed to load patients.',
-        });
+        console.error('Error fetching patients:', error.message);
+        if (req.headers.accept.includes('application/json')) {
+            res.status(500).json({ error: 'Failed to load patients.' });
+        } else {
+            res.render('pages/admin/all-patients', {
+                isLoggedIn: true,
+                userName: req.name,
+                role: req.role,
+                error: 'Failed to load patients.',
+            });
+        }
     }
 });
-
 // Update patient (admin and owner)
 app.post('/patients/:id', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin' && req.role !== 'owner') return res.status(403).json({ error: 'Access denied' });
+    const patientId = req.params.id;
+    const { name, email, phone } = req.body;
+    const userRole = req.role;
 
     try {
-        const { name, email, phone } = req.body;
-        const patientId = req.params.id;
-        await axios.post(`http://middleware:3001/patients/${patientId}`, {
-            name,
-            email,
-            phone,
-            organizationId: req.organizationId,
-        });
-        res.status(200).send('Patient updated');
+        if (userRole === 'admin' || userRole === 'owner') {
+            await axios.post(`http://middleware:3001/patients/${patientId}`, {
+                name,
+                email,
+                phone,
+                organizationId: req.organizationId,
+            });
+            res.status(200).send('Patient updated');
+        } else if (userRole === 'user') {
+            await axios.post(`http://auth-service:4000/api/users/${patientId}`, {
+                name,
+                email,
+                phone,
+                organizationId: req.organizationId,
+                role: 'user'
+            });
+            res.status(200).send('Patient updated');
+        } else {
+            res.status(403).json({ error: 'Access denied' });
+        }
     } catch (error) {
-        console.error('Error updating patient:', error.message); // Log error
+        console.error('Error updating patient:', error.message);
         res.status(500).send('Failed to update patient');
     }
 });
 
 // Delete patient (admin and owner)
 app.delete('/patients/:id', authenticateUser, async (req, res) => {
-    if (req.role !== 'admin' && req.role !== 'owner') return res.status(403).json({ error: 'Access denied' });
+    const patientId = req.params.id;
+    const userRole = req.role;
 
     try {
-        const patientId = req.params.id;
-        await axios.delete(`http://middleware:3001/patients/${patientId}`);
-        res.status(200).send('Patient deleted');
+        if (userRole === 'admin' || userRole === 'owner') {
+            await axios.delete(`http://middleware:3001/patients/${patientId}`);
+            res.status(200).send('Patient deleted');
+        } else if (userRole === 'user') {
+            await axios.delete(`http://auth-service:4000/api/users/${patientId}`);
+            res.status(200).send('Patient deleted');
+        } else {
+            res.status(403).json({ error: 'Access denied' });
+        }
     } catch (error) {
-        console.error('Error deleting patient:', error.message); // Log error
+        console.error('Error deleting patient:', error.message);
         res.status(500).send('Failed to delete patient');
     }
 });
@@ -526,10 +561,10 @@ app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
     const role = req.role;
-    console.log('Rendering logs page for user:', userId, 'with role:', role); // Log render attempt
+    console.log('Rendering logs page for user:', userId, 'with role:', role);
 
     if (role !== 'admin' && role !== 'owner') {
-        console.log('Access denied: User is not an admin or owner'); // Log access denial
+        console.log('Access denied: User is not an admin or owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
@@ -540,7 +575,9 @@ app.get('/logs', authenticateUser, async (req, res) => {
 
     try {
         const response = await axios.get('http://middleware:3001/logs', {
-            params: { userId, role }
+            params: { 
+                organizationId: req.organizationId, // Pass organizationId from token
+            }
         });
         const logs = response.data;
 
@@ -551,7 +588,7 @@ app.get('/logs', authenticateUser, async (req, res) => {
             logs,
         });
     } catch (error) {
-        console.error('Error fetching logs:', error.message); // Log error
+        console.error('Error fetching logs:', error.message);
         res.render('pages/admin/logs', {
             isLoggedIn,
             userName: req.name,
