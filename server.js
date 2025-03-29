@@ -214,10 +214,76 @@ app.get('/about', (req, res) => {
     res.render('pages/extra/about-us', {
         isLoggedIn: isLoggedIn,
         userName: userName,
-        role: role
+        role: role,
     });
 });
 
+// Contact Us Route
+app.get('/contact', (req, res) => {
+    const token = req.cookies.authToken;
+    let isLoggedIn = false;
+    let userName = null;
+    let role = null;
+
+    // Check if token exists and attempt to verify it
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            isLoggedIn = true;
+            userName = decoded.name;
+            role = decoded.role;
+            console.log('User authenticated for contact us page:', { userName, role }); // Log authenticated user
+        } catch (error) {
+            console.error('Token verification failed for contact us page:', error.message); // Log token error
+            // If token is invalid, treat as not logged in but still render the page
+        }
+    } else {
+        console.log('No token found for contact us, rendering as guest'); // Log guest access
+    }
+
+    res.render('pages/extra/contact-us', {
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        role: role,
+        success: false
+    });
+});
+
+// Contact Form Submission
+app.post('/contact-us', (req, res) => {
+    const { name, email, subject, message } = req.body;
+
+    const token = req.cookies.authToken;
+    let isLoggedIn = false;
+    let userName = null;
+    let role = null;
+
+    // Check if token exists and attempt to verify it
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, SECRET_KEY);
+            isLoggedIn = true;
+            userName = decoded.name;
+            role = decoded.role;
+            console.log('User authenticated for contact form submission page:', { userName, role }); // Log authenticated user
+        } catch (error) {
+            console.error('Token verification failed for contact form submission page:', error.message); // Log token error
+            // If token is invalid, treat as not logged in but still render the page
+        }
+    } else {
+        console.log('No token found for contact us form submission, rendering as guest'); // Log guest access
+    }
+
+    // You can log it, send an email, store in Firestore, etc.
+    console.log("Contact Request:", { name, email, subject, message });
+
+    // Send a success message or redirect
+    res.render('pages/extra/contact-us', { 
+        isLoggedIn: isLoggedIn,
+        userName: userName,
+        role: role,
+        success: true });
+});
 
 // Admin signup page
 app.get('/sign-up-admin', async (req, res) => {
