@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Add Caretaker - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels inside .form-container */
+        .form-container label {
+            font-weight: bold;
+        }
+
+        /* Inputs and select elements inside .form-container */
+        .form-container input,
+        .form-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        /* Button inside .form-container */
+        .form-container button {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+     <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Add Caretaker</h1>
+            <form id="add-caretaker-form" action="/new-caretaker" method="POST">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="relation">Relation to Patient</label>
+                    <select name="relation" id="relation">
+                        <option value="parent">Parent</option>
+                        <option value="spouse">Spouse</option>
+                        <option value="sibling">Sibling</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Caretaker Contact Number</label>
+                    <input type="tel" name="phone" id="phone" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Caretaker Email</label>
+                    <input type="email" name="email" id="email" required />
+                </div>
+
+                <button type="submit">Add Caretaker</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-caretaker-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the form from submitting traditionally
+
+            // Get form inputs
+            const name = document.getElementById('name').value.trim();
+            const relation = document.getElementById('relation').value;
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            // Validation
+            if (!name || !relation || !phone || !email) {
+                alert('All fields are required.');
+                return;
+            }
+
+            if (!/^\d{10,}$/.test(phone)) {
+                alert('Please enter a valid phone number (at least 10 digits).');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            try {
+                // Submit the form data to /new-caretaker
+                const response = await fetch('/new-caretaker', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, relation, phone, email }),
+                });
+
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to the home page
+                } else {
+                    const errorText = await response.text();
+                    alert('Failed to add caretaker: ' + errorText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
+    </script>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Settings - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px; /* Narrower for vertical layout */
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Header container for h1 */
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Form group for vertical layout */
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Labels */
+        .form-group label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        /* Inputs */
+        .form-group input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Disabled state */
+        .form-group input:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+        }
+
+        /* Hide current password field by default */
+        .form-group.current-password {
+            display: none;
+        }
+
+        /* Buttons */
+        .form-container .edit-btn,
+        .form-container .save-btn {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+            width: 100%;
+            max-width: 200px; /* Limit button width */
+            margin: 0 auto; /* Center buttons */
+            display: block; /* Ensure block-level for centering */
+        }
+
+        .form-container .save-btn {
+            background: #2ecc71; /* Green for save */
+            display: none; /* Hidden by default */
+        }
+
+        .form-container .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .form-container .save-btn:hover {
+            background: #27ae60;
+        }
+
+        /* Button container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-group input {
+                font-size: 0.9em;
+            }
+
+            .form-container .edit-btn,
+            .form-container .save-btn {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+     <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Account Settings</h1>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <% if (user) { %>
+            <div class="settings-form" data-id="<%= user.userId %>">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name-<%= user.userId %>" value="<%= user.name %>" disabled required />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email-<%= user.userId %>" value="<%= user.email %>" disabled required />
+                </div>
+                <div class="form-group current-password">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password-<%= user.userId %>" disabled
+                        placeholder="Enter current password" />
+                </div>
+                <div class="form-group">
+                    <label for="password">New Password</label>
+                    <input type="password" id="password-<%= user.userId %>" value="********" disabled
+                        placeholder="New Password" />
+                </div>
+                <div class="button-container">
+                    <button class="edit-btn" data-id="<%= user.userId %>">Edit</button>
+                    <button class="save-btn" data-id="<%= user.userId %>">Save</button>
+                </div>
+            </div>
+            <% } else { %>
+            <p style="text-align: center;">User data not available.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal for Dynamic Alerts -->
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">Notification</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="alertModalBody">
+            <!-- Message will be dynamically inserted here -->
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script>
+        function showAlert(title, message) {
+            document.getElementById("alertModalLabel").innerText = title;
+            document.getElementById("alertModalBody").innerText = message;
+            var myModal = new bootstrap.Modal(document.getElementById("alertModal"));
+            myModal.show();
+        }
+
+        // Edit button logic
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.dataset.id;
+                const form = document.querySelector(`.settings-form[data-id="${id}"]`);
+                const inputs = form.querySelectorAll('input');
+                const saveBtn = form.querySelector('.save-btn');
+                const currentPasswordGroup = form.querySelector('.current-password');
+
+                inputs.forEach(input => {
+                    input.disabled = false;
+                    if (input.id === `password-${id}`) input.value = ''; // Clear new password field
+                    if (input.id === `current-password-${id}`) input.value = ''; // Clear current password field
+                });
+
+                currentPasswordGroup.style.display = 'block'; // Show current password field
+                e.target.style.display = 'none';
+                saveBtn.style.display = 'block';
+            });
+        });
+
+        // Save button logic
+        document.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.dataset.id;
+                const form = document.querySelector(`.settings-form[data-id="${id}"]`);
+                const name = form.querySelector(`#name-${id}`).value.trim();
+                const email = form.querySelector(`#email-${id}`).value.trim();
+                const password = form.querySelector(`#password-${id}`).value.trim();
+                const currentPassword = form.querySelector(`#current-password-${id}`).value.trim();
+
+                // Validation
+                if (!name || !email) {
+                    showAlert("Error", "Name and email are required.");
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    showAlert("Error", 'Please enter a valid email address.');
+                    return;
+                }
+                if (password && password.length < 6) {
+                    showAlert("Error", 'New password must be at least 6 characters long.');
+                    return;
+                }
+                if (password && password.length > 10) {
+                    showAlert("Error", 'New password must be max 10 characters long.');
+                    return;
+                }
+                if (password && !currentPassword) {
+                    showAlert("Error", 'Please enter your current password to change your password.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/settings/${id}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            password: password || undefined,
+                            currentPassword: password ? currentPassword : undefined // Send current password only if new password is provided
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const inputs = form.querySelectorAll('input');
+                        const editBtn = form.querySelector('.edit-btn');
+                        inputs.forEach(input => {
+                            input.disabled = true;
+                            if (input.id === `password-${id}`) input.value = '********'; // Reset password display
+                        });
+                        e.target.style.display = 'none';
+                        editBtn.style.display = 'block';
+                        showAlert("Success", 'Settings updated successfully!');
+                        window.location.reload();
+                    } else {
+                        const errorText = await response.text();
+                        showAlert("Error", 'Failed to update settings: ' + errorText);
+                    }
+                } catch (error) {
+                    console.error('Error updating settings:', error);
+                    showAlert("Error", 'An error occurred. Please try again.');
+                }
+            });
+        });
+    </script>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

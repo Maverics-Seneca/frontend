@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>MediTrack Dashboard</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .form-container .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .form-container input {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-container input:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .form-container button {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+        }
+
+        .form-container button:hover {
+            background: #2980b9;
+        }
+
+        .form-container button:active {
+            background: #1f6a99;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .form-container h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-container button {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+    
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="add-patient-page">
+            <div class="form-container">
+                <h1>Add Patient</h1>
+                <% if (typeof error !== 'undefined' && error) { %>
+                <p style="color: #e74c3c; text-align: center;"><%= error %></p>
+                <% } %>
+                <form action="/add-patient" method="POST">
+                    <!-- Patient Details -->
+                    <div class="form-group">
+                        <label for="patientName">Full Name</label>
+                        <input type="text" name="patientName" id="patientName" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" id="email" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" name="phone" id="phone" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth</label>
+                        <input type="date" name="dob" id="dob" required />
+                    </div>
+
+                    <button type="submit">Add Patient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

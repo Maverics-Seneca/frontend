@@ -2,52 +2,311 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - MediTrack</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        /* Main Content Styling */
+        .main-content {
+            padding: 15px;
+            max-width: 1000px;
+            margin: 10px auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e0e0;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            width: 100%;
+            position: relative;
+        }
+
+        .main-content h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .main-content .last-updated {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* Policy Sections */
+        .policy-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .policy-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .policy-section h2 {
+            font-size: 1.5em;
+            /* Reduced from 1.9em */
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 10px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .policy-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: #2ecc71;
+            border-radius: 2px;
+        }
+
+        .policy-section p {
+            font-size: 1.15em;
+            color: #34495e;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .policy-section ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-bottom: 10px;
+        }
+
+        .policy-section ul li {
+            font-size: 1.1em;
+            color: #34495e;
+            margin-bottom: 5px;
+            /* Reduced from 8px */
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .policy-section ul li::before {
+            content: '✔';
+            position: absolute;
+            left: 0;
+            color: #2ecc71;
+            font-size: 1.2em;
+        }
+
+        /* Back to Home Link */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #2ecc71;
+            text-decoration: underline;
+        }
+
+        /* Custom Scrollbar Styling */
+        .main-content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb {
+            background: #3498db;
+            border-radius: 10px;
+        }
+
+        .main-content::-webkit-scrollbar-thumb:hover {
+            background: #2ecc71;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+                margin: 10px;
+                max-height: 70vh;
+            }
+
+            .main-content h1 {
+                font-size: 2.2em;
+            }
+
+            .policy-section h2 {
+                font-size: 1.3em;
+                /* Reduced from 1.6em */
+            }
+
+            .policy-section p,
+            .policy-section ul li {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 10px;
+                max-height: 60vh;
+            }
+
+            .main-content h1 {
+                font-size: 1.8em;
+            }
+
+            .policy-section {
+                padding: 10px;
+            }
+
+            .policy-section h2 {
+                font-size: 1.2em;
+                /* Adjusted for smaller screens */
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container">
+    <%- include('../../partials/_sidebar') %>
+    
+
+    <!-- Main Content -->
+    <div class="main-content">
         <h1>MediTrack Privacy Policy</h1>
-        <p><strong>Last Updated:</strong> February 2025</p>
+        <p class="last-updated"><strong>Last Updated:</strong> March 18, 2025</p>
 
-        <div class="policy-content">
+        <div class="policy-section">
             <h2>1. Introduction</h2>
-            <p>At MediTrack, we prioritize your privacy. This policy explains how we collect, use, and protect your data when you use our medication management platform.</p>
+            <p>Welcome to MediTrack! We’re committed to protecting your privacy. This Privacy Policy explains how we
+                collect, use, disclose, and safeguard your personal information when you interact with our medication
+                management platform. Your trust is invaluable to us, and we strive to handle your data with the utmost
+                care.</p>
+        </div>
 
+        <div class="policy-section">
             <h2>2. Information We Collect</h2>
+            <p>To provide a personalized and effective service, we collect the following:</p>
             <ul>
-                <li>Personal details (name, email, phone number).</li>
-                <li>Medication records and adherence history.</li>
-                <li>Device and usage data for improving service quality.</li>
+                <li><strong>Personal Information:</strong> Name, email address, phone number, and date of birth provided
+                    during account creation.</li>
+                <li><strong>Health Data:</strong> Details about your medications, including names, dosages, frequencies,
+                    prescribing physicians, and adherence records.</li>
+                <li><strong>Caretaker Information:</strong> Names, contact details, and relationships of individuals you
+                    designate as caretakers.</li>
+                <li><strong>Technical Data:</strong> IP address, browser type, device identifiers, and usage metrics to
+                    optimize our platform.</li>
+                <li><strong>Communication Data:</strong> Information you share via support inquiries or feedback forms.
+                </li>
             </ul>
+        </div>
 
+        <div class="policy-section">
             <h2>3. How We Use Your Information</h2>
+            <p>Your data powers the MediTrack experience in these ways:</p>
             <ul>
-                <li>To provide medication tracking and reminders.</li>
-                <li>To allow caregivers to monitor adherence.</li>
-                <li>To enhance platform security and performance.</li>
+                <li>Enable tracking of medications, set refill alerts, and send timely reminders.</li>
+                <li>Support caretaker oversight and coordination with healthcare providers (with your permission).</li>
+                <li>Analyze usage trends to enhance features and user satisfaction.</li>
+                <li>Ensure compliance with legal obligations and safeguard against misuse.</li>
+                <li>Deliver optional updates, notifications, or promotional materials (with your opt-in consent).</li>
             </ul>
-
-            <h2>4. Data Security</h2>
-            <p>We use encryption and secure storage methods to protect user data. MediTrack does not share your data with third parties without your consent.</p>
-
-            <h2>5. Your Rights</h2>
-            <p>You have the right to access, update, or delete your personal information. Contact our support team for any data-related requests.</p>
-
-            <h2>6. Updates to This Policy</h2>
-            <p>We may update our privacy policy periodically. Continued use of MediTrack after updates means acceptance of the revised policy.</p>
         </div>
 
-        <div class="policy-footer">
-            <input type="checkbox" id="acceptPrivacy">
-            <label for="acceptPrivacy">I acknowledge the Privacy Policy</label>
-            <button id="proceedBtn" disabled>Proceed</button>
+        <div class="policy-section">
+            <h2>4. Data Sharing and Disclosure</h2>
+            <p>We’re strict about keeping your data private. We only share it under these conditions:</p>
+            <ul>
+                <li><strong>With Consent:</strong> Sharing with caretakers or healthcare professionals you approve.</li>
+                <li><strong>Service Providers:</strong> Engaging trusted partners (e.g., hosting or analytics services)
+                    under strict confidentiality terms.</li>
+                <li><strong>Legal Obligations:</strong> Complying with lawful requests, such as court orders or
+                    regulatory demands.</li>
+            </ul>
         </div>
+
+        <div class="policy-section">
+            <h2>5. Data Security</h2>
+            <p>We take robust steps to protect your information:</p>
+            <ul>
+                <li>End-to-end encryption for all data in transit and at rest.</li>
+                <li>Regular security audits and system updates to stay ahead of threats.</li>
+                <li>Restricted access controls to limit data handling to authorized personnel only.</li>
+            </ul>
+            <p>While we strive for top-tier security, no system is infallible. Should a breach occur, we’ll notify
+                affected users promptly as required by law.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>6. Your Rights and Choices</h2>
+            <p>You’re in control of your data with these options:</p>
+            <ul>
+                <li><strong>Access:</strong> Review or export your personal and health data from your account.</li>
+                <li><strong>Update:</strong> Edit your details anytime via the platform.</li>
+                <li><strong>Delete:</strong> Request account removal by emailing support@meditrack.com; some data may be
+                    retained for legal reasons.</li>
+                <li><strong>Opt-Out:</strong> Unsubscribe from non-essential emails through your settings.</li>
+            </ul>
+        </div>
+
+        <div class="policy-section">
+            <h2>7. Children’s Privacy</h2>
+            <p>MediTrack isn’t designed for users under 13. We don’t knowingly collect data from children without
+                parental consent. If you suspect we have such data, please notify us immediately.</p>
+        </div>
+
+        <div class="policy-section">
+            <h2>8. Updates to This Policy</h2>
+            <p>We may update this policy to reflect evolving practices or regulations. Changes will be posted here with
+                an updated “Last Updated” date. Your continued use of MediTrack signals acceptance of these revisions.
+            </p>
+        </div>
+
+        <div class="policy-section">
+            <h2>9. Contact Us</h2>
+            <p>Have questions or need to exercise your rights? We’re here to help:</p>
+            <ul>
+                <li><strong>Email:</strong> <a href="mailto:support@meditrack.com">support@meditrack.com</a></li>
+                <li><strong>Phone:</strong> +1-800-MEDI-TRK (1-800-633-4875)</li>
+                <li><strong>Mail:</strong> MediTrack Inc., 123 Health Lane, Wellness City, WC 45678</li>
+            </ul>
+        </div>
+
+        <!-- Back to Home Link -->
+        <a href="/" class="back-link">Back to Home</a>
     </div>
+
+    <%- include('../../partials/_scripts') %>
+
+    <!-- Force scroll to top on load -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                mainContent.scrollTop = 0; // Force scroll to top
+            }
+            window.scrollTo(0, 0); // Ensure page itself starts at top
+        });
+    </script>
 </body>
 
 </html>

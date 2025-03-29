@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Caretaker Profile - MediTrack</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .caretaker-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+
+        .caretaker-table th,
+        .caretaker-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .caretaker-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #444;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .caretaker-table th:hover {
+            background: #e9ecef;
+        }
+
+        .caretaker-table th::after {
+            content: ' ↕';
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        .caretaker-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .caretaker-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        .caretaker-table th:last-child::after {
+            content: '';
+        }
+
+        .caretaker-table td {
+            background: #fafafa;
+        }
+
+        /* Increase size of Token column */
+        .caretaker-table th:nth-child(5),
+        /* Token header */
+        .caretaker-table td.token-cell {
+            width: 200px;
+            /* Increased width for Token column */
+        }
+
+        .caretaker-table input,
+        .caretaker-table select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .caretaker-table input:disabled,
+        .caretaker-table select:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+        }
+
+        .caretaker-table .edit-btn,
+        .caretaker-table .save-btn,
+        .caretaker-table .delete-btn,
+        .add-caretaker-btn {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .add-caretaker-btn:hover {
+            background: #2980b9;
+        }
+
+        .caretaker-table .save-btn {
+            background: #2ecc71;
+            display: none;
+        }
+
+        .caretaker-table .delete-btn {
+            background: #e74c3c;
+        }
+
+        .caretaker-table .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .caretaker-table .save-btn:hover {
+            background: #27ae60;
+        }
+
+        .caretaker-table .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .caretaker-table {
+                font-size: 0.9em;
+            }
+
+            .caretaker-table th,
+            .caretaker-table td {
+                padding: 8px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .caretaker-table th:nth-child(5),
+            .caretaker-table td.token-cell {
+                width: 150px;
+                /* Slightly smaller on mobile */
+            }
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .token-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .token-wrapper input {
+            padding-right: 70px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #f9f9f9;
+        }
+
+        .token-icons {
+            position: absolute;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .copy-icon,
+        .visibility-icon {
+            cursor: pointer;
+            color: #888;
+            font-size: 20px;
+            transition: color 0.2s ease;
+        }
+
+        .copy-icon:hover,
+        .visibility-icon:hover {
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Caretaker List</h1>
+                <button class="add-caretaker-btn" onclick="window.location.href='/add-caretaker'">Add Caretaker</button>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by name..."
+                    style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <table class="caretaker-table" id="caretakerTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Name</th>
+                        <th onclick="sortTable(1)">Relation</th>
+                        <th onclick="sortTable(2)">Contact Number</th>
+                        <th onclick="sortTable(3)">Email</th>
+                        <th>Token</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="caretakerBody">
+                    <% if (caretakers && caretakers.length > 0) { %>
+                    <% caretakers.forEach(caretaker => { %>
+                    <tr data-id="<%= caretaker.id %>">
+                        <td>
+                            <input type="text" id="name-<%= caretaker.id %>" value="<%= caretaker.name %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <select id="relation-<%= caretaker.id %>" disabled>
+                                <option value="parent" <%= caretaker.relation === 'parent' ? 'selected' : '' %>>Parent
+                                </option>
+                                <option value="spouse" <%= caretaker.relation === 'spouse' ? 'selected' : '' %>>Spouse
+                                </option>
+                                <option value="sibling" <%= caretaker.relation === 'sibling' ? 'selected' : '' %>>
+                                    Sibling
+                                </option>
+                                <option value="other" <%= caretaker.relation === 'other' ? 'selected' : '' %>>Other
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="tel" id="phone-<%= caretaker.id %>" value="<%= caretaker.phone %>" disabled
+                                required />
+                        </td>
+                        <td>
+                            <input type="email" id="email-<%= caretaker.id %>" value="<%= caretaker.email %>" disabled
+                                required />
+                        </td>
+                        <td class="token-cell">
+                            <div class="token-wrapper">
+                                <input type="password" id="token-<%= caretaker.id %>" value="<%= caretaker.password %>"
+                                    disabled />
+                                <div class="token-icons">
+                                    <span class="material-icons visibility-icon"
+                                        data-id="<%= caretaker.id %>">visibility_off</span>
+                                    <span class="material-icons copy-icon"
+                                        data-id="<%= caretaker.id %>">content_copy</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="edit-btn" data-id="<%= caretaker.id %>">Edit</button>
+                            <button class="save-btn" data-id="<%= caretaker.id %>">Save</button>
+                            <button class="delete-btn" data-id="<%= caretaker.id %>">Delete</button>
+                        </td>
+                    </tr>
+                    <% }) %>
+                    <% } else { %>
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No caretakers found.</td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let caretakersData = <%- JSON.stringify(typeof caretakers !== 'undefined' ? caretakers : []) %>;
+        let currentDisplayData = [...caretakersData];
+        let sortColumn = -1;
+        let sortDirection = 1;
+
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const query = this.value.toLowerCase();
+            currentDisplayData = caretakersData.filter(caretaker =>
+                caretaker.name.toLowerCase().includes(query)
+            );
+            renderFilteredData(currentDisplayData);
+        });
+
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            currentDisplayData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0:
+                        aValue = a.name || '';
+                        bValue = b.name || '';
+                        break;
+                    case 1:
+                        aValue = a.relation || '';
+                        bValue = b.relation || '';
+                        break;
+                    case 2:
+                        aValue = a.phone || '';
+                        bValue = b.phone || '';
+                        break;
+                    case 3:
+                        aValue = a.email || '';
+                        bValue = b.email || '';
+                        break;
+                    default:
+                        return 0;
+                }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+
+            renderFilteredData(currentDisplayData);
+            updateSortIndicators(columnIndex);
+        }
+
+        function renderFilteredData(filteredData) {
+            const tbody = document.getElementById('caretakerBody');
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No caretakers found.</td></tr>';
+                return;
+            }
+
+            filteredData.forEach(caretaker => {
+                const row = document.createElement('tr');
+                row.dataset.id = caretaker.id;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${caretaker.id}" value="${caretaker.name}" disabled required /></td>
+                    <td>
+                        <select id="relation-${caretaker.id}" disabled>
+                            <option value="parent" ${caretaker.relation === 'parent' ? 'selected' : ''}>Parent</option>
+                            <option value="spouse" ${caretaker.relation === 'spouse' ? 'selected' : ''}>Spouse</option>
+                            <option value="sibling" ${caretaker.relation === 'sibling' ? 'selected' : ''}>Sibling</option>
+                            <option value="other" ${caretaker.relation === 'other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </td>
+                    <td><input type="tel" id="phone-${caretaker.id}" value="${caretaker.phone}" disabled required /></td>
+                    <td><input type="email" id="email-${caretaker.id}" value="${caretaker.email}" disabled required /></td>
+                    <td class="token-cell">
+                        <div class="token-wrapper">
+                            <input type="password" id="token-${caretaker.id}" value="${caretaker.password}" disabled />
+                            <div class="token-icons">
+                                <span class="material-icons visibility-icon" data-id="${caretaker.id}">visibility_off</span>
+                                <span class="material-icons copy-icon" data-id="${caretaker.id}">content_copy</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="edit-btn" data-id="${caretaker.id}">Edit</button>
+                        <button class="save-btn" data-id="${caretaker.id}">Save</button>
+                        <button class="delete-btn" data-id="${caretaker.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            attachEventListeners();
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#caretakerTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
+        function attachEventListeners() {
+            // Edit button logic
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const inputs = row.querySelectorAll('input, select');
+                    const saveBtn = row.querySelector('.save-btn');
+                    inputs.forEach(input => input.disabled = false);
+                    e.target.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
+                });
+            });
+
+            // Save button logic
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const name = row.querySelector(`#name-${id}`).value.trim();
+                    const relation = row.querySelector(`#relation-${id}`).value;
+                    const phone = row.querySelector(`#phone-${id}`).value.trim();
+                    const email = row.querySelector(`#email-${id}`).value.trim();
+
+                    if (!name || !relation || !phone || !email) {
+                        showAlert('All fields are required.', "danger");
+                        return;
+                    }
+                    if (!/^\d{10,}$/.test(phone)) {
+                        showAlert('Please enter a valid phone number (at least 10 digits).', "danger");
+                        return;
+                    }
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                        showAlert('Please enter a valid email address.', "danger");
+                        return;
+                    }
+
+                    try {
+                        showLoader()
+                        const response = await fetch(`/caretakers/${id}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, relation, phone, email }),
+                        });
+                        hideLoader()
+
+                        if (response.ok) {
+                            const inputs = row.querySelectorAll('input, select');
+                            const editBtn = row.querySelector('.edit-btn');
+                            inputs.forEach(input => input.disabled = true);
+                            e.target.style.display = 'none';
+                            editBtn.style.display = 'inline-block';
+                            const caretakerIndex = caretakersData.findIndex(c => c.id === id);
+                            caretakersData[caretakerIndex] = { id, name, relation, phone, email, password: caretakersData[caretakerIndex].password };
+                            currentDisplayData = caretakersData.filter(c => c.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
+                            renderFilteredData(currentDisplayData);
+                            showAlert('Caretaker updated successfully!', "success");
+                        } else {
+                            const errorText = await response.text();
+                            alert('Failed to update caretaker: ' + errorText);
+                        }
+                    } catch (error) {
+                        hideLoader()
+                        console.error('Error updating caretaker:', error);
+                        showAlert('An error occurred. Please try again.', "danger");
+                    }
+                });
+            });
+
+            // Delete button logic
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+
+                    if (confirm('Are you sure you want to delete this caretaker?')) {
+                        try {
+                            const response = await fetch(`/caretakers/${id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                            });
+
+                            if (response.ok) {
+                                caretakersData = caretakersData.filter(c => c.id !== id);
+                                currentDisplayData = caretakersData.filter(c => c.name.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
+                                renderFilteredData(currentDisplayData);
+                                showAlert('Caretaker deleted successfully!', "success");
+                            } else {
+                                const errorText = await response.text();
+                                showAlert('Failed to delete caretaker: ' + errorText, "danger");
+                            }
+                        } catch (error) {
+                            console.error('Error deleting caretaker:', error);
+                            showAlert('An error occurred. Please try again.', "danger");
+                        }
+                    }
+                });
+            });
+
+            // Visibility toggle logic
+            document.querySelectorAll('.visibility-icon').forEach(icon => {
+                icon.removeEventListener('click', toggleVisibility); // Remove any existing listeners to prevent duplicates
+                icon.addEventListener('click', toggleVisibility);
+            });
+
+            // Copy token logic
+            document.querySelectorAll('.copy-icon').forEach(icon => {
+                icon.removeEventListener('click', copyToken); // Remove any existing listeners
+                icon.addEventListener('click', copyToken);
+            });
+        }
+
+        function toggleVisibility(e) {
+            const id = e.target.dataset.id;
+            const input = document.getElementById(`token-${id}`);
+            if (input) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    e.target.textContent = 'visibility';
+                } else {
+                    input.type = 'password';
+                    e.target.textContent = 'visibility_off';
+                }
+            } else {
+                console.error(`Token input with id "token-${id}" not found`);
+            }
+        }
+
+        function copyToken(e) {
+            const id = e.target.dataset.id;
+            const input = document.getElementById(`token-${id}`);
+            if (input) {
+                navigator.clipboard.writeText(input.value).then(() => {
+                    e.target.textContent = 'check';
+                    setTimeout(() => {
+                        e.target.textContent = 'content_copy';
+                    }, 1500);
+                }).catch(err => {
+                    console.error('Copy failed:', err);
+                    showAlert('Failed to copy token.', "danger");
+                });
+            } else {
+                console.error(`Token input with id "token-${id}" not found`);
+            }
+        }
+
+        // Initial render and event listener attachment
+        renderFilteredData(caretakersData);
+        attachEventListeners();
+    </script>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Medication Profile - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Header container for h1 and button */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Table styling */
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+        }
+
+        .medication-table th,
+        .medication-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .medication-table th {
+            background: #f5f5f5;
+            font-weight: bold;
+            color: #444;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .medication-table th:hover {
+            background: #e9ecef;
+        }
+
+        /* Default sort indicator */
+        .medication-table th::after {
+            content: ' ↕'; /* Neutral sort icon */
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        /* Sorted column indicators */
+        .medication-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .medication-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        .medication-table td {
+            background: #fafafa;
+        }
+
+        /* Inputs and select in table */
+        .medication-table input,
+        .medication-table select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Disabled state */
+        .medication-table input:disabled,
+        .medication-table select:disabled {
+            background: #e9ecef;
+            color: #666;
+            border: none;
+        }
+
+        /* Buttons */
+        .medication-table .edit-btn,
+        .medication-table .save-btn,
+        .medication-table .delete-btn,
+        .add-medicine-btn {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .add-medicine-btn:hover {
+            background: #2980b9;
+        }
+
+        .medication-table .save-btn {
+            background: #2ecc71;
+            display: none;
+        }
+
+        .medication-table .delete-btn {
+            background: #e74c3c;
+        }
+
+        .medication-table .edit-btn:hover {
+            background: #2980b9;
+        }
+
+        .medication-table .save-btn:hover {
+            background: #27ae60;
+        }
+
+        .medication-table .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .medication-table {
+                font-size: 0.9em;
+            }
+
+            .medication-table th,
+            .medication-table td {
+                padding: 8px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../../partials/_sidebar') %>
+    
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Medication List</h1>
+                <button class="add-medicine-btn" onclick="window.location.href='/add-medicines'">Add Medicine</button>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by name..." style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <table class="medication-table" id="medicationTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Name</th>
+                        <th onclick="sortTable(1)">Dosage (mg)</th>
+                        <th onclick="sortTable(2)">Frequency</th>
+                        <th onclick="sortTable(3)">Prescribing Doctor</th>
+                        <th onclick="sortTable(4)">End Date</th>
+                        <th onclick="sortTable(5)">Inventory</th>
+                        <th>Action</th> <!-- No sorting for Action column -->
+                    </tr>
+                </thead>
+                <tbody id="medicationBody">
+                    <% if (medications && medications.length > 0) { %>
+                        <% medications.forEach(medication => { %>
+                            <tr data-id="<%= medication.id %>">
+                                <td>
+                                    <input type="text" id="name-<%= medication.id %>" value="<%= medication.name %>" disabled required />
+                                </td>
+                                <td>
+                                    <input type="number" id="dosage-<%= medication.id %>" value="<%= medication.dosage %>" disabled required />
+                                </td>
+                                <td>
+                                    <select id="frequency-<%= medication.id %>" disabled>
+                                        <option value="Once a day" <%= medication.frequency === 'Once a day' ? 'selected' : '' %>>Once a day</option>
+                                        <option value="Twice a day" <%= medication.frequency === 'Twice a day' ? 'selected' : '' %>>Twice a day</option>
+                                        <option value="Thrice a day" <%= medication.frequency === 'Thrice a day' ? 'selected' : '' %>>Thrice a day</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="text" id="prescribingDoctor-<%= medication.id %>" value="<%= medication.prescribingDoctor %>" disabled required />
+                                </td>
+                                <td>
+                                    <input type="date" id="endDate-<%= medication.id %>" value="<%= medication.endDate %>" disabled required />
+                                </td>
+                                <td>
+                                    <input type="number" id="inventory-<%= medication.id %>" value="<%= medication.inventory %>" disabled required min="0" />
+                                </td>
+                                <td>
+                                    <button class="edit-btn" data-id="<%= medication.id %>">Edit</button>
+                                    <button class="save-btn" data-id="<%= medication.id %>">Save</button>
+                                    <button class="delete-btn" data-id="<%= medication.id %>">Delete</button>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" style="text-align: center;">No medications found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Pass initial medications data from EJS to JavaScript
+        let medicationsData = <%- JSON.stringify(medications || []) %>;
+
+        let currentDisplayData = [...medicationsData]; // Tracks filtered or full data
+
+        // Track current sort column and direction
+        let sortColumn = -1;
+        let sortDirection = 1; // 1 for ascending, -1 for descending
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+        
+            currentDisplayData = medicationsData.filter(med =>
+                med.name.toLowerCase().includes(query)
+            );
+        
+            renderFilteredData(currentDisplayData);
+        });
+        
+
+        function sortTable(columnIndex) {
+            // Toggle sort direction if clicking the same column, otherwise reset to ascending
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            // Sort the medications data
+            currentDisplayData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Name
+                        aValue = a.name || '';
+                        bValue = b.name || '';
+                        break;
+                    case 1: // Dosage
+                        aValue = Number(a.dosage) || 0;
+                        bValue = Number(b.dosage) || 0;
+                        break;
+                    case 2: // Frequency
+                        aValue = a.frequency || '';
+                        bValue = b.frequency || '';
+                        break;
+                    case 3: // Prescribing Doctor
+                        aValue = a.prescribingDoctor || '';
+                        bValue = b.prescribingDoctor || '';
+                        break;
+                    case 4: // End Date
+                        aValue = a.endDate ? new Date(a.endDate).getTime() : -Infinity;
+                        bValue = b.endDate ? new Date(b.endDate).getTime() : -Infinity;
+                        break;
+                    case 5: // Inventory
+                        aValue = Number(a.inventory) || 0;
+                        bValue = Number(b.inventory) || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+
+            // Update the table body
+            renderFilteredData(currentDisplayData);
+
+            // Update sort indicators
+            updateSortIndicators(columnIndex);
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('medicationBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            if (medicationsData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No medications found.</td></tr>';
+                return;
+            }
+
+            medicationsData.forEach(medication => {
+                const row = document.createElement('tr');
+                row.dataset.id = medication.id;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${medication.id}" value="${medication.name}" disabled required /></td>
+                    <td><input type="number" id="dosage-${medication.id}" value="${medication.dosage}" disabled required /></td>
+                    <td>
+                        <select id="frequency-${medication.id}" disabled>
+                            <option value="Once a day" ${medication.frequency === 'Once a day' ? 'selected' : ''}>Once a day</option>
+                            <option value="Twice a day" ${medication.frequency === 'Twice a day' ? 'selected' : ''}>Twice a day</option>
+                            <option value="Thrice a day" ${medication.frequency === 'Thrice a day' ? 'selected' : ''}>Thrice a day</option>
+                        </select>
+                    </td>
+                    <td><input type="text" id="prescribingDoctor-${medication.id}" value="${medication.prescribingDoctor}" disabled required /></td>
+                    <td><input type="date" id="endDate-${medication.id}" value="${medication.endDate}" disabled required /></td>
+                    <td><input type="number" id="inventory-${medication.id}" value="${medication.inventory}" disabled required min="0" /></td>
+                    <td>
+                        <button class="edit-btn" data-id="${medication.id}">Edit</button>
+                        <button class="save-btn" data-id="${medication.id}">Save</button>
+                        <button class="delete-btn" data-id="${medication.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Reattach event listeners after rendering
+            attachEventListeners();
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#medicationTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
+        function attachEventListeners() {
+            // Edit button logic
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const inputs = row.querySelectorAll('input, select');
+                    const saveBtn = row.querySelector('.save-btn');
+                    inputs.forEach(input => input.disabled = false);
+                    e.target.style.display = 'none';
+                    saveBtn.style.display = 'inline-block';
+                });
+            });
+
+            // Save button logic
+            document.querySelectorAll('.save-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+                    const name = row.querySelector(`#name-${id}`).value.trim();
+                    const dosage = row.querySelector(`#dosage-${id}`).value.trim();
+                    const frequency = row.querySelector(`#frequency-${id}`).value;
+                    const prescribingDoctor = row.querySelector(`#prescribingDoctor-${id}`).value.trim();
+                    const endDate = row.querySelector(`#endDate-${id}`).value;
+                    const inventory = row.querySelector(`#inventory-${id}`).value.trim();
+
+                    // Validation
+                    if (!name || !dosage || !frequency || !prescribingDoctor || !endDate || !inventory) {
+                        showAlert('All fields are required.', "danger");
+                        return;
+                    }
+                    if (!/^\d+$/.test(dosage) || Number(dosage) <= 0) {
+                        showAlert('Please enter a valid positive dosage.', "danger");
+                        return;
+                    }
+                    if (!/^\d+$/.test(inventory) || Number(inventory) < 0) {
+                        showAlert('Please enter a valid non-negative inventory.', "danger");
+                        return;
+                    }
+
+                    try {
+                        showLoader()
+                        const response = await fetch(`/medicines/${id}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, dosage: Number(dosage), frequency, prescribingDoctor, endDate, inventory: Number(inventory) }),
+                        });
+                        hideLoader()
+
+                        if (response.ok) {
+                            const inputs = row.querySelectorAll('input, select');
+                            const editBtn = row.querySelector('.edit-btn');
+                            inputs.forEach(input => input.disabled = true);
+                            e.target.style.display = 'none';
+                            editBtn.style.display = 'inline-block';
+                            // Update medicationsData with new values
+                            const medIndex = medicationsData.findIndex(m => m.id === id);
+                            medicationsData[medIndex] = { id, name, dosage: Number(dosage), frequency, prescribingDoctor, endDate, inventory: Number(inventory) };
+                            showAlert('Medicine updated successfully!', "success");
+                        } else {
+                            const errorText = await response.text();
+                            showAlert('Failed to update medicine: ' + errorText, "danger");
+                        }
+                    } catch (error) {
+                        console.error('Error updating medicine:', error);
+                        showAlert('An error occurred. Please try again.', "danger");
+                    }
+                });
+            });
+
+            // Delete button logic
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
+                btn.addEventListener('click', async (e) => {
+                    const id = e.target.dataset.id;
+                    const row = e.target.closest('tr');
+
+                    if (confirm('Are you sure you want to delete this medicine?')) {
+                        try {
+                            showLoader()
+                            const response = await fetch(`/medicines/${id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                            });
+                            hideLoader()
+
+                            if (response.ok) {
+                                medicationsData = medicationsData.filter(m => m.id !== id); // Remove from data
+                                row.remove(); // Remove the row from the table
+                                if (medicationsData.length === 0) renderTable(); // Update if empty
+                                showAlert('Medicine deleted successfully!', "success");
+                            } else {
+                                const errorText = await response.text();
+                                showAlert('Failed to delete medicine: ' + errorText, "danger");
+                            }
+                        } catch (error) {
+                            console.error('Error deleting medicine:', error);
+                            showAlert('An error occurred. Please try again.', "danger");
+                        }
+                    }
+                });
+            });
+        }
+
+        function renderFilteredData(filteredData) {
+            const tbody = document.getElementById('medicationBody');
+            tbody.innerHTML = '';
+        
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No medications found.</td></tr>';
+                return;
+            }
+        
+            filteredData.forEach(medication => {
+                const row = document.createElement('tr');
+                row.dataset.id = medication.id;
+                row.innerHTML = `
+                    <td><input type="text" id="name-${medication.id}" value="${medication.name}" disabled required /></td>
+                    <td><input type="number" id="dosage-${medication.id}" value="${medication.dosage}" disabled required /></td>
+                    <td>
+                        <select id="frequency-${medication.id}" disabled>
+                            <option value="Once a day" ${medication.frequency === 'Once a day' ? 'selected' : ''}>Once a day</option>
+                            <option value="Twice a day" ${medication.frequency === 'Twice a day' ? 'selected' : ''}>Twice a day</option>
+                            <option value="Thrice a day" ${medication.frequency === 'Thrice a day' ? 'selected' : ''}>Thrice a day</option>
+                        </select>
+                    </td>
+                    <td><input type="text" id="prescribingDoctor-${medication.id}" value="${medication.prescribingDoctor}" disabled required /></td>
+                    <td><input type="date" id="endDate-${medication.id}" value="${medication.endDate}" disabled required /></td>
+                    <td><input type="number" id="inventory-${medication.id}" value="${medication.inventory}" disabled required min="0" /></td>
+                    <td>
+                        <button class="edit-btn" data-id="${medication.id}">Edit</button>
+                        <button class="save-btn" data-id="${medication.id}">Save</button>
+                        <button class="delete-btn" data-id="${medication.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        
+            // Ensure event listeners are reattached after filtering
+            attachEventListeners();
+        }
+        
+        // Initially render full table content
+        renderFilteredData(medicationsData);
+
+        // Initial call to attach event listeners
+        attachEventListeners();
+    </script>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

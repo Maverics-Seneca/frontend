@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Medicine Details - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+
+    <style>
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .header-container {
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            width: 100%;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        .medication-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+        }
+
+        .medication-table thead {
+            position: sticky;
+            top: 0;
+            background: #f5f5f5;
+            z-index: 1000;
+        }
+
+        .medication-table th,
+        .medication-table td {
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .medication-table th {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .medication-table th::after {
+            content: ' ↕';
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        .medication-table th.sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .medication-table th.sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        .medication-table th:hover {
+            background: #e9ecef;
+        }
+
+        .side-effects-list {
+            padding-left: 15px;
+        }
+
+        .truncate-url {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .medication-table {
+                font-size: 0.9em;
+            }
+
+            .medication-table th,
+            .medication-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+    
+
+    <div class="main-content">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Medication Details</h1>
+            </div>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by name..." style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+
+            <div class="table-container">
+                <table class="medication-table">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Name</th>
+                            <th onclick="sortTable(1)">Description</th>
+                            <th onclick="sortTable(2)">Side Effects</th>
+                            <th onclick="sortTable(3)">More Details</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let medicationsData = <%- JSON.stringify(medications || []) %>;
+
+        let sortColumn = -1;
+        let sortDirection = 1;
+
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            const filteredData = medicationsData.filter(med => med.name.toLowerCase().includes(query));
+            renderFilteredTable(filteredData);
+        });
+
+        function sortTable(columnIndex) {
+            sortDirection = (sortColumn === columnIndex) ? -sortDirection : 1;
+            sortColumn = columnIndex;
+
+            medicationsData.sort((a, b) => {
+                let fields = [a.name, a.description, a.side_effects.length, a.url];
+                let fieldsB = [b.name, b.description, b.side_effects.length, b.url];
+                let aValue = fields[columnIndex];
+                let bValue = fieldsB[columnIndex];
+                if (typeof aValue === 'string') {
+                    aValue = aValue.toLowerCase();
+                    bValue = bValue.toLowerCase();
+                }
+                return (aValue < bValue ? -1 : aValue > bValue ? 1 : 0) * sortDirection;
+            });
+
+            renderFilteredTable(medicationsData);
+            updateSortIndicators();
+        }
+
+        function renderFilteredTable(data) {
+            const tbody = document.querySelector('.medication-table tbody');
+            tbody.innerHTML = data.map(med => `
+                <tr>
+                    <td>${med.name}</td>
+                    <td>${med.description}</td>
+                    <td><ul class="side-effects-list">${med.side_effects.map(effect => `<li>${effect}</li>`).join('')}</ul></td>
+                    <td><a href="${med.url}" target="_blank" class="truncate-url">${med.url}</a></td>
+                </tr>
+            `).join('') || '<tr><td colspan="4">No medications found.</td></tr>';
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('.medication-table th').forEach((th, i) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (i === sortColumn) th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+            });
+        }
+
+        renderFilteredTable(medicationsData);
+    </script>
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

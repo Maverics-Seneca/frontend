@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Error - MediTrack</title>
+    <%- include('../partials/_header') %>
+    <%- include('../partials/_styles') %>
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 1.2rem;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .back-button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+
+
+    <div class="main-content">
+        <div class="error-container">
+            <h1>Error <%= status || 403 %></h1>
+            <p class="error-message"><%= message || 'An unexpected error occurred.' %></p>
+            <p class="error-code">Status Code: <%= status || 403 %></p>
+            <a href="/" class="back-button">Return to Dashboard</a>
+        </div>
+    </div>
+
+    <%- include('../partials/_scripts') %>
+    <%- include('../partials/_footer') %>
+
+

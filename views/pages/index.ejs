@@ -1,277 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MediTrack Dashboard</title>
-    <link rel="stylesheet" href="/css/core/libs.min.css">
-    <link rel="stylesheet" href="/css/xray.min.css">
-    <link rel="stylesheet" href="/css/custom.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            background: url('/images/background.png') no-repeat center center fixed;
-            background-size: cover;
-            display: flex;
-        }
+<!-- views/index.ejs -->
+<%- include('../partials/_header') %>
+<%- include('../partials/_styles') %>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-        /* Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background: #2c3e50;
-            color: white;
-            height: 100vh;
-            padding: 20px;
-            position: fixed;
-            left: 0;
-            top: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
+<%- include('../partials/_sidebar') %>
 
-        .sidebar .logo-main {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .sidebar .logo-main img {
-            width: 50px;
-            margin-right: 10px;
-        }
-
-        .sidebar .brand-name {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 15px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            background: #3498db;
-        }
-
-        /* Content Wrapper */
-        .main-content {
-            margin-left: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: calc(100% - 250px);
-            min-height: 100vh;
-            text-align: center;
-            padding: 20px;
-        }
-
-        /* Title Styling */
-        .main-content h1 {
-            font-size: clamp(2rem, 4vw, 4.5rem);
-            font-weight: bold;
-            color: #000000;
-            text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5);
-            text-align: center;
-            margin-top: 10px;
-            word-wrap: break-word;
-            max-width: 90%;
-        }
-
-        /* Subtitle Styling */
-        .main-content p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: #000000;
-            margin-bottom: 30px;
-            max-width: 80%;
-            word-wrap: break-word;
-        }
-
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            width: 100%;
-        }
-
-        /* Box Styling */
-        .card {
-            position: relative;
-            width: 320px;
-            height: 280px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            justify-content: space-between;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-        .card img {
-            width: 90px;
-            height: 90px;
-            margin-bottom: 10px;
-        }
-
-        .card h3 {
-            font-size: 1.6em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #000000;
-        }
-
-        /* ✅ Restored Descriptions */
-        .card p {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #534c4c;
-            margin-bottom: 0;
-        }
-
-        /* Sign-in & Sign-up Buttons */
-        .auth-buttons {
-            margin-top: 40px;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .auth-buttons a {
-            text-decoration: none;
-            color: white;
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 12px 24px;
-            border-radius: 8px;
-            transition: 0.3s ease;
-        }
-
-        .sign-in-btn {
-            background: #3498db;
-        }
-
-        .sign-up-btn {
-            background: #2ecc71;
-        }
-
-        .auth-buttons a:hover {
-            opacity: 0.8;
-        }
-
-        /* Mobile & Tablet Styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-                transform: translateX(-100%);
-                height: 100vh;
-                position: fixed;
-                z-index: 1000;
-            }
-
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding: 20px;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .menu-toggle {
-                position: fixed;
-                top: 15px;
-                left: 15px;
-                background: #3498db;
-                color: white;
-                border: none;
-                padding: 10px;
-                cursor: pointer;
-                border-radius: 5px;
-                z-index: 1001;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .card-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .auth-buttons {
-                flex-direction: column;
-                gap: 10px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<!-- Sidebar -->
-<aside class="sidebar">
-    <div class="logo-main">
-        <img src="/images/logo.png" alt="MediTrack Logo">
-        <span class="brand-name">MediTrack</span>
-    </div>
-    <ul>
-        <li><a href="/">Dashboard</a></li>
-        <li><a href="/dashboard/add-guardian">Add Guardian</a></li>
-        <li><a href="/dashboard/guardian-profile">Guardian Profile</a></li>
-        <li><a href="/dashboard/add-patient">Add Patient</a></li>
-        <li><a href="/dashboard/patient-profile">Patient Profile</a></li>
-        <li><a href="/dashboard/add-medicines">Add Medicines</a></li>
-        <li><a href="/dashboard/refill-alerts">Refill Alerts</a></li>
-    </ul>
-</aside>
-
-<!-- Hamburger Menu Button -->
-<button class="menu-toggle">☰ Menu</button>
-
-<!-- Main Content -->
 <div class="main-content">
-    <h1>MediTrack</h1>
-    <p>Track your medications, manage your health easily</p>
+    <section class="hero">
+        <h1>Welcome to MediTrack</h1>
+        <p>Your trusted companion for managing medications and health.</p>
+        <a href="/sign-in" class="hero-btn">Get Started</a>
+    </section>
 
-    <div class="card-container">
-        <div class="card"><img src="/images/medication.png" alt="Medication"><h3>Manage Medications</h3><p>Add, update, and keep track of your medications and dosages.</p></div>
-        <div class="card"><img src="/images/refill.png" alt="Refill Alerts"><h3>Refill Alerts</h3><p>Receive timely refill alerts to ensure you never run out of supplies.</p></div>
-        <div class="card"><img src="/images/reminder.png" alt="Timely Reminders"><h3>Timely Reminders</h3><p>Get reminders for when it's time to take your medication.</p></div>
-    </div>
+    <section class="features">
+        <h2>Key Features</h2>
+        <div class="card-container">
+            <div class="card">
+                <img src="/images/medication.png" alt="Manage Medications">
+                <h3>Manage Medications</h3>
+                <p>Track and update your prescriptions with ease.</p>
+            </div>
+            <div class="card">
+                <img src="/images/refill.png" alt="Refill Alerts">
+                <h3>Refill Alerts</h3>
+                <p>Get notified when it’s time to refill.</p>
+            </div>
+            <div class="card">
+                <img src="/images/reminder.png" alt="Timely Reminders">
+                <h3>Timely Reminders</h3>
+                <p>Never miss a dose with custom alerts.</p>
+            </div>
+        </div>
+    </section>
 
-    <div class="auth-buttons">
-        <a href="/sign-in" class="sign-in-btn">Sign In</a>
-        <a href="/sign-up" class="sign-up-btn">Sign Up</a>
-    </div>
+    <section class="about">
+        <h2>About Us</h2>
+        <p>MediTrack is designed to simplify healthcare management, empowering you to live healthier and happier.</p>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to Begin?</h2>
+        <% if (!isLoggedIn) { %>
+        <a href="/sign-up" class="cta-btn">Sign Up Now</a>
+        <% } else { %>
+        <a href="/dashboard" class="cta-btn">Go to Dashboard</a>
+        <% } %>
+    </section>
 </div>
 
-<script>$(".menu-toggle").click(()=>{$(".sidebar").toggleClass("active");});</script>
-</body>
-</html>
+<%- include('../partials/_scripts') %>
+<%- include('../partials/_footer') %>

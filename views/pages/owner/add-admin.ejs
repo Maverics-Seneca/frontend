@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Add Admin - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <style>
+        /* Container for the form */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* h1 inside .form-container */
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Form group inside .form-container */
+        .form-container .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            /* Center all form groups */
+        }
+
+        /* Labels inside .form-container */
+        .form-container label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        /* Inputs and select inside .form-container */
+        .form-container input,
+        .form-container select {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            width: 100%;
+            /* Ensure inputs stretch to fit */
+            max-width: 300px;
+            /* Limit width for consistency */
+        }
+
+        /* Button inside .form-container */
+        .form-container button[type="submit"] {
+            background: #3498db;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            /* Match input width */
+            font-size: 1.2em;
+            transition: background 0.3s ease;
+            margin: 0 auto;
+            /* Center the submit button */
+            display: block;
+            /* Ensure it behaves as a block element */
+        }
+
+        /* Button hover state inside .form-container */
+        .form-container button[type="submit"]:hover {
+            background: #2980b9;
+        }
+
+        /* Error message */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Success message */
+        .success-message {
+            color: #2ecc71;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
+     <!-- Include Auth partial -->
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="form-container">
+            <h1>Add Admin</h1>
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <% if (typeof success !== 'undefined' && success) { %>
+            <p class="success-message"><%= success %></p>
+            <% } %>
+            <form action="/add-admin" method="POST" id="add-admin-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" name="name" id="name" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" name="phone" id="phone" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="organizationId">Organization</label>
+                    <select name="organizationId" id="organizationId" required>
+                        <option value="">Select an Organization</option>
+                        <% organizations.forEach(org => { %>
+                        <option value="<%= org.organizationId %>"><%= org.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <button type="submit">Add Admin</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('add-admin-form').addEventListener('submit', (e) => {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const organizationId = document.getElementById('organizationId').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phoneRegex = /^\d{10,15}$/;
+
+            if (!name) {
+                e.preventDefault();
+                alert('Full Name is required.');
+            }
+            if (!emailRegex.test(email)) {
+                e.preventDefault();
+                alert('Please enter a valid email address.');
+            }
+            if (!phoneRegex.test(phone)) {
+                e.preventDefault();
+                alert('Please enter a valid phone number (10-15 digits).');
+            }
+            if (!organizationId) {
+                e.preventDefault();
+                alert('Please select an organization.');
+            }
+        });
+    </script>
+
+    <%- include('../../partials/_scripts') %>
+    <%- include('../../partials/_footer') %>

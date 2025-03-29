@@ -1,33 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" class="theme-fs-sm" data-bs-theme="light" data-bs-theme-color="default" dir="ltr">
+
 <head>
+    <%- include('../../partials/_alerts') %>
+    <%- include('../../partials/_loader') %>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <title>Sign In - MediTrack</title>
-    
+
     <!-- Favicon -->
-    <link rel="shortcut icon" href="/images/logo.png"/>
+    <link rel="shortcut icon" href="/images/logo.png" />
 
     <!-- CSS Files -->
     <link rel="stylesheet" href="/css/core/libs.min.css" />
     <link rel="stylesheet" href="/css/xray.min.css?v=1.2.0" />
     <link rel="stylesheet" href="/css/custom.min.css?v=1.2.0" />
-    
+
     <style>
         .sign-in-page {
             display: flex;
             align-items: center;
             min-height: 100vh;
             justify-content: center;
-            background-color: #f4f7fc;
+            background: linear-gradient(135deg, #e6f0fa, #d4efdf);
+            font-family: 'Poppins', sans-serif;
         }
 
         .sign-in-container {
             max-width: 1100px;
             width: 100%;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             display: flex;
             flex-wrap: wrap;
@@ -35,7 +45,7 @@
 
         .sign-in-left {
             flex: 1;
-            background: linear-gradient(135deg, #0aab93, #087f75);
+            background: linear-gradient(135deg, #3498db, #2ecc71);
             color: white;
             display: flex;
             flex-direction: column;
@@ -44,15 +54,15 @@
             text-align: center;
             padding: 40px;
             min-width: 40%;
-            position: relative; /* Ensures proper positioning */
+            position: relative;
         }
 
         .sign-in-left img {
-            width: 350px; /* Increased logo size further */
+            width: 350px;
             max-width: 95%;
             margin-bottom: 20px;
             position: relative;
-            left: -35px; /* Shifted more left for true centering */
+            left: -35px;
         }
 
         .sign-in-left h4 {
@@ -60,14 +70,34 @@
             font-weight: 600;
             margin-bottom: 10px;
             position: relative;
-            left: -20px; /* Align text better */
+            left: -20px;
         }
 
         .sign-in-left p {
             font-size: 1.1rem;
             max-width: 80%;
             position: relative;
-            left: -20px; /* Align text better */
+            left: -20px;
+        }
+
+        .sign-in-left .back-to-home-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .sign-in-left .back-to-home-btn:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .sign-in-right {
@@ -77,6 +107,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            background: #ecf0f1;
         }
 
         .form-group {
@@ -87,15 +118,37 @@
             width: 100%;
             padding: 12px;
             font-size: 1rem;
-            background-color: #0aab93;
+            background-color: #2ecc71;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .btn-primary-subtle:hover {
-            background-color: #087f75;
+            background-color: #27ae60;
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .text-muted {
+            color: #7f8c8d !important;
+        }
+
+        .text-muted:hover {
+            color: #3498db !important;
+            text-decoration: underline;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #2980b9;
+            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
@@ -104,16 +157,22 @@
                 align-items: center;
                 text-align: center;
             }
-            .sign-in-left, .sign-in-right {
+
+            .sign-in-left,
+            .sign-in-right {
                 width: 100%;
                 min-width: 100%;
                 padding: 30px;
             }
+
             .sign-in-left img {
-                width: 280px; /* Adjusted for smaller screens */
+                width: 280px;
                 left: 0;
             }
-            .sign-in-left h4, .sign-in-left p {
+
+            .sign-in-left h4,
+            .sign-in-left p,
+            .sign-in-left .back-to-home-btn {
                 left: 0;
             }
         }
@@ -125,22 +184,28 @@
         <div class="sign-in-container">
             <!-- Left Side (Logo & Description) -->
             <div class="sign-in-left">
-                <img src="/images/logo.png" alt="MediTrack Logo" />
+                <a href="/"><img src="/images/logo.png" alt="MediTrack Logo" /></a>
                 <h4>Welcome Back</h4>
                 <p>Sign in to continue managing your clinic & patient details.</p>
+                <button onclick="window.location.href='/'" class="back-to-home-btn">Back to Home</button>
             </div>
 
             <!-- Right Side (Sign-In Form) -->
             <div class="sign-in-right">
                 <h1 class="mb-4">Sign In</h1>
-                <form>
+                <form id="signInForm">
                     <div class="form-group">
                         <label for="email">Email Address</label>
                         <input type="email" class="form-control" id="email" placeholder="Enter email" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" />
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" placeholder="Password" />
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between w-100 align-items-center mt-3">
                         <div class="custom-control custom-checkbox d-flex d-inline-block">
@@ -150,19 +215,73 @@
                         <a href="/recover-password" class="float-end">Forgot Password?</a>
                     </div>
                     <button type="submit" class="btn-primary-subtle mt-3">Sign In</button>
-                    <div class="text-center mt-3">
-                        <span>Don't have an account? 
-                            <a href="/sign-up">Sign Up</a>
-                        </span>
-                    </div>
                 </form>
+                <div class="text-center mt-3">
+                    <span>Don't have an account?
+                        <a href="/sign-up">Sign Up</a>
+                    </span>
+                </div>
+                <div class="text-center mt-2">
+                    <a href="/sign-in-caretaker" class="text-muted">Sign in as Caretaker</a>
+                </div>
+                <div id="error-message" style="color: red;">
+                    <% if (typeof error !== "undefined" && error) { %>
+                    <p><%= error %></p>
+                    <% } %>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!-- JavaScript Files -->
     <script src="/js/core/libs.min.js"></script>
     <script src="/js/xray.js?v=1.2.0" defer></script>
     <script src="/js/sidebar.js?v=1.2.0" defer></script>
+    <script>
+        document.getElementById("signInForm").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Stop form from submitting the traditional way
+
+            // Get values from form fields
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Send a POST request to /login with email and password
+                showLoader()
+                const response = await fetch("/login", {
+                    method: "POST",
+                    credentials: 'include',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                });
+                hideLoader()
+                
+                // Redirect on success, or show error message
+                if (response.redirected) {
+                    window.location.href = response.url; // Redirect to dashboard
+                } else {
+                    const errorText = await response.text();
+                    showAlert("Login failed, Please try again!", "danger");
+                }
+            } catch (error) {
+                showAlert("Login failed, Please try again!", "danger");
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+
+            togglePassword.addEventListener('click', function () {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+        });
+    </script>
 </body>
+
 </html>

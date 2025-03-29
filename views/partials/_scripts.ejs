@@ -1,0 +1,43 @@
+<!-- Sidebar Toggle Script -->
+
+<script>
+    const menuToggle = document.querySelector('.menu-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+
+    // Sidebar toggle (existing functionality)
+    if (menuToggle && sidebar && mainContent) {
+        menuToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('shift');
+        });
+    }
+
+    // Submenu toggle
+    document.querySelectorAll('.has-submenu .menu-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            const parent = link.parentElement;
+            parent.classList.toggle('active'); // Toggle submenu visibility
+        });
+    });
+
+    // Sign-Out Functionality (existing functionality)
+    const signOutBtn = document.getElementById('sign-out-btn');
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch("/logout", { method: "POST", credentials: "include" });
+                if (response.ok) {
+                    window.location.href = '/'; // Redirect to home page after sign-out
+                } else {
+                    alert('Failed to sign out. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error signing out:', error);
+                alert('An error occurred while signing out.');
+            }
+        });
+    }
+</script>

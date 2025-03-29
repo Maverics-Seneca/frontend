@@ -120,23 +120,6 @@
             box-shadow: none;
         }
 
-        .admin-signup-text {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-        }
-
-        .admin-signup-text a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        .admin-signup-text a:hover {
-            color: #2980b9;
-            text-decoration: underline;
-        }
-
         a {
             color: #3498db;
             text-decoration: none;
@@ -287,7 +270,10 @@
                 <button onclick="window.location.href='/'" class="back-to-home-btn">Back to Home</button>
             </div>
             <div class="sign-in-right">
-                <h1 class="mb-4">Sign Up</h1>
+                <h1 class="mb-4">Admin Sign Up</h1>
+                <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-danger"><%= error %></div>
+                <% } %>
                 <form id="signupForm">
                     <div class="form-group">
                         <label for="fullName">Your Full Name</label>
@@ -300,6 +286,15 @@
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="tel" class="form-control" id="phone" placeholder="Your Phone Number" required />
+                    </div>
+                    <div class="form-group organization-dropdown">
+                        <label for="organizationId">Organization</label>
+                        <select class="form-control" id="organizationId" name="organizationId" required>
+                            <option value="">Select an Organization</option>
+                            <% organizations.forEach(org => { %>
+                            <option value="<%= org.organizationId %>"><%= org.name %></option>
+                            <% }) %>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
@@ -323,13 +318,11 @@
                     <div class="form-group form-check">
                         <input type="checkbox" class="form-check-input" id="termsCheck" required />
                         <label class="form-check-label" for="termsCheck">
-                            I accept <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
+                            I accept <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and
+                                Conditions</a>
                         </label>
                     </div>
                     <button type="submit" class="btn-primary-subtle" id="signUpButton">Sign Up</button>
-                    <div class="admin-signup-text">
-                        Signing up as an admin? <a href="/sign-up-admin">Click here</a>
-                    </div>
                     <div class="text-center mt-3">
                         <span>Already have an account? <a href="/sign-in">Sign In</a></span>
                     </div>
@@ -338,7 +331,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap Modal for Dynamic Alerts -->
+    <!-- Alert Modal -->
     <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -355,7 +348,8 @@
     </div>
 
     <!-- Terms of Service Modal -->
-    <div class="modal fade terms-modal" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal fade terms-modal" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -368,8 +362,10 @@
 
                     <div class="terms-section">
                         <h2>1. Introduction</h2>
-                        <p>Welcome to MediTrack, a medication management platform that helps users track medications, set reminders,
-                            and allow caregivers to monitor adherence. By using our service, you agree to these Terms of Service.
+                        <p>Welcome to MediTrack, a medication management platform that helps users track medications,
+                            set reminders,
+                            and allow caregivers to monitor adherence. By using our service, you agree to these Terms of
+                            Service.
                         </p>
                     </div>
 
@@ -385,19 +381,22 @@
 
                     <div class="terms-section">
                         <h2>3. Privacy & Data Security</h2>
-                        <p>MediTrack stores and processes personal medication data securely. We comply with privacy laws and never
+                        <p>MediTrack stores and processes personal medication data securely. We comply with privacy laws
+                            and never
                             share data without consent.</p>
                     </div>
 
                     <div class="terms-section">
                         <h2>4. Service Limitations</h2>
-                        <p>MediTrack is a tool for medication tracking and does not provide medical advice. Always consult a
+                        <p>MediTrack is a tool for medication tracking and does not provide medical advice. Always
+                            consult a
                             healthcare provider before making medication changes.</p>
                     </div>
 
                     <div class="terms-section">
                         <h2>5. Changes to Terms</h2>
-                        <p>We may update these terms periodically. Continued use of MediTrack after changes means acceptance of the
+                        <p>We may update these terms periodically. Continued use of MediTrack after changes means
+                            acceptance of the
                             new terms.</p>
                     </div>
                 </div>
@@ -420,7 +419,6 @@
             const termsCheck = document.getElementById("termsCheck");
             const signUpButton = document.getElementById("signUpButton");
 
-            // Initially disable the button
             signUpButton.disabled = true;
 
             termsCheck.addEventListener("change", function () {
@@ -435,6 +433,7 @@
                 const fullName = document.getElementById("fullName").value.trim();
                 const email = document.getElementById("email").value.trim();
                 const phone = document.getElementById("phone").value.trim();
+                const organizationId = document.getElementById("organizationId").value;
                 const password = document.getElementById("password").value;
                 const confirmPassword = document.getElementById("confirmPassword").value;
                 const termsChecked = document.getElementById("termsCheck").checked;
@@ -453,6 +452,10 @@
                     showAlert("Error", "Please enter a valid phone number (10-15 digits).");
                     return;
                 }
+                if (!organizationId) {
+                    showAlert("Error", "Please select an organization.");
+                    return;
+                }
                 if (password.length < 8) {
                     showAlert("Error", "Password must be at least 8 characters long.");
                     return;
@@ -461,19 +464,19 @@
                     showAlert("Error", "Password must be maximum 10 characters long.");
                     return;
                 }
-                if (password !== confirmPassword) {
-                    showAlert("Error", "Passwords do not match!");
-                    return;
-                }
                 if (!termsChecked) {
                     showAlert("Error", "You must accept the Terms and Conditions.");
                     return;
                 }
+                if (password !== confirmPassword) {
+                    showAlert("Error", "Passwords do not match!");
+                    return;
+                }
 
-                const userData = { name: fullName, email, phone, password };
+                const userData = { name: fullName, email, phone, password, organizationId };
 
                 try {
-                    const response = await fetch("/register", {
+                    const response = await fetch("/register-admin", {
                         method: "POST",
                         credentials: 'include',
                         headers: { "Content-Type": "application/json" },
@@ -483,9 +486,9 @@
                     const result = await response.json();
                     if (response.ok) {
                         showAlert("Success", "Registration successful! Redirecting...");
-                        setTimeout(() => window.location.href = "/sign-in", 2000);
+                        setTimeout(() => { window.location.href = "/sign-in"; }, 2000);
                     } else {
-                        showAlert("Error", result.message || "Registration failed. Please try again.");
+                        showAlert("Error", result.error || "Registration failed. Please try again.");
                     }
                 } catch (error) {
                     console.error("Error:", error);

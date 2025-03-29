@@ -1,0 +1,56 @@
+<!-- Loader Overlay -->
+<div id="pulse-loader" class="d-none">
+    <div class="ring-loader"></div>
+</div>
+
+<style>
+    #pulse-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+      }
+      
+      .d-none {
+        display: none !important;
+      }
+      
+      .ring-loader {
+        width: 60px;
+        height: 60px;
+        border: 6px solid aquamarine;
+        border-radius: 50%;
+        animation: pulse-ring 1.2s infinite ease-in-out;
+        box-shadow: 0 0 0 rgba(127, 255, 212, 0.7);
+      }
+      
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.9);
+          box-shadow: 0 0 0 0 rgba(127, 255, 212, 0.7);
+        }
+        70% {
+          transform: scale(1.2);
+          box-shadow: 0 0 0 15px rgba(127, 255, 212, 0);
+        }
+        100% {
+          transform: scale(0.9);
+          box-shadow: 0 0 0 0 rgba(127, 255, 212, 0);
+        }
+      }      
+</style>
+<script>
+    function showLoader() {
+        document.getElementById('pulse-loader').classList.remove('d-none');
+    }
+      
+      function hideLoader() {
+        document.getElementById('pulse-loader').classList.add('d-none');
+    }      
+</script>

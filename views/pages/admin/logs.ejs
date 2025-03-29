@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>System Logs - MediTrack</title>
+    <%- include('../../partials/_header') %>
+    <%- include('../../partials/_styles') %>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        .main-content {
+            padding: 100px 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .logs-container {
+            width: 100%;
+            max-width: 1200px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        .logs-container h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            flex: 1; /* Takes up available space on the left */
+            min-width: 0; /* Prevents overflow */
+        }
+
+        .search-container input {
+            width: 100%;
+            max-width: 400px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-container input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        th:hover {
+            background: #e9ecef;
+        }
+
+        th::after {
+            content: ' ↕';
+            font-size: 0.9rem;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        .sort-asc::after {
+            content: ' ↑';
+            color: #333;
+        }
+
+        .sort-desc::after {
+            content: ' ↓';
+            color: #333;
+        }
+
+        .details-list {
+            margin: 0;
+            padding-left: 15px;
+            list-style-type: none;
+            font-size: 0.9rem;
+        }
+
+        .details-list li {
+            margin-bottom: 5px;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button:disabled {
+            background: #e9ecef;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            padding: 8px;
+            align-self: center;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 40px 10px;
+            }
+
+            .logs-container {
+                padding: 10px;
+            }
+
+            th,
+            td {
+                font-size: 0.85rem;
+                padding: 8px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-container input {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../../partials/_sidebar') %>
+
+    <div class="main-content">
+        <div class="logs-container">
+            <% if (typeof error !== 'undefined' && error) { %>
+            <p class="error-message"><%= error %></p>
+            <% } %>
+            <% if (logs && logs.length > 0) { %>
+            <div class="header-container">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search logs..." onkeyup="searchLogs()">
+                </div>
+                <h1>System Logs</h1>
+            </div>
+            <div class="table-container">
+                <table id="logsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Timestamp</th>
+                            <th onclick="sortTable(1)">Action</th>
+                            <th onclick="sortTable(2)">User ID</th>
+                            <th onclick="sortTable(3)">User Name</th>
+                            <th onclick="sortTable(4)">Entity</th>
+                            <th onclick="sortTable(5)">Entity Name</th>
+                            <th onclick="sortTable(6)">Entity ID</th>
+                            <th onclick="sortTable(7)">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody">
+                        <!-- Logs will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button onclick="changePage(-1)" id="prevBtn">Previous</button>
+                <span id="pageInfo"></span>
+                <button onclick="changePage(1)" id="nextBtn">Next</button>
+            </div>
+            <% } else { %>
+            <h1>System Logs</h1>
+            <p>No logs found. Logs variable: <%= JSON.stringify(logs) %></p>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <%- include('../../partials/_scripts') %>
+    <script>
+        let logsData = <%- JSON.stringify(logs) %>;
+        let originalLogs = [...logsData];
+        const ITEMS_PER_PAGE = 10;
+        let currentPage = 1;
+        let sortColumn = -1;
+        let sortDirection = 1;
+
+        function searchLogs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            logsData = originalLogs.filter(log => {
+                return (
+                    (log.timestamp && new Date(log.timestamp).toLocaleString().toLowerCase().includes(searchTerm)) ||
+                    (log.action && log.action.toLowerCase().includes(searchTerm)) ||
+                    (log.userId && log.userId.toLowerCase().includes(searchTerm)) ||
+                    (log.userName && log.userName.toLowerCase().includes(searchTerm)) ||
+                    (log.entity && log.entity.toLowerCase().includes(searchTerm)) ||
+                    (log.entityName && log.entityName.toLowerCase().includes(searchTerm)) ||
+                    (log.entityId && log.entityId.toLowerCase().includes(searchTerm))
+                );
+            });
+            currentPage = 1;
+            renderTable();
+            updatePagination();
+        }
+
+        function sortTable(columnIndex) {
+            if (sortColumn === columnIndex) {
+                sortDirection *= -1;
+            } else {
+                sortDirection = 1;
+            }
+            sortColumn = columnIndex;
+
+            logsData.sort((a, b) => {
+                let aValue, bValue;
+                switch (columnIndex) {
+                    case 0: // Timestamp
+                        aValue = a.timestamp ? new Date(a.timestamp).getTime() : -Infinity;
+                        bValue = b.timestamp ? new Date(b.timestamp).getTime() : -Infinity;
+                        break;
+                    case 1: // Action
+                        aValue = a.action || 'N/A';
+                        bValue = b.action || 'N/A';
+                        break;
+                    case 2: // User ID
+                        aValue = a.userId || 'N/A';
+                        bValue = b.userId || 'N/A';
+                        break;
+                    case 3: // User Name
+                        aValue = a.userName || 'N/A';
+                        bValue = b.userName || 'N/A';
+                        break;
+                    case 4: // Entity
+                        aValue = a.entity || 'N/A';
+                        bValue = b.entity || 'N/A';
+                        break;
+                    case 5: // Entity Name
+                        aValue = a.entityName || 'N/A';
+                        bValue = b.entityName || 'N/A';
+                        break;
+                    case 6: // Entity ID
+                        aValue = a.entityId || 'N/A';
+                        bValue = b.entityId || 'N/A';
+                        break;
+                    case 7: // Details
+                        aValue = a.details ? JSON.stringify(a.details) : 'N/A';
+                        bValue = b.details ? JSON.stringify(b.details) : 'N/A';
+                        break;
+                    default:
+                        return 0;
+                }
+                if (aValue < bValue) return -1 * sortDirection;
+                if (aValue > bValue) return 1 * sortDirection;
+                return 0;
+            });
+
+            currentPage = 1;
+            renderTable();
+            updateSortIndicators(columnIndex);
+            updatePagination();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('logsBody');
+            tbody.innerHTML = '';
+
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const paginatedLogs = logsData.slice(start, end);
+
+            paginatedLogs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A'}</td>
+                    <td>${log.action || 'N/A'}</td>
+                    <td>${log.userId ? log.userId.slice(0, 6) + '....' : 'N/A'}</td>
+                    <td>${log.userName || 'N/A'}</td>
+                    <td>${log.entity || 'N/A'}</td>
+                    <td>${log.entityName || 'N/A'}</td>
+                    <td>${log.entityId ? log.entityId.slice(0, 6) + '....' : 'N/A'}</td>
+                    <td>${renderDetails(log)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function renderDetails(log) {
+            if (!log.details || Object.keys(log.details).length === 0) return 'N/A';
+            let html = '<ul class="details-list">';
+
+            if (log.entity === 'Medication') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Name: ${log.details.data.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.data.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.data.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.data.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.data.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.data.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.oldData.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.oldData.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.oldData.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.oldData.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.oldData.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Dosage: ${log.details.newData.dosage || 'N/A'} mg</li>
+                        <li>Frequency: ${log.details.newData.frequency || 'N/A'}</li>
+                        <li>Doctor: ${log.details.newData.prescribingDoctor || 'N/A'}</li>
+                        <li>End Date: ${log.details.newData.endDate || 'N/A'}</li>
+                        <li>Inventory: ${log.details.newData.inventory || 'N/A'}</li>
+                    </ul></li>`;
+                }
+            } else if (log.entity === 'Caretaker') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Name: ${log.details.data.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.data.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.data.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.data.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.oldData.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.oldData.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.oldData.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Relation: ${log.details.newData.relation || 'N/A'}</li>
+                        <li>Email: ${log.details.newData.email || 'N/A'}</li>
+                        <li>Phone: ${log.details.newData.phone || 'N/A'}</li>
+                    </ul></li>`;
+                }
+            } else if (log.entity === 'User') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Email: ${log.details.data.email || 'N/A'}</li>`;
+                    if (log.action === 'REGISTER') {
+                        html += `<li>Name: ${log.details.data.name || 'N/A'}</li>
+                                 <li>Role: ${log.details.data.role || 'N/A'}</li>`;
+                    }
+                    html += `</ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Name: ${log.details.oldData.name || 'N/A'}</li>
+                        <li>Email: ${log.details.oldData.email || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Name: ${log.details.newData.name || 'N/A'}</li>
+                        <li>Email: ${log.details.newData.email || 'N/A'}</li>
+                        <li>Password: ${log.details.newData.password || 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.reason) {
+                    html += `<li><strong>Reason:</strong> ${log.details.reason}</li>`;
+                }
+            } else if (log.entity === 'Reminder') {
+                if (log.details.data) {
+                    html += `<li><strong>Data:</strong><ul>
+                        <li>Title: ${log.details.data.title || 'N/A'}</li>
+                        <li>Description: ${log.details.data.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.data.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.data.completed !== undefined ? log.details.data.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.oldData) {
+                    html += `<li><strong>Old Data:</strong><ul>
+                        <li>Title: ${log.details.oldData.title || 'N/A'}</li>
+                        <li>Description: ${log.details.oldData.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.oldData.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.oldData.completed !== undefined ? log.details.oldData.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+                if (log.details.newData) {
+                    html += `<li><strong>New Data:</strong><ul>
+                        <li>Title: ${log.details.newData.title || 'N/A'}</li>
+                        <li>Description: ${log.details.newData.description || 'N/A'}</li>
+                        <li>Datetime: ${log.details.newData.datetime || 'N/A'}</li>
+                        <li>Completed: ${log.details.newData.completed !== undefined ? log.details.newData.completed : 'N/A'}</li>
+                    </ul></li>`;
+                }
+            }
+            html += '</ul>';
+            return html;
+        }
+
+        function updateSortIndicators(columnIndex) {
+            const headers = document.querySelectorAll('#logsTable th');
+            headers.forEach((th, index) => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                if (index === columnIndex) {
+                    th.classList.add(sortDirection === 1 ? 'sort-asc' : 'sort-desc');
+                }
+            });
+        }
+
+        function changePage(delta) {
+            const totalPages = Math.ceil(logsData.length / ITEMS_PER_PAGE);
+            currentPage += delta;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            renderTable();
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(logsData.length / ITEMS_PER_PAGE);
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages || totalPages === 0;
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages || 1}`;
+        }
+
+        if (logsData && logsData.length > 0) {
+            renderTable();
+            updatePagination();
+        }
+    </script>
+    <%- include('../../partials/_footer') %>
