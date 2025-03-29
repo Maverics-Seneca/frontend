@@ -5,6 +5,7 @@
     <title>Add Reminder - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
+    <%- include('../../partials/_loader') %>
     <style>
         /* Container for the form */
         .form-container {
@@ -132,6 +133,7 @@
 
         // Form submission feedback
         document.getElementById('add-reminder-form').addEventListener('submit', (e) => {
+            showLoader()
             const title = document.getElementById('title').value.trim();
             const datetime = document.getElementById('datetime').value;
 
@@ -139,6 +141,7 @@
                 e.preventDefault();
                 alert('Title and Date & Time are required.');
             }
+            hideLoader()
         });
     </script>
 

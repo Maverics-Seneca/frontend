@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <%- include('../../partials/_alerts') %>
     <title>Timely Reminders - MediTrack</title>
     <%- include('../../partials/_header') %>
     <%- include('../../partials/_styles') %>
@@ -354,6 +355,8 @@
 
             // Save button logic
             document.querySelectorAll('.save-btn').forEach(btn => {
+                if (btn.dataset.listenerAttached) return; // already attached
+                btn.dataset.listenerAttached = 'true'; // mark as attached
                 btn.addEventListener('click', async (e) => {
                     const id = e.target.dataset.id;
                     const row = e.target.closest('tr');
@@ -364,7 +367,7 @@
 
                     // Validation
                     if (!title || !datetime) {
-                        alert('Title and Date & Time are required.');
+                        showAlert('Title and Date & Time are required.',"danger");
                         return;
                     }
 
@@ -386,14 +389,14 @@
                             remindersData[reminderIndex] = { reminderId: id, title, description, datetime, completed };
                             currentDisplayData = remindersData.filter(r => r.title.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
                             renderFilteredData(currentDisplayData);
-                            alert('Reminder updated successfully!');
+                            showAlert('Reminder updated successfully!',"success");
                         } else {
                             const errorText = await response.text();
-                            alert('Failed to update reminder: ' + errorText);
+                            showAlert('Failed to update reminder: ' + errorText,"danger");
                         }
                     } catch (error) {
                         console.error('Error updating reminder:', error);
-                        alert('An error occurred. Please try again.');
+                        showAlert('An error occurred. Please try again.',"danger");
                     }
                 });
             });
@@ -416,14 +419,14 @@
                                 remindersData = remindersData.filter(r => r.reminderId !== id); // Remove from data
                                 currentDisplayData = remindersData.filter(r => r.title.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()));
                                 renderFilteredData(currentDisplayData); // Update table
-                                alert('Reminder deleted successfully!');
+                                showAlert('Reminder deleted successfully!',"success");
                             } else {
                                 const errorText = await response.text();
-                                alert('Failed to delete reminder: ' + errorText);
+                                showAlert('Failed to delete reminder: ' + errorText,"danger");
                             }
                         } catch (error) {
                             console.error('Error deleting reminder:', error);
-                            alert('An error occurred. Please try again.');
+                            showAlert('An error occurred. Please try again.',"danger");
                         }
                     }
                 });
