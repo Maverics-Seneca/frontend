@@ -26,6 +26,9 @@ add loader to most of the pages
 
 29-03-2025
 still facing issues in signup page : password issues , phone numver issues 
+recover password fixes
+account settings : failed to load user data
+
 
 
 
