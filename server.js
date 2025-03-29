@@ -245,7 +245,8 @@ app.get('/contact', (req, res) => {
         isLoggedIn: isLoggedIn,
         userName: userName,
         role: role,
-        success: false
+        success: false,
+        error: false
     });
 });
 
@@ -285,14 +286,16 @@ app.post('/contact-us', async (req, res) => {
             isLoggedIn: isLoggedIn,
             userName: userName,
             role: role,
-            success: true });
+            success: true,
+            error: false});
     } catch (error) {
         console.error('Error saving contact message:', error.message); // Log error
         res.render('pages/extra/contact-us', { 
             isLoggedIn: isLoggedIn,
             userName: userName,
             role: role,
-            success: false });
+            success: false,
+            error: true });
     }
 
     // You can log it, send an email, store in Firestore, etc.
