@@ -250,7 +250,7 @@ app.get('/contact', (req, res) => {
 });
 
 // Contact Form Submission
-app.post('/contact-us', (req, res) => {
+app.post('/contact-us', async (req, res) => {
     const { name, email, subject, message } = req.body;
 
     const token = req.cookies.authToken;
@@ -274,15 +274,29 @@ app.post('/contact-us', (req, res) => {
         console.log('No token found for contact us form submission, rendering as guest'); // Log guest access
     }
 
+    try {
+        await axios.post(`http://middleware:3001/contact-us`, { 
+            name, 
+            email, 
+            subject, 
+            message });
+        // Send a success message or redirect
+        res.render('pages/extra/contact-us', { 
+            isLoggedIn: isLoggedIn,
+            userName: userName,
+            role: role,
+            success: true });
+    } catch (error) {
+        console.error('Error saving contact message:', error.message); // Log error
+        res.render('pages/extra/contact-us', { 
+            isLoggedIn: isLoggedIn,
+            userName: userName,
+            role: role,
+            success: false });
+    }
+
     // You can log it, send an email, store in Firestore, etc.
     console.log("Contact Request:", { name, email, subject, message });
-
-    // Send a success message or redirect
-    res.render('pages/extra/contact-us', { 
-        isLoggedIn: isLoggedIn,
-        userName: userName,
-        role: role,
-        success: true });
 });
 
 // Admin signup page
