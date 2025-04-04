@@ -142,6 +142,7 @@
             <a href="/admin-dashboard">Dashboard</a>
             <% } else if (role === 'user') { %>
             <a href="/patient-dashboard">Dashboard</a>
+            <% } else if (role === 'caretaker') { %>
             <% } else { %>
             <a href="/dashboard">Dashboard</a> <!-- Fallback -->
             <% } %>

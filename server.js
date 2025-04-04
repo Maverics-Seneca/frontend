@@ -1104,6 +1104,7 @@ app.get('/caretaker-dashboard', async (req, res) => {
         res.render('pages/caretaker/caretaker-dashboard', {
             isLoggedIn,
             userName: "Caretaker",
+            role: "caretaker",
             refillAlerts,
             currentMedications
         });
