@@ -205,6 +205,7 @@
                             <th onclick="sortTable(5)">Entity Name</th>
                             <th onclick="sortTable(6)">Entity ID</th>
                             <th onclick="sortTable(7)">Details</th>
+                            <th onclick="sortTable(8)">Organization ID</th> <!-- Added for visibility -->
                         </tr>
                     </thead>
                     <tbody id="logsBody">
@@ -235,7 +236,7 @@
         let currentPage = 1;
         let sortColumn = -1;
         let sortDirection = 1;
-
+    
         function searchLogs() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             logsData = originalLogs.filter(log => {
@@ -246,14 +247,15 @@
                     (log.userName && log.userName.toLowerCase().includes(searchTerm)) ||
                     (log.entity && log.entity.toLowerCase().includes(searchTerm)) ||
                     (log.entityName && log.entityName.toLowerCase().includes(searchTerm)) ||
-                    (log.entityId && log.entityId.toLowerCase().includes(searchTerm))
+                    (log.entityId && log.entityId.toLowerCase().includes(searchTerm)) ||
+                    (log.organizationId && log.organizationId.toLowerCase().includes(searchTerm))
                 );
             });
             currentPage = 1;
             renderTable();
             updatePagination();
         }
-
+    
         function sortTable(columnIndex) {
             if (sortColumn === columnIndex) {
                 sortDirection *= -1;
@@ -261,7 +263,7 @@
                 sortDirection = 1;
             }
             sortColumn = columnIndex;
-
+    
             logsData.sort((a, b) => {
                 let aValue, bValue;
                 switch (columnIndex) {
@@ -297,6 +299,10 @@
                         aValue = a.details ? JSON.stringify(a.details) : 'N/A';
                         bValue = b.details ? JSON.stringify(b.details) : 'N/A';
                         break;
+                    case 8: // Organization ID
+                        aValue = a.organizationId || 'N/A';
+                        bValue = b.organizationId || 'N/A';
+                        break;
                     default:
                         return 0;
                 }
@@ -304,21 +310,21 @@
                 if (aValue > bValue) return 1 * sortDirection;
                 return 0;
             });
-
+    
             currentPage = 1;
             renderTable();
             updateSortIndicators(columnIndex);
             updatePagination();
         }
-
+    
         function renderTable() {
             const tbody = document.getElementById('logsBody');
             tbody.innerHTML = '';
-
+    
             const start = (currentPage - 1) * ITEMS_PER_PAGE;
             const end = start + ITEMS_PER_PAGE;
             const paginatedLogs = logsData.slice(start, end);
-
+    
             paginatedLogs.forEach(log => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -330,6 +336,7 @@
                     <td>${log.entityName || 'N/A'}</td>
                     <td>${log.entityId ? log.entityId.slice(0, 6) + '....' : 'N/A'}</td>
                     <td>${renderDetails(log)}</td>
+                    <td>${log.organizationId || 'N/A'}</td>
                 `;
                 tbody.appendChild(row);
             });

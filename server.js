@@ -558,12 +558,13 @@ app.post('/add-patient', authenticateUser, async (req, res) => {
     }
 });
 
-// Logs page (admin and owner) - Already has correct permissions
+// Logs page (admin and owner)
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
     const role = req.role;
-    console.log('Rendering logs page for user:', userId, 'with role:', role);
+    const organizationId = role === 'owner' ? null : req.organizationId; // Owners don’t send organizationId
+    console.log('Rendering logs page for user:', userId, 'with role:', role, 'organizationId:', organizationId);
 
     if (role !== 'admin' && role !== 'owner') {
         console.log('Access denied: User is not an admin or owner');
@@ -578,11 +579,14 @@ app.get('/logs', authenticateUser, async (req, res) => {
     try {
         const response = await axios.get('http://middleware:3001/logs', {
             params: { 
-                organizationId: req.organizationId, // Pass organizationId from token
+                organizationId, // Null for owners, specific for admins/users
+                userId,         // Always send userId
+                limit: 50       // Optional: Adjust as needed
             }
         });
         const logs = response.data;
 
+        console.log('Frontend - Fetched logs:', JSON.stringify(logs, null, 2)); // Debug logs
         res.render('pages/admin/logs', {
             isLoggedIn,
             userName: req.name,
