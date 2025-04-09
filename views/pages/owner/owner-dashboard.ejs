@@ -215,7 +215,7 @@
                             <tbody>
                                 <% recentLogs.slice(0, 5).forEach(log => { %>
                                     <tr>
-                                        <td><%= log.timestamp ? new Date(log.timestamp.seconds * 1000).toLocaleString() : 'N/A' %></td>
+                                        <td><%= log.timestamp ? new Date(log.timestamp).toLocaleString() : 'N/A' %></td>
                                         <td><%= log.action || 'N/A' %></td>
                                         <td><%= log.entity || 'N/A' %></td>
                                         <td><%= log.entityName || 'N/A' %></td>

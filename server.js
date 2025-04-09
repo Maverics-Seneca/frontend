@@ -439,10 +439,10 @@ app.delete('/patients/:id', authenticateUser, async (req, res) => {
 app.get('/admin-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
-    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role); // Log render attempt
+    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role);
 
     if (req.role !== 'admin' && req.role !== 'owner') {
-        console.log('Access denied: User is not an admin or owner'); // Log access denial
+        console.log('Access denied: User is not an admin or owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
@@ -462,6 +462,8 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
         const reminders = remindersResponse.data;
         const recentLogs = logsResponse.data;
 
+        console.log('Frontend - Recent Logs:', recentLogs); // Add this line
+
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
@@ -471,7 +473,7 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
             recentLogs
         });
     } catch (error) {
-        console.error('Error fetching admin dashboard data:', error.message); // Log error
+        console.error('Error fetching admin dashboard data:', error.message);
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
