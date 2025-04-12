@@ -439,10 +439,10 @@ app.delete('/patients/:id', authenticateUser, async (req, res) => {
 app.get('/admin-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
-    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role); // Log render attempt
+    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role);
 
     if (req.role !== 'admin' && req.role !== 'owner') {
-        console.log('Access denied: User is not an admin or owner'); // Log access denial
+        console.log('Access denied: User is not an admin or owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
@@ -462,6 +462,8 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
         const reminders = remindersResponse.data;
         const recentLogs = logsResponse.data;
 
+        console.log('Frontend - Recent Logs:', recentLogs); // Add this line
+
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
@@ -471,7 +473,7 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
             recentLogs
         });
     } catch (error) {
-        console.error('Error fetching admin dashboard data:', error.message); // Log error
+        console.error('Error fetching admin dashboard data:', error.message);
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
@@ -556,12 +558,13 @@ app.post('/add-patient', authenticateUser, async (req, res) => {
     }
 });
 
-// Logs page (admin and owner) - Already has correct permissions
+// Logs page (admin and owner)
 app.get('/logs', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
     const role = req.role;
-    console.log('Rendering logs page for user:', userId, 'with role:', role);
+    const organizationId = role === 'owner' ? null : req.organizationId; // Owners don’t send organizationId
+    console.log('Rendering logs page for user:', userId, 'with role:', role, 'organizationId:', organizationId);
 
     if (role !== 'admin' && role !== 'owner') {
         console.log('Access denied: User is not an admin or owner');
@@ -576,11 +579,14 @@ app.get('/logs', authenticateUser, async (req, res) => {
     try {
         const response = await axios.get('http://middleware:3001/logs', {
             params: { 
-                organizationId: req.organizationId, // Pass organizationId from token
+                organizationId, // Null for owners, specific for admins/users
+                userId,         // Always send userId
+                limit: 50       // Optional: Adjust as needed
             }
         });
         const logs = response.data;
 
+        console.log('Frontend - Fetched logs:', JSON.stringify(logs, null, 2)); // Debug logs
         res.render('pages/admin/logs', {
             isLoggedIn,
             userName: req.name,
@@ -1104,6 +1110,7 @@ app.get('/caretaker-dashboard', async (req, res) => {
         res.render('pages/caretaker/caretaker-dashboard', {
             isLoggedIn,
             userName: "Caretaker",
+            role: "caretaker",
             refillAlerts,
             currentMedications
         });

@@ -547,24 +547,53 @@
         function copyToken(e) {
             const id = e.target.dataset.id;
             const input = document.getElementById(`token-${id}`);
-            if (input) {
+        
+            if (!input) return;
+        
+            // Temporarily change input type to text
+            const originalType = input.type;
+            input.type = 'text';
+        
+            // Use Clipboard API or fallback
+            if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(input.value).then(() => {
                     e.target.textContent = 'check';
                     setTimeout(() => {
                         e.target.textContent = 'content_copy';
                     }, 1500);
+                    input.type = originalType; // Revert type
                 }).catch(err => {
-                    console.error('Copy failed:', err);
+                    console.error('Clipboard API failed:', err);
                     showAlert('Failed to copy token.', "danger");
+                    input.type = originalType;
                 });
             } else {
-                console.error(`Token input with id "token-${id}" not found`);
+                // Fallback copy
+                input.select();
+                try {
+                    const success = document.execCommand('copy');
+                    if (success) {
+                        e.target.textContent = 'check';
+                        setTimeout(() => {
+                            e.target.textContent = 'content_copy';
+                        }, 1500);
+                    } else {
+                        showAlert('Copy failed.', "danger");
+                    }
+                } catch (err) {
+                    console.error('Fallback copy failed:', err);
+                    showAlert('Copy failed.', "danger");
+                }
+                input.blur();
+                input.type = originalType;
             }
         }
 
         // Initial render and event listener attachment
         renderFilteredData(caretakersData);
         attachEventListeners();
+        console.log('Clipboard API supported:', !!navigator.clipboard);
+        console.log('Secure context:', window.isSecureContext);
     </script>
     <%- include('../../partials/_scripts') %>
     <%- include('../../partials/_footer') %>

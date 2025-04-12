@@ -10,9 +10,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
-
     <style>
         /* Scrollable container */
         .scroll-container {
@@ -30,13 +27,12 @@
         /* Card */
         .card {
             margin-bottom: 10px;
-            padding: 5px 3px;
-            display: flex;
-            flex-direction: column;
+            padding: 15px;
             border: 1px solid #e0e0e0;
             border-radius: 5px;
             background: #fff;
-            min-height: 130px;
+            display: flex;
+            flex-direction: column;
         }
 
         .card:hover {
@@ -49,15 +45,27 @@
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
-            height: 70px;
+            width: 100%;
+        }
+
+        .card-title {
+            flex: 1;
+            font-size: 1.5rem;
+            color: #000000;
+            margin: 0;
+            font-weight: 700;
+            line-height: 1.2;
+            text-align: left;
+            min-width: 0;
         }
 
         .card-details {
-            flex: 1;
+            flex: 2;
             display: flex;
             flex-direction: row;
-            gap: 5px;
-            padding: 2px;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
         }
 
         .details-column {
@@ -66,73 +74,37 @@
             flex-direction: column;
             gap: 5px;
             text-align: left;
-            justify-content: center;
-        }
-
-        /* Add padding to the first details-column only */
-        .card-details .details-column:first-child {
-            padding-left: 10px;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            color: #000000;
-            margin: 0 0 2px 0;
-            padding: 0;
-            font-weight: 700;
-            line-height: 1;
-            text-align: left;
         }
 
         .card-text {
-            font-size: 0.85rem;
-            color: #34495e;
+            font-size: 0.9rem;
+            color: #000000;
             margin: 0 !important;
             padding: 0 !important;
-            line-height: 1.1;
-        }
-
-        .card-text,
-        .card-text * {
-            font-size: 0.85rem !important;
-            color: inherit;
+            line-height: 1.2;
         }
 
         .card-text strong {
             font-weight: 500;
-            color: #2c3e50;
+            color: #000000;
         }
 
-        .details-column p.card-text {
-            margin: 0 !important;
-            padding: 0 !important;
-            line-height: 1.1 !important;
-        }
+        .status-low { color: #e74c3c; }
+        .status-warning { color: #e67e22; }
+        .status-good { color: #27ae60; }
 
-        /* Status indicators */
-        .status-low {
-            color: #e74c3c;
-        }
-
-        .status-warning {
-            color: #e67e22;
-        }
-
-        .status-good {
-            color: #27ae60;
-        }
-
-        /* Pie chart */
         .chart-container {
-            flex: 0 0 90px;
+            flex: 1;
             height: 90px;
+            width: 90px;
             margin: 0;
+            display: flex;
+            justify-content: flex-end;
         }
 
-        /* Progress bar */
         .progress {
             height: 4px;
-            margin: 25px 0 0 0;
+            margin: 10px 0 0 0;
             width: 100%;
             background: #ecf0f1;
         }
@@ -141,12 +113,11 @@
             transition: width 0.3s ease;
         }
 
-        /* Messages */
         .no-medications,
         .error-message {
             text-align: center;
             font-size: 0.9rem;
-            color: #7f8c8d;
+            color: #000000;
             padding: 10px;
         }
 
@@ -154,7 +125,6 @@
             color: #e74c3c;
         }
 
-        /* Scrollbar */
         .scroll-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -173,7 +143,47 @@
             background: #2980b9;
         }
 
-        /* Mobile view (max-width: 768px) */
+        /* New styles for header and search */
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container h1 {
+            font-size: 2rem;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #333;
+        }
+
+        .add-medication-btn {
+            background: #3498db;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+
+        .add-medication-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Mobile view */
         @media (max-width: 768px) {
             .scroll-container {
                 max-width: 100%;
@@ -181,62 +191,47 @@
             }
 
             .card {
-                min-height: 180px;
-                /* Adjusted for two-column layout */
-                padding: 3px;
-            }
-
-            .card-row {
-                flex-direction: row;
-                /* Two columns */
-                height: auto;
-                align-items: flex-start;
-                gap: 5px;
-                /* Gap between columns */
-            }
-
-            .card-details {
-                flex: 2;
-                /* Larger share for details */
-                flex-direction: column;
-                /* Stack details columns */
-                padding: 0;
-                width: auto;
-            }
-
-            .details-column {
-                gap: 3px;
-                padding: 5px 0;
-            }
-
-            .card-details .details-column:first-child {
-                padding-left: 5px;
+                padding: 10px;
             }
 
             .card-title {
-                font-size: 0.95rem;
-                margin-bottom: 5px;
+                font-size: 1.25rem;
+            }
+
+            .card-row {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+
+            .card-details {
+                flex-direction: column;
+                gap: 5px;
+                justify-content: flex-start;
             }
 
             .card-text {
                 font-size: 0.8rem;
             }
 
-            .card-text,
-            .card-text * {
-                font-size: 0.8rem !important;
-            }
-
             .chart-container {
-                flex: 1;
-                /* Smaller share for chart */
+                flex: 0 0 70px;
                 height: 70px;
                 width: 70px;
-                margin: 5px 0;
+                justify-content: center;
             }
 
             .progress {
-                margin: 15px 0 0 0;
+                margin: 5px 0 0 0;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -244,79 +239,151 @@
 
 <body>
     <%- include('../../partials/_sidebar') %>
-    
 
     <div class="main-content">
-        <div class="scroll-container">
+        <div class="form-container">
+            <div class="header-container">
+                <h1>Refill Alerts</h1>
+                <!-- Optional: Add Medication button (adjust route as needed) -->
+                <button class="add-medication-btn" onclick="window.location.href='/add-medication'">Add Medication</button>
+            </div>
             <% if (typeof error !== 'undefined' && error) { %>
             <p class="error-message"><%= error %></p>
-            <% } else if (medications && medications.length > 0) { %>
-            <% medications.forEach((medication, index) => { %>
-            <div class="card">
-                <h2 class="card-title"><%= medication.name %></h2>
-                <div class="card-row">
-                    <div class="card-details">
-                        <div class="details-column">
-                            <p class="card-text"><strong>Dosage:</strong> <%= medication.dosage %> mg</p>
-                            <p class="card-text"><strong>Freq:</strong> <%= medication.frequency %></p>
-                            <p class="card-text"><strong>Dr:</strong> <%= medication.prescribingDoctor %></p>
-                        </div>
-                        <div class="details-column">
-                            <p class="card-text"><strong>End:</strong>
-                                <%= new Date(medication.endDate).toLocaleDateString() %></p>
-                            <p class="card-text"><strong>Inv:</strong> <%= medication.inventory %> units
-                                <span
-                                    class="<%= medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good' %>">
-                                    (<%= medication.inventoryStatus %>)
-                                </span>
-                            </p>
-                            <p class="card-text"><strong>Days:</strong> <%= medication.daysRemaining %>
-                                <% if (medication.daysRemaining <= 7 && medication.daysRemaining > 0) { %>
-                                <span class="status-low">(Urgent)</span>
-                                <% } else if (medication.daysRemaining <= 14 && medication.daysRemaining > 0) { %>
-                                <span class="status-warning">(Soon)</span>
-                                <% } else if (medication.daysRemaining === 0 && medication.inventory === 0) { %>
-                                <span class="status-low">(Out)</span>
-                                <% } %>
-                            </p>
-                            <p class="card-text"><strong>Refill:</strong>
-                                <%= medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString() %>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="pieChart-<%= index %>"></canvas>
-                    </div>
-                </div>
-                <div class="progress">
-                    <div class="progress-bar <%= medication.inventoryStatus === 'Low' ? 'bg-danger' : medication.inventoryStatus === 'Warning' ? 'bg-warning' : 'bg-success' %>"
-                        role="progressbar" style="width: <%= medication.inventoryPercentage %>%;"
-                        aria-valuenow="<%= medication.inventoryPercentage %>" aria-valuemin="0" aria-valuemax="100">
-                    </div>
-                </div>
-            </div>
-            <% }) %>
-            <% } else { %>
-            <p class="no-medications">No active medications found.</p>
             <% } %>
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="searchInput" placeholder="Search by medication name..." style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <div class="scroll-container" id="medicationsContainer">
+                <% if (medications && medications.length > 0) { %>
+                <% medications.forEach((medication, index) => { %>
+                <div class="card" data-name="<%= medication.name.toLowerCase() %>">
+                    <div class="card-row">
+                        <h2 class="card-title"><%= medication.name %></h2>
+                        <div class="card-details">
+                            <div class="details-column">
+                                <p class="card-text"><strong>Dosage:</strong> <%= medication.dosage %> mg</p>
+                                <p class="card-text"><strong>Freq:</strong> <%= medication.frequency %></p>
+                                <p class="card-text"><strong>Dr:</strong> <%= medication.prescribingDoctor %></p>
+                            </div>
+                            <div class="details-column">
+                                <p class="card-text"><strong>End:</strong> <%= new Date(medication.endDate).toLocaleDateString() %></p>
+                                <p class="card-text"><strong>Inv:</strong> <%= medication.inventory %> units
+                                    <span class="<%= medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good' %>">
+                                        (<%= medication.inventoryStatus %>)
+                                    </span>
+                                </p>
+                                <p class="card-text"><strong>Days:</strong> <%= medication.daysRemaining %>
+                                    <% if (medication.daysRemaining <= 7 && medication.daysRemaining > 0) { %>
+                                    <span class="status-low">(Urgent)</span>
+                                    <% } else if (medication.daysRemaining <= 14 && medication.daysRemaining > 0) { %>
+                                    <span class="status-warning">(Soon)</span>
+                                    <% } else if (medication.daysRemaining === 0 && medication.inventory === 0) { %>
+                                    <span class="status-low">(Out)</span>
+                                    <% } %>
+                                </p>
+                                <p class="card-text"><strong>Refill:</strong>
+                                    <%= medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString() %>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pieChart-<%= index %>"></canvas>
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar <%= medication.inventoryStatus === 'Low' ? 'bg-danger' : medication.inventoryStatus === 'Warning' ? 'bg-warning' : 'bg-success' %>"
+                            role="progressbar" style="width: <%= medication.inventoryPercentage %>%;"
+                            aria-valuenow="<%= medication.inventoryPercentage %>" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+                <% } else { %>
+                <p class="no-medications">No active medications found.</p>
+                <% } %>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            <% medications.forEach((medication, index) => { %>
-                const ctx<%= index %> = document.getElementById('pieChart-<%= index %>')?.getContext('2d');
-            if (ctx <%= index %>) {
-                new Chart(ctx <%= index %>, {
+        // Pass initial medications data from EJS to JavaScript
+        let medicationsData = <%- JSON.stringify(medications || []) %>;
+        let currentDisplayData = [...medicationsData];
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            currentDisplayData = medicationsData.filter(medication =>
+                medication.name.toLowerCase().includes(query)
+            );
+            renderFilteredData(currentDisplayData);
+        });
+
+        function renderFilteredData(filteredData) {
+            const container = document.getElementById('medicationsContainer');
+            container.innerHTML = ''; // Clear existing content
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<p class="no-medications">No active medications found.</p>';
+                return;
+            }
+
+            filteredData.forEach((medication, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.name = medication.name.toLowerCase();
+                card.innerHTML = `
+                    <div class="card-row">
+                        <h2 class="card-title">${medication.name}</h2>
+                        <div class="card-details">
+                            <div class="details-column">
+                                <p class="card-text"><strong>Dosage:</strong> ${medication.dosage} mg</p>
+                                <p class="card-text"><strong>Freq:</strong> ${medication.frequency}</p>
+                                <p class="card-text"><strong>Dr:</strong> ${medication.prescribingDoctor}</p>
+                            </div>
+                            <div class="details-column">
+                                <p class="card-text"><strong>End:</strong> ${new Date(medication.endDate).toLocaleDateString()}</p>
+                                <p class="card-text"><strong>Inv:</strong> ${medication.inventory} units
+                                    <span class="${medication.inventoryStatus === 'Low' ? 'status-low' : medication.inventoryStatus === 'Warning' ? 'status-warning' : 'status-good'}">
+                                        (${medication.inventoryStatus})
+                                    </span>
+                                </p>
+                                <p class="card-text"><strong>Days:</strong> ${medication.daysRemaining}
+                                    ${medication.daysRemaining <= 7 && medication.daysRemaining > 0 ? '<span class="status-low">(Urgent)</span>' : 
+                                      medication.daysRemaining <= 14 && medication.daysRemaining > 0 ? '<span class="status-warning">(Soon)</span>' : 
+                                      medication.daysRemaining === 0 && medication.inventory === 0 ? '<span class="status-low">(Out)</span>' : ''}
+                                </p>
+                                <p class="card-text"><strong>Refill:</strong>
+                                    ${medication.inventory === 0 ? 'Now' : new Date(medication.nextRefillDate).toLocaleDateString()}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pieChart-${index}"></canvas>
+                        </div>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar ${medication.inventoryStatus === 'Low' ? 'bg-danger' : medication.inventoryStatus === 'Warning' ? 'bg-warning' : 'bg-success'}"
+                            role="progressbar" style="width: ${medication.inventoryPercentage}%;"
+                            aria-valuenow="${medication.inventoryPercentage}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+
+                // Render pie chart
+                const ctx = document.getElementById(`pieChart-${index}`).getContext('2d');
+                new Chart(ctx, {
                     type: 'pie',
                     data: {
                         labels: ['Remaining', 'Used'],
                         datasets: [{
-                            data: [<%= medication.inventoryPercentage || 0 %>, <%= 100 - (medication.inventoryPercentage || 0) %>],
+                            data: [medication.inventoryPercentage || 0, 100 - (medication.inventoryPercentage || 0)],
                             backgroundColor: ['#27ae60', '#e74c3c'],
                             borderWidth: 1
                         }]
@@ -330,8 +397,12 @@
                         }
                     }
                 });
-            }
-            <% }) %>
+            });
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFilteredData(medicationsData);
         });
     </script>
 
