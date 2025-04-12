@@ -234,7 +234,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             console.log('DOM fully loaded, initializing charts...');
-
+        
             if (typeof Chart === 'undefined') {
                 console.error('Chart.js is not loaded! Check the script src path: /js/charts/chart.min.js');
                 document.querySelectorAll('.chart-container p').forEach(p => {
@@ -244,26 +244,30 @@
             } else {
                 console.log('Chart.js loaded successfully');
             }
-
+        
             const inventoryCtx = document.getElementById('inventoryChart');
             const completionCtx = document.getElementById('completionChart');
             const typesCtx = document.getElementById('typesChart');
-
+        
             if (!inventoryCtx || !completionCtx || !typesCtx) {
                 console.error('One or more chart canvases not found!');
                 return;
             } else {
                 console.log('All chart canvases found');
             }
-
+        
             try {
-                // Log raw currentMedications to debug
-                const rawMedications = <% - JSON.stringify(currentMedications || 'undefined') %>;
-                console.log('Raw currentMedications:', rawMedications);
-
+                // Sample medication data (replace with actual data from backend if available)
+                const currentMedications = [
+                    { name: 'Aspirin', inventory: 50, type: 'Pill' },
+                    { name: 'Insulin', inventory: 20, type: 'Injection' },
+                    { name: 'Ibuprofen', inventory: 30, type: 'Pill' }
+                ];
+                console.log('Current Medications:', currentMedications);
+        
                 // Bar Chart: Medication Inventory Levels
-                const inventoryLabels = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.map(med => med.name || 'Unnamed') : ['No Data']) %>;
-                const inventoryValues = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.map(med => med.inventory || 0) : [0]) %>;
+                const inventoryLabels = currentMedications.map(med => med.name);
+                const inventoryValues = currentMedications.map(med => med.inventory);
                 const inventoryData = {
                     labels: inventoryLabels,
                     datasets: [{
@@ -287,7 +291,7 @@
                         plugins: { legend: { display: false } }
                     }
                 });
-
+        
                 // Line Graph: Reminder Completion Trend (Hardcoded Data)
                 const completionData = {
                     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -313,13 +317,12 @@
                         plugins: { legend: { display: true } }
                     }
                 });
-
+        
                 // Pie Chart: Medication Types Distribution
-                const typeCounts = <% - JSON.stringify(currentMedications && Array.isArray(currentMedications) ? currentMedications.reduce((acc, med) => {
-                    const type = med.type || 'Unknown';
-                    acc[type] = (acc[type] || 0) + 1;
+                const typeCounts = currentMedications.reduce((acc, med) => {
+                    acc[med.type] = (acc[med.type] || 0) + 1;
                     return acc;
-                }, {}) : { 'Unknown': 1 }) %>;
+                }, {});
                 const typesData = {
                     labels: Object.keys(typeCounts),
                     datasets: [{
@@ -341,7 +344,7 @@
                         }
                     }
                 });
-
+        
                 console.log('Charts initialized successfully');
             } catch (error) {
                 console.error('Error initializing charts:', error);
