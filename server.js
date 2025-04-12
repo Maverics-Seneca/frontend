@@ -1044,7 +1044,6 @@ app.get('/all-organizations', authenticateUser, async (req, res) => {
                 createdAt: createdAtSeconds ? new Date(createdAtSeconds * 1000).toISOString() : null
             };
         }) : [];
-        console.log('Processed organizations:', organizations); // Log processed organizations
 
         res.render('pages/owner/all-organizations', {
             isLoggedIn,
@@ -1214,9 +1213,6 @@ app.get('/patient-dashboard', authenticateUser, async (req, res) => {
         medicineHistory = responses.history.status === 'fulfilled' ? responses.history.value.data : [];
         caretakers = responses.caretakers.status === 'fulfilled' ? responses.caretakers.value.data : [];
         medicationDetails = responses.details.status === 'fulfilled' ? responses.details.value.data : [];
-
-        console.log('Current Date:', currentDate.toISOString()); // Log the current date for debugging
-        console.log('Current Medications:', currentMedications);
 
         res.render('pages/patient/patient-dashboard', {
             isLoggedIn,
@@ -1722,8 +1718,6 @@ app.post('/login', async (req, res) => {
             withCredentials: true,
         });
 
-        console.log('Middleware response:', response.data); // Log middleware response
-
         res.cookie('authToken', response.data.token, {
             httpOnly: true,
             secure: false,
@@ -1759,8 +1753,6 @@ app.post('/login', async (req, res) => {
 app.post('/login-caretaker', async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        console.log('Caretaker login request received:', req.body);
 
         const response = await axios.post('http://middleware:3001/auth/caretaker-login', { email, password });
 
@@ -1813,15 +1805,12 @@ app.post('/logout', (req, res) => {
 
 // Register (general)
 app.post('/register', async (req, res) => {
-    console.log('Register request received:', req.body); // Log request data
-    // TODO: Sanitize req.body inputs
 
     try {
         const response = await axios.post('http://middleware:3001/auth/register', req.body, {
             withCredentials: true,
         });
 
-        console.log('Middleware response:', response.data); // Log response
         res.json(response.data);
     } catch (error) {
         console.error('Registration error:', error.message); // Log error
@@ -1834,8 +1823,6 @@ app.post('/register', async (req, res) => {
 // Register admin
 app.post('/register-admin', async (req, res) => {
     const { name, email, phone, password, organizationId } = req.body;
-    console.log('Admin signup request received:', req.body); // Log request data
-    // TODO: Sanitize inputs
 
     try {
         const response = await axios.post('http://middleware:3001/auth/register-admin', {
@@ -1856,12 +1843,9 @@ app.post('/register-admin', async (req, res) => {
 
 // Password reset
 app.post("/reset-password", async (req, res) => {
-    console.log('Password reset request received:', req.body); // Log request data
-    // TODO: Sanitize req.body
 
     try {
         const response = await axios.post("http://middleware:3001/auth/request-password-reset", req.body, { withCredentials: true });
-        console.log('Middleware response:', response.data); // Log response
         res.json(response.data);
     } catch (error) {
         console.error('Password reset error:', error.message); // Log error
@@ -1909,9 +1893,6 @@ app.post('/settings/:id', authenticateUser, async (req, res) => {
     if (id !== userId) {
         return res.status(403).json({ error: 'Unauthorized to update this user' });
     }
-
-    console.log('Updating settings:', { id, name, email, password: password || 'unchanged', currentPassword: currentPassword || 'not provided' }); // Log request data
-    // TODO: Sanitize inputs
 
     try {
         const updateResponse = await axios.post('http://middleware:3001/auth/update', {
