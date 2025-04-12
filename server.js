@@ -439,35 +439,43 @@ app.delete('/patients/:id', authenticateUser, async (req, res) => {
 app.get('/admin-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
-    console.log('Rendering admin dashboard for user:', userId, 'with role:', req.role);
+    const role = req.role;
+    const organizationId = role === 'owner' ? null : req.organizationId; // Null for owners
+    console.log('Rendering admin dashboard for user:', userId, 'with role:', role, 'organizationId:', organizationId);
 
-    if (req.role !== 'admin' && req.role !== 'owner') {
+    if (role !== 'admin' && role !== 'owner') {
         console.log('Access denied: User is not an admin or owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
-            role: req.role,
+            role,
             message: 'Access denied. You must be an admin or owner to view this page.',
         });
     }
 
     try {
         const [patientsResponse, remindersResponse, logsResponse] = await Promise.all([
-            axios.get(`http://middleware:3001/patients?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/reminders/all?organizationId=${req.organizationId}`),
-            axios.get(`http://middleware:3001/logs?organizationId=${req.organizationId}&limit=5`)
+            axios.get(`http://middleware:3001/patients`, {
+                params: { organizationId }
+            }),
+            axios.get(`http://middleware:3001/reminders/all`, {
+                params: { organizationId }
+            }),
+            axios.get(`http://middleware:3001/logs`, {
+                params: { organizationId, userId, limit: 5 }
+            })
         ]);
 
         const patients = patientsResponse.data;
         const reminders = remindersResponse.data;
         const recentLogs = logsResponse.data;
 
-        console.log('Frontend - Recent Logs:', recentLogs); // Add this line
+        console.log('Frontend - Recent Logs:', JSON.stringify(recentLogs, null, 2)); // Enhanced logging
 
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
-            role: req.role,
+            role,
             patients,
             reminders,
             recentLogs
@@ -477,7 +485,7 @@ app.get('/admin-dashboard', authenticateUser, async (req, res) => {
         res.render('pages/admin/admin-dashboard', {
             isLoggedIn,
             userName: req.name,
-            role: req.role,
+            role,
             error: 'Failed to load dashboard data',
             patients: [],
             reminders: [],
@@ -822,10 +830,10 @@ app.delete('/admins/:id', authenticateUser, async (req, res) => {
 app.get('/owner-dashboard', authenticateUser, async (req, res) => {
     const isLoggedIn = !!req.cookies.authToken;
     const userId = req.userId;
-    console.log('Rendering owner dashboard for user:', userId, 'with role:', req.role); // Log render attempt
+    console.log('Rendering owner dashboard for user:', userId, 'with role:', req.role);
 
     if (req.role !== 'owner') {
-        console.log('Access denied: User is not an owner'); // Log access denial
+        console.log('Access denied: User is not an owner');
         return res.status(403).render('pages/error', {
             isLoggedIn,
             userName: req.name,
@@ -837,7 +845,7 @@ app.get('/owner-dashboard', authenticateUser, async (req, res) => {
     try {
         const orgsResponse = await axios.get(`http://middleware:3001/organization/get?userId=${userId}`);
         const organizations = Array.isArray(orgsResponse.data) ? orgsResponse.data : [];
-        console.log('Fetched organizations:', organizations); // Log fetched organizations
+        console.log('Fetched organizations:', organizations);
 
         if (organizations.length === 0) {
             return res.render('pages/owner/owner-dashboard', {
@@ -855,23 +863,44 @@ app.get('/owner-dashboard', authenticateUser, async (req, res) => {
         }
 
         const organizationIds = organizations.map(org => org.id);
-        console.log('Organization IDs:', organizationIds); // Log organization IDs
+        console.log('Organization IDs:', organizationIds);
 
         const [adminsResponses, patientsResponses, caretakersResponses, medicationsResponses, logsResponses] = await Promise.all([
             Promise.all(organizationIds.map(orgId =>
-                axios.get(`http://middleware:3001/auth/get-all-admins?organizationId=${orgId}`).catch(() => ({ data: [] }))
+                axios.get(`http://middleware:3001/auth/get-all-admins?organizationId=${orgId}`)
+                    .catch(err => {
+                        console.error(`Error fetching admins for org ${orgId}:`, err.message);
+                        return { data: [] };
+                    })
             )),
             Promise.all(organizationIds.map(orgId =>
-                axios.get(`http://middleware:3001/patients?organizationId=${orgId}`).catch(() => ({ data: [] }))
+                axios.get(`http://middleware:3001/patients?organizationId=${orgId}`)
+                    .catch(err => {
+                        console.error(`Error fetching patients for org ${orgId}:`, err.message);
+                        return { data: [] };
+                    })
             )),
             Promise.all(organizationIds.map(orgId =>
-                axios.get(`http://middleware:3001/caretakers/all?organizationId=${orgId}`).catch(() => ({ data: [] }))
+                axios.get(`http://middleware:3001/caretakers/all?organizationId=${orgId}`)
+                    .catch(err => {
+                        console.error(`Error fetching caretakers for org ${orgId}:`, err.message);
+                        return { data: [] };
+                    })
             )),
             Promise.all(organizationIds.map(orgId =>
-                axios.get(`http://middleware:3001/medications/all?organizationId=${orgId}`).catch(() => ({ data: [] }))
+                axios.get(`http://middleware:3001/medications/all?organizationId=${orgId}`)
+                    .catch(err => {
+                        console.error(`Error fetching medications for org ${orgId}:`, err.message);
+                        return { data: [] };
+                    })
             )),
             Promise.all(organizationIds.map(orgId =>
-                axios.get(`http://middleware:3001/logs?organizationId=${orgId}&limit=5`).catch(() => ({ data: [] }))
+                axios.get(`http://middleware:3001/logs`, {
+                    params: { organizationId: orgId, userId, limit: 5 }
+                }).catch(err => {
+                    console.error(`Error fetching logs for org ${orgId}:`, err.message);
+                    return { data: [] };
+                })
             ))
         ]);
 
@@ -881,9 +910,21 @@ app.get('/owner-dashboard', authenticateUser, async (req, res) => {
         const medications = medicationsResponses.flatMap(response => response.data);
         const recentLogs = logsResponses
             .flatMap(response => response.data)
-            .sort((a, b) => (b.timestamp?._seconds || 0) - (a.timestamp?._seconds || 0))
+            .sort((a, b) => {
+                const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+                const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+                return bTime - aTime; // Newest first
+            })
             .slice(0, 5);
-        console.log('Aggregated data:', { admins, patients, caretakers, medications, recentLogs, organizations }); // Log aggregated data
+
+        console.log('Aggregated data:', {
+            admins: admins.length,
+            patients: patients.length,
+            caretakers: caretakers.length,
+            medications: medications.length,
+            recentLogs: JSON.stringify(recentLogs, null, 2),
+            organizations: organizations.length
+        });
 
         res.render('pages/owner/owner-dashboard', {
             isLoggedIn,
@@ -897,7 +938,7 @@ app.get('/owner-dashboard', authenticateUser, async (req, res) => {
             organizations
         });
     } catch (error) {
-        console.error('Error fetching owner dashboard data:', error.message); // Log error
+        console.error('Error fetching owner dashboard data:', error.message);
         res.render('pages/owner/owner-dashboard', {
             isLoggedIn,
             userName: req.name,
