@@ -95,7 +95,7 @@
 
 <body>
     <%- include('../../partials/_sidebar') %> <!-- Include sidebar partial -->
-     <!-- Include Auth partial -->
+    <!-- Include Auth partial -->
 
     <!-- Main Content -->
     <div class="main-content" id="main-content">
@@ -109,39 +109,100 @@
                     <label for="title">Reminder Title</label>
                     <input type="text" name="title" id="title" required />
                 </div>
-
                 <div class="form-group">
                     <label for="description">Description</label>
                     <textarea name="description" id="description"></textarea>
                 </div>
-
                 <div class="form-group">
                     <label for="datetime">Date & Time</label>
                     <input type="datetime-local" name="datetime" id="datetime" required />
                 </div>
-
                 <button type="submit">Add Reminder</button>
             </form>
         </div>
     </div>
 
     <script>
+        // Fallback showAlert function
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
+            alertDiv.style.margin = '10px auto';
+            alertDiv.style.maxWidth = '500px';
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+            document.querySelector('.form-container').prepend(alertDiv);
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 300); // Match Bootstrap fade duration
+            }, 5000); // Auto-dismiss after 5 seconds
+        }
+
         // Restrict datetime to current and future dates
         const datetimeInput = document.getElementById('datetime');
         const now = new Date().toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM format
         datetimeInput.setAttribute('min', now); // Set minimum to current date/time
 
-        // Form submission feedback
-        document.getElementById('add-reminder-form').addEventListener('submit', (e) => {
-            showLoader()
+        // Form submission handling
+        document.getElementById('add-reminder-form').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
             const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
             const datetime = document.getElementById('datetime').value;
 
+            // Client-side validation
             if (!title || !datetime) {
-                e.preventDefault();
-                alert('Title and Date & Time are required.');
+                showAlert('Title and Date & Time are required.', 'danger');
+                return;
             }
-            hideLoader()
+
+            // Debug form data
+            console.log('Form data:', { title, description, datetime });
+
+            try {
+                showLoader(); // Show loader after validation
+                const response = await fetch('/add-reminder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        description,
+                        datetime,
+                    }),
+                    credentials: 'include' // Include cookies for auth
+                });
+
+                hideLoader(); // Hide loader after response
+
+                if (response.ok) {
+                    showAlert('Reminder added successfully!', 'success');
+                    document.getElementById('add-reminder-form').reset(); // Clear form
+                    // Redirect to reminders list after a delay
+                    setTimeout(() => {
+                        window.location.href = '/all-reminders';
+                    }, 1000);
+                } else {
+                    let errorMessage = 'Failed to add reminder. Please try again.';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (jsonError) {
+                        console.error('Error parsing JSON response:', jsonError);
+                    }
+                    showAlert(errorMessage, 'danger');
+                }
+            } catch (error) {
+                console.error('Error adding reminder:', error);
+                hideLoader();
+                showAlert('An error occurred. Please try again.', 'danger');
+            }
         });
     </script>
 
